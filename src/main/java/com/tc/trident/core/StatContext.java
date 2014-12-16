@@ -31,9 +31,13 @@ public class StatContext implements StatInfo, Serializable {
     private Stack<Transaction> transactionStack;
     
     public StatContext(String name) {
+        this(name, null);
+    }
+    
+    public StatContext(String name, Transaction defaultTransaction) {
     
         transactionStack = new Stack<Transaction>();
-        transactionStack.push(new Transaction(name));
+        transactionStack.push(defaultTransaction == null ? new Transaction(name) : defaultTransaction);
     }
     
     public void finish() {

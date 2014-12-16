@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.tc.trident.core.StatContext;
 import com.tc.trident.core.TridentException;
+import com.tc.trident.core.web.WebRequest;
 import com.tc.trident.store.SimpleFileStatStore;
 import com.tc.trident.store.StatStore;
 
@@ -55,9 +56,13 @@ public class StatFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
     
         if (state) {
-            HttpServletRequest r = (HttpServletRequest)request;
-            String requestPath = r.getContextPath() + r.getServletPath(); 
-            StatContext context = new StatContext(requestPath);
+            HttpServletRequest r = (HttpServletRequest) request;
+            boolean isAsyncRequest = r.getHeader("X-Requested-With") != null;
+            String requestPath = r.getContextPath() + r.getServletPath();
+            Object[] parameters = request.getParameterMap().values().toArray();
+            WebRequest webRequest = new WebRequest(requestPath, parameters);
+            webRequest.setAsyncRequest(isAsyncRequest);
+            StatContext context = new StatContext(requestPath, webRequest);
             StatContext.setCurrentContext(context);
             chain.doFilter(request, response);
             try {
