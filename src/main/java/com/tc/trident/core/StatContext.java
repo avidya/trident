@@ -17,7 +17,7 @@ public class StatContext implements StatInfo, Serializable {
     
     private static final long serialVersionUID = -3973541459226247268L;
     
-    private static final String GLOBAL = "GLOBAL";
+    public static final String GLOBAL = "GLOBAL";
     
     private static final ThreadLocal<StatContext> contextLocal = new ThreadLocal<StatContext>() {
         
@@ -31,13 +31,14 @@ public class StatContext implements StatInfo, Serializable {
     private Stack<Transaction> transactionStack;
     
     public StatContext(String name) {
-        this(name, null);
+    
+        this(new Transaction(name));
     }
     
-    public StatContext(String name, Transaction defaultTransaction) {
+    public StatContext(Transaction defaultTransaction) {
     
         transactionStack = new Stack<Transaction>();
-        transactionStack.push(defaultTransaction == null ? new Transaction(name) : defaultTransaction);
+        transactionStack.push(defaultTransaction == null ? new Transaction(GLOBAL) : defaultTransaction);
     }
     
     public void finish() {
@@ -78,9 +79,9 @@ public class StatContext implements StatInfo, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public String getStatInfo() {
+    public String compact() {
     
-        return currentTransaction().getStatInfo();
+        return currentTransaction().compact();
     }
     
 }

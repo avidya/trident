@@ -13,25 +13,32 @@ import com.tc.trident.core.StatInfo;
  * @date Dec 12, 2014 4:36:33 PM
  * @id $Id$
  */
-public abstract class AbstractQueuedAsyncStatStore extends AbstractAsyncStatStore {
+public abstract class AbstractAsyncBatchStatStore extends AbstractAsyncStatStore {
     
-    public static final Integer VALVE = 20;
+    public Integer threshold = 20;
+    
+    public void setThreshold(Integer valve) {
+    
+        this.threshold = valve;
+    }
     
     private List<StatInfo> queueStatInfo = new LinkedList<StatInfo>();
     
-    synchronized void queue(StatInfo statInfo){
+    synchronized void queue(StatInfo statInfo) {
+    
         queueStatInfo.add(statInfo);
     }
     
-    abstract void flush(List<StatInfo> statInfo);   
+    public abstract void flush(List<StatInfo> statInfo);
     
     @Override
     synchronized void doStore(StatInfo statInfo) {
-        if(queueStatInfo.size() > VALVE){
+    
+        queue(statInfo);
+        if (queueStatInfo.size() >= threshold) {
             flush(queueStatInfo);
             queueStatInfo.clear();
         }
-        queue(statInfo);
     }
     
 }

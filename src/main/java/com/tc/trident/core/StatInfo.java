@@ -10,5 +10,5 @@ package com.tc.trident.core;
  */
 public interface StatInfo {
     
-    String getStatInfo();
+    String compact();
 }

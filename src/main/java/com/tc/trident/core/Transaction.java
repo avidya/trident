@@ -3,6 +3,10 @@ package com.tc.trident.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * TODO 类的功能描述。
@@ -26,6 +30,16 @@ public class Transaction implements StatInfo, Serializable {
     private ArrayList<Transaction> childTransactions;
     
     private Object[] attachments;
+    
+    private static final String URL = "url";
+    
+    private static final String ELAPSE = "elapse";
+    
+    private static final String STATUS = "status";
+    
+    private static final String CHILDREN = "children";
+    
+    private static final String ATTACHMENTS = "attachments";
     
     public long getBeginTime() {
     
@@ -97,14 +111,29 @@ public class Transaction implements StatInfo, Serializable {
         childTransactions.add(t);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getStatInfo() {
+    public String compact() {
     
-        // TODO Auto-generated method stub
-        return null;
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put(URL, name);
+        map.put(ELAPSE, endTime - beginTime);
+        map.put(STATUS, (success ? "S" : "F"));
+        if (childTransactions != null && childTransactions.size() > 0) {
+            ArrayList<String> ct = new ArrayList<String>();
+            for (Transaction t : childTransactions) {
+                ct.add(t.compact());
+            }
+            map.put(CHILDREN, ct);
+        }
+        if (attachments != null && attachments.length > 0) {
+            ArrayList<Object> at = new ArrayList<Object>();
+            for (Object a : at) {
+                at.add(a);
+            }
+            map.put(ATTACHMENTS, at);
+        }
+        
+        return JSON.toJSONString(map, SerializerFeature.DisableCircularReferenceDetect);
     }
     
     @Override
