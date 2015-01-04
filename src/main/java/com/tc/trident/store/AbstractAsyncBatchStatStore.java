@@ -22,21 +22,21 @@ public abstract class AbstractAsyncBatchStatStore extends AbstractAsyncStatStore
         this.threshold = valve;
     }
     
-    private List<StatInfo> queueStatInfo = new LinkedList<StatInfo>();
+    protected List<StatInfo> queueStatInfo = new LinkedList<StatInfo>();
     
     synchronized void queue(StatInfo statInfo) {
     
         queueStatInfo.add(statInfo);
     }
     
-    public abstract void flush(List<StatInfo> statInfo);
+    public abstract void flush();
     
     @Override
     synchronized void doStore(StatInfo statInfo) {
     
         queue(statInfo);
         if (queueStatInfo.size() >= threshold) {
-            flush(queueStatInfo);
+            flush();
             queueStatInfo.clear();
         }
     }

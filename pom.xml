@@ -22,7 +22,7 @@
     <servlet.version>3.1.0</servlet.version>
     <javassist.version>3.18.2-GA</javassist.version>
     <servlet.version>3.1.0</servlet.version>
-    <activemq.version>5.10.0</activemq.version>
+    <activemq.version>5.10.0-tc</activemq.version>
     <aspectj.version>1.5.4</aspectj.version>
     <xbean.version>3.7</xbean.version>
     <fastjson.version>1.2.3</fastjson.version>
@@ -87,29 +87,10 @@
     </dependency>
 
     <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>log4j-over-slf4j</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>${logback.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
@@ -176,6 +157,82 @@
       <version>${fastjson.version}</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>wout_trinity</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <finalName>trident-without-trinity-${project.version}</finalName>
+        <resources>
+          <resource>
+            <directory>${basedir}/src/main/config</directory>
+            <excludes>
+              <exclude>**/com.tc.trinity.core.spi.Configurable</exclude>
+            </excludes>
+          </resource>
+        </resources>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <version>2.9</version>
+            <configuration>
+              <sourceExcludes>
+                <sourceExclude>**/TrinityConfiguration.java</sourceExclude>
+              </sourceExcludes>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <source>1.7</source>
+              <target>1.7</target>
+            </configuration>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>**/TrinityConfiguration.java</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>with_trinity</id>
+      <activation>
+        <property>
+          <name>with_trinity</name>
+        </property>
+      </activation>
+      <build>
+        <resources>
+          <resource>
+            <directory>${basedir}/src/main/config</directory>
+          </resource>
+        </resources>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>com.tc.mw</groupId>
+          <artifactId>trinity</artifactId>
+          <version>1.2-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <!-- maven plugin for compiler -->

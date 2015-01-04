@@ -4,8 +4,8 @@ package com.tc.trident.store;
 import com.tc.trident.core.StatInfo;
 
 /**
- * TODO 类的功能描述。
- *
+ * 
+ * 
  * @author kozz.gaof
  * @date Dec 12, 2014 1:58:43 PM
  * @id $Id$

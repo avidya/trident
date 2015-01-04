@@ -11,26 +11,6 @@
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 	http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.2.xsd
 ">
-
-	<amq:connectionFactory id="amqConnectionFactory" brokerURL="${trident.jms.url}" userName="${trident.jms.username}" password="${trident.jms.password}" />
-	
-	<!-- CachingConnectionFactory Definition, sessionCacheSize property is the number of sessions to cache -->
-	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-    	<constructor-arg ref="amqConnectionFactory" />
-    	<!--property name="exceptionListener" ref="jmsExceptionListener" /-->
-    	<property name="sessionCacheSize" value="${trident.jms.session.cache.size}" />
-	</bean>
-	
-	<!-- JmsTemplate Definition -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-   		<constructor-arg ref="connectionFactory"/>
-	</bean>
-	
-	<bean class="com.tc.trident.store.jms.JMSStatStore">
-		<property name="jmsTemplate" ref="jmsTemplate" />
-		<property name="queueName" value="${trident.jms.queue.name}" />
-		<property name="valve" value="${trident.jms.queue.count}" />
-	</bean>
 	
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="tcmc" expression="execution(* com.tcmc..*.*(..))" />
@@ -38,5 +18,5 @@
     	<aop:advisor pointcut-ref="tcmc" advice-ref="statInterceptor" />
     	<aop:advisor pointcut-ref="tc" advice-ref="statInterceptor" />
   	</aop:config>
-	<bean id="statInterceptor" class="com.tc.trident.spring.StatMethodInterceptor" />  	
+	
 </beans>
