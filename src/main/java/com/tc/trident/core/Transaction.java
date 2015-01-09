@@ -4,9 +4,7 @@ package com.tc.trident.core;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import java.util.Map;
 
 /**
  * TODO 类的功能描述。
@@ -33,7 +31,9 @@ public class Transaction implements StatInfo, Serializable {
     
     private static final String URL = "url";
     
-    private static final String ELAPSE = "elapse";
+    private static final String BEGIN = "begin";
+    
+    private static final String END = "end";
     
     private static final String STATUS = "status";
     
@@ -112,14 +112,15 @@ public class Transaction implements StatInfo, Serializable {
     }
     
     @Override
-    public String compact() {
+    public Map<String, Object> compact() {
     
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(URL, name);
-        map.put(ELAPSE, endTime - beginTime);
+        map.put(BEGIN, beginTime);
+        map.put(END, endTime);
         map.put(STATUS, (success ? "S" : "F"));
         if (childTransactions != null && childTransactions.size() > 0) {
-            ArrayList<String> ct = new ArrayList<String>();
+            ArrayList<Map<String, ?>> ct = new ArrayList<Map<String, ?>>();
             for (Transaction t : childTransactions) {
                 ct.add(t.compact());
             }
@@ -133,17 +134,18 @@ public class Transaction implements StatInfo, Serializable {
             map.put(ATTACHMENTS, at);
         }
         
-        return JSON.toJSONString(map, SerializerFeature.DisableCircularReferenceDetect);
+        return map;
     }
     
     @Override
     public String toString() {
     
-        String elapse = endTime == 0 ? "N/A" : (endTime - beginTime) + " ms";
         StringBuffer result = new StringBuffer();
         result.append("[T]: " + name);
-        result.append(" [E]: " + elapse);
+        result.append(" [E]: " + (endTime - beginTime));
         result.append(" [S]: " + (success ? "S" : "F"));
+        result.append(" [B]: " + beginTime);
+        result.append(" [F]: " + endTime);
         return result.toString();
     }
 }

@@ -3,11 +3,12 @@ package com.tc.trident.store;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.tc.trident.core.StatInfo;
+import com.tc.trident.core.conf.Configuration;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Dec 12, 2014 4:36:33 PM
@@ -15,30 +16,41 @@ import com.tc.trident.core.StatInfo;
  */
 public abstract class AbstractAsyncBatchStatStore extends AbstractAsyncStatStore {
     
-    public Integer threshold = 20;
-    
-    public void setThreshold(Integer valve) {
-    
-        this.threshold = valve;
-    }
+    public static final Integer DEFAULT_THRESHOLD = 20;
     
     protected List<StatInfo> queueStatInfo = new LinkedList<StatInfo>();
     
-    synchronized void queue(StatInfo statInfo) {
+    private ReentrantLock queueLock = new ReentrantLock();
+    
+    private void queue(StatInfo statInfo) {
     
         queueStatInfo.add(statInfo);
+    }
+    
+    private Integer getThreshold() {
+    
+        try {
+            Integer t = Integer.parseInt(Configuration.LOCAL_QUEUE_SIZE);
+            return t;
+        } catch (NumberFormatException e) {
+            return DEFAULT_THRESHOLD;
+        }
     }
     
     public abstract void flush();
     
     @Override
-    synchronized void doStore(StatInfo statInfo) {
+    void doStore(StatInfo statInfo) {
     
-        queue(statInfo);
-        if (queueStatInfo.size() >= threshold) {
-            flush();
-            queueStatInfo.clear();
+        try {
+            queueLock.lock();
+            queue(statInfo);
+            if (queueStatInfo.size() >= getThreshold()) {
+                flush();
+                queueStatInfo.clear();
+            }
+        } finally {
+            queueLock.unlock();
         }
     }
-    
 }

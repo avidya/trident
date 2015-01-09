@@ -12,7 +12,7 @@ import com.tc.trinity.core.AbstractConfigurable;
 import com.tc.trinity.core.ConfigContext;
 
 /**
- * TODO 类的功能描述。
+ * trinity configuration system supported
  *
  * @author kozz.gaof
  * @date Jan 2, 2015 2:14:59 PM
@@ -56,7 +56,10 @@ public class TrinityConfiguration extends AbstractConfigurable {
             }
             if (StringUtils.isBlank(Configuration.LOCAL_QUEUE_SIZE)) {
                 Configuration.LOCAL_QUEUE_SIZE = properties.getProperty(Constants.LOCAL_QUEUE_SIZE);
-            }            
+            }
+            if (StringUtils.isBlank(Configuration.APP_NAME)) {
+                Configuration.APP_NAME = properties.getProperty(Constants.APP_NAME);
+            }
         } catch (ClassNotFoundException e) {
             logger.error("", e);
             return false;
@@ -66,9 +69,13 @@ public class TrinityConfiguration extends AbstractConfigurable {
     }
     
     @Override
-    protected boolean doOnChange(String arg0, String arg1, String arg2) {
+    protected boolean doOnChange(String key, String value, String originalValue) {
     
-        return true;
+        if (key.equals(Configuration.LOCAL_QUEUE_SIZE)) {
+            Configuration.LOCAL_QUEUE_SIZE = value;
+            return true;
+        }
+        return false;
     }
     
 }

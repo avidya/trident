@@ -1,11 +1,11 @@
+
 package com.tc.trident.store;
 
 import com.tc.trident.core.StatInfo;
 import com.tc.trident.core.TridentException;
 
-
 /**
- * TODO 类的功能描述。
+ * Interface for storing statistics information.
  *
  * @author kozz.gaof
  * @date Dec 12, 2014 1:54:59 PM
@@ -14,8 +14,7 @@ import com.tc.trident.core.TridentException;
 public interface StatStore {
     
     /**
-     * 
-     * 持久化统计信息
+     * to persist StatInfo
      *
      * @param statInfo
      */

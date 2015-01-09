@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.tc.trident.core.StatInfo;
 import com.tc.trident.core.TridentException;
 import com.tc.trident.core.conf.Configuration;
@@ -37,9 +39,6 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
             throw new IllegalStateException(misConfMsg);
         }
         
-        if(StringUtils.isNotBlank(Configuration.LOCAL_QUEUE_SIZE)){
-            setThreshold(Integer.parseInt(Configuration.LOCAL_QUEUE_SIZE));
-        }
         try {
             connection.open(Configuration.BROKER_URL, Integer.parseInt(Configuration.BROKER_PORT));
             connection.connect(Configuration.BROKER_USERNAME, Configuration.BROKER_PASSWORD);
@@ -69,7 +68,7 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
         try {
             connection.begin("tx1");
             for (StatInfo stat : queueStatInfo) {
-                connection.send("/queue/stat-info", stat.compact(), "tx1", null);
+                connection.send("/queue/stat-info", JSON.toJSONString(stat.compact(), SerializerFeature.DisableCircularReferenceDetect), "tx1", null);
             }
             connection.commit("tx1");
         } catch (Exception e) {

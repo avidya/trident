@@ -13,7 +13,7 @@ import com.tc.trident.core.Transaction;
 import com.tc.trident.core.TridentException;
 
 /**
- * TODO 类的功能描述。
+ * Store StatInfo into plain text file.
  *
  * @author kozz.gaof
  * @date Dec 12, 2014 7:42:06 PM

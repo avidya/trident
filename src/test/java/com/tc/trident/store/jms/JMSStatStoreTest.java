@@ -2,20 +2,12 @@ package com.tc.trident.store.jms;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import org.apache.activemq.transport.stomp.Stomp;
 import org.apache.activemq.transport.stomp.Stomp.Headers.Subscribe;
 import org.apache.activemq.transport.stomp.StompConnection;
 import org.apache.activemq.transport.stomp.StompFrame;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tc.trident.core.TridentException;
 import com.tc.trident.store.StatStore;
 
 
@@ -26,8 +18,6 @@ import com.tc.trident.store.StatStore;
  * @date Dec 29, 2014 6:47:59 PM
  * @id $Id$
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:trident-test.xml"})
 public class JMSStatStoreTest {
     
     private StatStore jmsStatStore;

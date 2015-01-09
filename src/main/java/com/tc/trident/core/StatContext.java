@@ -2,6 +2,7 @@
 package com.tc.trident.core;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -13,22 +14,40 @@ import java.util.Stack;
  */
 public class StatContext implements StatInfo, Serializable {
     
-    /** TODO 字段含义 */
-    
     private static final long serialVersionUID = -3973541459226247268L;
     
     public static final String GLOBAL = "GLOBAL";
     
-    private static final ThreadLocal<StatContext> contextLocal = new ThreadLocal<StatContext>() {
-        
-        @Override
-        public StatContext initialValue() {
-        
-            return new StatContext(GLOBAL);
-        }
-    };
+    public static final String HOSTNAME = "hostname";
+    
+    public static final String APPNAME = "app";
+    
+    public static final String HOSTIP = "ip";
+    
+    private static final ThreadLocal<StatContext> contextLocal = new ThreadLocal<StatContext>();
     
     private Stack<Transaction> transactionStack;
+    
+    private String appName;
+    
+    private String hostIP;
+    
+    private String hostName;
+    
+    public void setAppName(String appName) {
+    
+        this.appName = appName;
+    }
+    
+    public void setHostIP(String hostIP) {
+    
+        this.hostIP = hostIP;
+    }
+    
+    public void setHostName(String hostName) {
+    
+        this.hostName = hostName;
+    }
     
     public StatContext(String name) {
     
@@ -53,6 +72,11 @@ public class StatContext implements StatInfo, Serializable {
         return contextLocal.get();
     }
     
+    public void clear() {
+    
+        contextLocal.remove();
+    }
+    
     public static void setCurrentContext(StatContext sc) {
     
         contextLocal.set(sc);
@@ -70,18 +94,36 @@ public class StatContext implements StatInfo, Serializable {
     
     protected void popTransaction() {
     
-        if (transactionStack.size() > 1) { // keep the global transaction
+        if (transactionStack.size() > 1) { // keep, at least, one global transaction
             this.transactionStack.pop();
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String compact() {
+    public Map<String, Object> compact() {
     
-        return currentTransaction().compact();
+        if (transactionStack.size() < 1) {
+            throw new IllegalStateException("compact in an empty StatContext");
+        }
+        Transaction t = transactionStack.get(0);
+        Map<String, Object> map = t.compact();
+        map.put(HOSTNAME, hostName);
+        map.put(HOSTIP, hostIP);
+        map.put(APPNAME, appName);
+        return map;
     }
     
+    @Override
+    public String toString() {
+    
+        StringBuffer result = new StringBuffer();
+        result.append("{Hostname: " + hostName);
+        result.append(", IP: " + hostIP);
+        result.append("} - ");
+        if (transactionStack.size() > 0) {
+            Transaction t = transactionStack.get(0);
+            result.append(t.toString());
+        }
+        return result.toString();
+    }
 }

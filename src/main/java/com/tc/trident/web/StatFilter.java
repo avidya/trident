@@ -17,12 +17,21 @@ import org.slf4j.LoggerFactory;
 import com.tc.trident.core.StatContext;
 import com.tc.trident.core.Transaction;
 import com.tc.trident.core.TridentException;
-import com.tc.trident.core.web.WebRequest;
+import com.tc.trident.core.conf.Configuration;
 import com.tc.trident.store.StatStore;
+import com.tc.trident.util.HostUtils;
 
 /**
- * TODO 类的功能描述。
- *
+ * This filter is supposed to intercept before any other ones.
+ * 
+ * <p>
+ * When in init phase, this filter will attempt to initialize a StatStore instance specified in web.xml, such StatStore
+ * implementation MUST provide a constructor without parameters.
+ * 
+ * <p>
+ * For each request, one correspond StatContext will be instantiated in ThreadLocal for any consequent transactions to
+ * attach to.
+ * 
  * @author kozz.gaof
  * @date Dec 12, 2014 10:15:51 AM
  * @id $Id$
@@ -35,6 +44,10 @@ public class StatFilter implements Filter {
     
     private static final String STORE_NAME = "statStore";
     
+    private static final String HOSTNAME = HostUtils.getLocalHostName();
+    
+    private static final String HOSTIP = HostUtils.getHostIP();
+    
     private StatStore statStore;
     
     private boolean state = false;
@@ -43,8 +56,9 @@ public class StatFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     
         try {
-            @SuppressWarnings("rawtypes")
-            Class statStoreClass = Class.forName(filterConfig.getInitParameter(STORE_NAME), true, Thread.currentThread().getContextClassLoader());
+            
+            String storeName = filterConfig.getInitParameter(STORE_NAME);
+            Class<?> statStoreClass = Class.forName(storeName, true, Thread.currentThread().getContextClassLoader());
             logger.info("Loading StatStore class: " + statStoreClass);
             statStore = (StatStore) statStoreClass.newInstance();
             statStore.init();
@@ -78,14 +92,19 @@ public class StatFilter implements Filter {
             }
             
             StatContext context = new StatContext(t);
+            context.setAppName(Configuration.APP_NAME);
+            context.setHostIP(HOSTIP);
+            context.setHostName(HOSTNAME);
             StatContext.setCurrentContext(context);
-            chain.doFilter(request, response);
+            
             try {
+                chain.doFilter(request, response);
+                context.finish();
                 statStore.store(context);
             } catch (TridentException e) {
                 logger.error("Failed in store statistics info! ", e);
             } finally {
-                context.finish();
+                context.clear();
             }
         } else {
             chain.doFilter(request, response);

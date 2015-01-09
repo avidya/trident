@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.tc.trident.core.Constants;
 
 /**
- * TODO 类的功能描述。
+ * Class to hold configuration needed.
  *
  * @author kozz.gaof
  * @date Jan 2, 2015 1:55:58 PM
@@ -34,6 +34,8 @@ public class Configuration {
     
     public static String LOCAL_QUEUE_SIZE;
     
+    public static String APP_NAME;
+    
     static {
         InputStream in = Configuration.class.getClassLoader().getResourceAsStream(config_file);
         if (in != null) {
@@ -46,6 +48,7 @@ public class Configuration {
                 BROKER_PASSWORD = props.getProperty(Constants.BROKER_PASSWORD);
                 QUEUE_NAME = props.getProperty(Constants.QUEUE_NAME);
                 LOCAL_QUEUE_SIZE = props.getProperty(Constants.LOCAL_QUEUE_SIZE);
+                APP_NAME = props.getProperty(Constants.APP_NAME);
             } catch (Exception e) {
                 logger.error("Error in loading trident.properties file", e);
             }

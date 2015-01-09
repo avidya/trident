@@ -17,5 +17,6 @@ public interface Constants {
     public static final String BROKER_PASSWORD = "trident.broker.password";
     public static final String QUEUE_NAME = "trident.queue.name";
     public static final String LOCAL_QUEUE_SIZE = "trident.local.queue.size";
+    public static final String APP_NAME = "trident.app.name";
     
 }
