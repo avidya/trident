@@ -1,0 +1,244 @@
+/*reset*/
+* {
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+a{
+	text-decoration:none;
+}
+ol, ul {
+	list-style: none;
+}
+.clearfix:before, .clearfix:after {
+	content: "";
+	display: table;
+}
+.clearfix:after {
+	clear: both;
+}
+/* For IE 6/7 (trigger hasLayout) */
+.clearfix {
+	zoom: 1;
+}
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+	border: 0;
+	table-layout: fixed;
+}
+/*container*/
+body {
+	font-size: 14px;
+	font-family: "微软雅黑";
+}
+.container {
+	margin: 20px auto;
+	width: 1566px;
+}
+.tr_tit {
+	background: #c4e9ff;
+	-webkit-border-top-right-radius: 8px;
+	-moz-border-radius-topright: 8px;
+	border-top-right-radius: 8px;
+	-webkit-border-top-left-radius: 8px;
+	-moz-border-radius-topleft: 8px;
+	border-top-left-radius: 8px;
+}
+.tr_tit .h-32 {
+	height: 32px;
+	line-height: 32px;
+	vertical-align: middle;
+}
+.tr_tit li {
+text-indent:10px;
+	float:left;
+	height: 45px;
+	line-height: 45px;
+}
+.container i, .container cite {
+	font-style: normal;
+	width: 100%;
+}
+.tree_content {
+	font-size: 12px;
+	margin-top: 2px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	border: #d1d1d1 1px solid;
+	width: 100%;
+}
+.ul_bg {
+	background: url("../imgs/btn_bg_repeat-x.jpg") repeat-x left top;
+}
+.tree_content li {
+	width: 100%;
+	line-height: 35px;
+	display: block;
+}
+.tree_content div.col_item {
+border-right:1px solid #ccc;
+text-indent:2px;
+	display: block;
+	float: left;
+	height: 35px;
+	line-height: 35px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.col_0 {
+	width: 16%;
+}
+.col_1 {
+	width: 22%;
+}
+.col_2 {
+	width: 48%;
+}
+.col_3 {
+	width: 6%;
+}
+.col_4 {
+	width: 4%;
+}
+.col_5 {
+	width: 20%;
+}
+
+.child_ul{
+    float:left;
+    width:100%;
+float:right;
+}
+
+.child_ul li{
+    border-bottom:1px solid #ccc;
+}
+
+
+#treeMenu .col_6 {
+	width: 21.7%;
+	border:none;
+}
+#treeMenu a.jt {
+	display: inline-block;
+	width: 14px;
+	height: 35px;
+	overflow: hidden;
+	cursor: pointer;
+	vertical-align: middle;
+}
+#treeMenu a.opened {
+	background: url(../imgs/opened.gif) no-repeat 3px 8px;
+}
+#treeMenu a.closed {
+	background: url(../imgs/closed.gif) no-repeat 3px 8px;
+}
+#treeMenu a.leaf {
+	background: url(../imgs/leaf.gif) no-repeat 16px 8px;
+}
+.proc-bar {
+	margin-left:42px;
+	display: block;
+	width: 0;
+	height: 13px;
+	margin-top: 12px;
+	background: #E00;
+}
+.bar_warp{
+	float:right;
+	width:100%
+}
+.pro_i{
+	width:auto;
+}
+/*分页*/
+.pager {
+	padding-top: 17px;
+	height: 40px;
+	line-height: 40px;
+	overflow: hidden;
+	font-size: 12px
+}
+.pager input {
+	font-size: 12px
+}
+.scott2 {
+	text-align: center
+}
+.scott2 a {
+	border: #d4d1d1 1px solid;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	padding: 2px 6px;
+	color: #666;
+	margin: 0 3px;
+	height: 24px;
+	cursor: pointer;
+	background: #ededed
+}
+.scott2 a:hover {
+	border: #97c8f6 1px solid;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	color: #666;
+	height: 24px;
+	text-decoration: none;
+	cursor: pointer;
+	background: #f8fbfe
+}
+.scott2 span.current {
+	border: #2eadde 1px solid;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: 2px 6px;
+	color: #fff;
+	margin-right: 3px;
+	background-color: #4abde9
+}
+.scott2 span.disabled {
+	font-size: 12px;
+	border: #ddd 1px solid;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	padding: 2px 6px;
+	color: #ccc;
+	margin-right: 8px
+}
+.page_text {
+	margin-right: 10px
+}
+.go {
+	color: #fff;
+	background: #aaa;
+	border: #888 1px solid;
+	width: 30px;
+	font-size: 12px;
+	cursor: pointer;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px
+}
+.go:hover {
+	border: #999 1px solid
+}
+.pageInput {
+	width: 35px;
+	height: 18px;
+	text-align: center;
+	margin-right: 2px;
+	line-height: 18px;
+	border: 1px solid #ccc
+}
+
+.left-header {
+	margin-top:3px;
+	height: 50px;
+	background: url(../imgs/btn_bg_repeat-x.jpg) repeat;
+}

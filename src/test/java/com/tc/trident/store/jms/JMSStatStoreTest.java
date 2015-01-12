@@ -6,7 +6,7 @@ import org.apache.activemq.transport.stomp.Stomp.Headers.Subscribe;
 import org.apache.activemq.transport.stomp.StompConnection;
 import org.apache.activemq.transport.stomp.StompFrame;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
 
 import com.tc.trident.store.StatStore;
 
@@ -22,13 +22,13 @@ public class JMSStatStoreTest {
     
     private StatStore jmsStatStore;
     
-    @Autowired
+    //@Autowired
     public void setJmsStatStore(StatStore jmsStatStore) {
     
         this.jmsStatStore = jmsStatStore;
     }
 
-    @Test
+    //@Test
     public void testSend() throws Exception{
 //        jmsStatStore.store(new StatInfo(){
 //
