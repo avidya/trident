@@ -15,7 +15,7 @@ public interface StatInfo {
     
     /**
      * toString() is EXTREMELY USEFUL in debugging.
-     * Redeclaring this method can be seen as a reminder in implementation.
+     * Redeclaring this method can be regarded as a reminder in implementation.
      *
      * @return
      */

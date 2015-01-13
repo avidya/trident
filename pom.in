@@ -79,29 +79,17 @@
       <version>${servlet.version}</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.tc.mw</groupId>
-      <artifactId>trinity</artifactId>
-      <version>1.2-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>dubbo</artifactId>
-      <version>2.4.9</version>
-      <scope>provided</scope>
-    </dependency>
-
+#_DEPENDENCY_PLACEHOLDER_#
   </dependencies>
 
   <build>
-    <finalName>trident-default-${project.version}</finalName>
+    <finalName>trident-${project.version}</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/config</directory>
         <excludes>
+          <exclude>**/com.tc.trinity.core.spi.Configurable</exclude>
+          <exclude>**/com.alibaba.dubbo.rpc.ProxyFactory</exclude>
         </excludes>
       </resource>
     </resources>
@@ -112,6 +100,9 @@
         <version>2.9</version>
         <configuration>
           <sourceExcludes>
+            <sourceExclude>**/TrinityConfiguration.java</sourceExclude>
+            <sourceExclude>**/TridentProxyFactory.java</sourceExclude>
+            <sourceExclude>**/TridentInvokerInvocationHandler.java</sourceExclude>
           </sourceExcludes>
         </configuration>
       </plugin>
@@ -131,6 +122,9 @@
             </goals>
             <configuration>
               <excludes>
+                <exclude>**/TrinityConfiguration.java</exclude>
+                <exclude>**/TridentProxyFactory.java</exclude>
+                <exclude>**/TridentInvokerInvocationHandler.java</exclude>
               </excludes>
             </configuration>
           </execution>
