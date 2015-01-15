@@ -27,6 +27,8 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
     
     private StompConnection connection = new StompConnection();
     
+    private Boolean closed = false;
+    
     private static final String misConfMsg = "Error in intializing StompStatStore, please check the Configuration either in trident.properties or Configuration Center/Trinity";
     
     @Override
@@ -52,13 +54,20 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
     }
     
     @Override
-    public void close() throws TridentException {
+    public void close() throws IOException {
     
         try {
-            connection.close();
+            if (!closed) {
+                synchronized (closed) {
+                    if (!closed) {
+                        connection.close();
+                        closed = true;
+                    }
+                }
+            }
         } catch (IOException e) {
             logger.error("Error in closing StompConnection", e);
-            throw new TridentException(e);
+            throw e;
         }
     }
     
@@ -73,7 +82,7 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
             connection.commit("tx1");
         } catch (Exception e) {
             logger.warn("Error in pushing message to Broker, stat-info is discarding...", e);
-        }finally{
+        } finally {
             queueStatInfo.clear();
         }
     }

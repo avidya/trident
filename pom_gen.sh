@@ -10,12 +10,15 @@ OUTPUT=pom.xml
 
 wd=0
 wt=0
+wc=0
 [[ $params == *with_dubbo* ]] && wd=1 
 [[ $params == *with_trinity* ]] && wt=1 
+[[ $params == *with_cat* ]] && wc=1 
 
-[[ $((wd+wt)) -eq 0 ]] && {
-    echo '>>> You can also add with_dubbo and/or with_trinity parameter to this script to augmenting functionality! :)'
-    echo ">>> ./pom_gen.sh [with_dubbo] [with_trinity]"
+
+[[ $((wd+wt+wc)) -eq 0 ]] && {
+    echo '>>> You can also add with_dubbo | with_trinity | with_cat parameter to this script to augmenting functionality! :)'
+    echo ">>> ./pom_gen.sh [with_dubbo] [with_trinity] [with_cat]"
     echo 
 }
 
@@ -40,6 +43,25 @@ dependencies=
     </dependency>\n"
 }
 
+[[ $wc -eq 1 ]] && {
+    dependencies="$dependencies\n\
+    <dependency>\n\
+      <groupId>com.dianping.cat</groupId>\n\
+      <artifactId>cat-core</artifactId>\n\
+      <version>0.4.1</version>\n\
+      <exclusions>\n\
+        <exclusion>\n\
+          <groupId>com.site.common</groupId>\n\
+          <artifactId>lookup</artifactId>\n\
+        </exclusion>\n\
+        <exclusion>\n\
+          <groupId>org.jboss.netty</groupId>\n\
+          <artifactId>netty</artifactId>\n\
+        </exclusion>\n\
+      </exclusions>\n\
+    </dependency>\n"
+}
+
 #echo $dependencies
 sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^$dependencies^" $TEMPLATE > $OUTPUT
 
@@ -55,6 +77,13 @@ sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^$dependencies^" $TEMPLATE > $OUTPUT
     sed -r '/^\s+<sourceExclude>\*\*\/TridentInvokerInvocationHandler.java<\/sourceExclude>/d' -i $OUTPUT
     sed -r '/^\s+<exclude>\*\*\/TridentProxyFactory.java<\/exclude>/d' -i $OUTPUT
     sed -r '/^\s+<exclude>\*\*\/TridentInvokerInvocationHandler.java<\/exclude>/d' -i $OUTPUT
+}
+
+[[ $wc -eq 1 ]] && {
+    sed -r '/^\s+<sourceExclude>\*\*\/StatCollector.java<\/sourceExclude>/d' -i $OUTPUT
+    sed -r '/^\s+<sourceExclude>\*\*\/HeartBeat.java<\/sourceExclude>/d' -i $OUTPUT
+    sed -r '/^\s+<exclude>\*\*\/StatCollector.java<\/exclude>/d' -i $OUTPUT
+    sed -r '/^\s+<exclude>\*\*\/HeartBeat.java<\/exclude>/d' -i $OUTPUT
 }
 
 echo '>> Complete!'

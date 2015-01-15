@@ -59,7 +59,7 @@ public class SimpleFileStatStore extends AbstractAsyncStatStore {
     }
     
     @Override
-    public void close() throws TridentException {
+    public void close() throws IOException {
     
         pw.close();
         

@@ -1,7 +1,10 @@
 
 package com.tc.trident.web;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -64,12 +67,45 @@ public class StatFilter implements Filter {
             statStore.init();
             this.state = true;
             logger.info("Finish initializing StatStore. ");
+            
+            loadStatCollectorIfAvailable();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             this.state = false;
             throw new ServletException("Failed to load StatStore, please check the configuration of filter in web.xml", e);
         } catch (TridentException e) {
             this.state = false;
             throw new ServletException("Failed in initializing StatStore", e);
+        }
+    }
+    
+    private void loadStatCollectorIfAvailable() {
+    
+        try {
+            Class<?> collectorClass = Class.forName("com.tc.trident.vmstatus.StatCollector");
+            Method setStatStoreMethod = collectorClass.getDeclaredMethod("setStatStore", com.tc.trident.store.StatStore.class);
+            final Object collector = collectorClass.newInstance();
+            
+            setStatStoreMethod.invoke(collector, statStore);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                
+                @Override
+                public void run() {
+                
+                    try {
+                        ((Closeable) collector).close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            });
+            new Thread((Runnable) collector).start();
+        } catch (ClassNotFoundException ex) {
+            System.out.println("==========> no StatCollector found. JVM status won't be collected.");
+        } catch (InstantiationException | IllegalAccessException |
+                NoSuchMethodException | SecurityException |
+                IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
     
@@ -102,7 +138,7 @@ public class StatFilter implements Filter {
                 context.finish();
                 statStore.store(context);
             } catch (TridentException e) {
-                logger.error("Failed in store statistics info! ", e);
+                logger.error("==========> Failed in store statistics info! " + context, e);
             } finally {
                 context.clear();
             }
@@ -118,8 +154,8 @@ public class StatFilter implements Filter {
         if (statStore != null) {
             try {
                 statStore.close();
-            } catch (TridentException e) {
-                logger.error("Failed in closing StatStore! ", e);
+            } catch (IOException e) {
+                logger.error("==========> Failed in closing StatStore! ", e);
             }
         }
     }
