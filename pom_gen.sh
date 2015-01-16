@@ -31,7 +31,7 @@ dependencies=
       <artifactId>trinity</artifactId>\n\
       <version>1.2-SNAPSHOT</version>\n\
       <scope>provided</scope>\n\
-    </dependency>\n"
+    </dependency>"
 }
 
 [[ $wd -eq 1 ]] && {
@@ -41,7 +41,7 @@ dependencies=
       <artifactId>dubbo</artifactId>\n\
       <version>2.4.9</version>\n\
       <scope>provided</scope>\n\
-    </dependency>\n"
+    </dependency>"
 }
 
 [[ $wc -eq 1 ]] && {
@@ -60,11 +60,14 @@ dependencies=
           <artifactId>netty</artifactId>\n\
         </exclusion>\n\
       </exclusions>\n\
-    </dependency>\n"
+    </dependency>"
 }
 
-#echo $dependencies
-sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^$dependencies^" $TEMPLATE > $OUTPUT
+echo $dependencies | grep -q -E "^\s*$" && {
+    sed -r "/^#_DEPENDENCY_PLACEHOLDER_#.*$/d" $TEMPLATE > $OUTPUT
+} || {
+    sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^${dependencies/\n/}^" $TEMPLATE > $OUTPUT
+}
 
 [[ $wt -eq 1 ]] && {
     sed -r '/^\s+<exclude>\*\*\/com.tc.trinity.core.spi.Configurable<\/exclude>/d' -i $OUTPUT

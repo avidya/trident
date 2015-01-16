@@ -79,7 +79,11 @@
       <version>${servlet.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- generated automatically:begin -->
 #_DEPENDENCY_PLACEHOLDER_#
+    <!-- generated automatically:end -->
+
   </dependencies>
 
   <build>
