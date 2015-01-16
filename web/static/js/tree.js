@@ -20,13 +20,15 @@ define(function(require, exports, module) {
 		initPages : function() {
 			$('body').delegate('.jt', 'click', function() {
 				var me=$(this);
-				var data_ip = $('#data_ip').val();
-				var data_app = $('#data_app').val();
-				var nodeId = $(this).parent().parent().attr('data-id');
+
+				var finger_print = $(this).parent().parent().attr('data-id');
+				var data_time = $("#data_time").val();
+				var parent_order_nos = $(this).parent().parent().attr('parentordernos');
+				var layer_no = parseInt($(this).parent().parent().attr('layerno'));
 				var nodeIndex = parseInt($(this).parent().parent().attr('node-index'));
 				var hasChild = $(this).parent().parent().parent().find('ul').length;
 				if (hasChild == 0) {
-					if (nodeId) {
+					if (finger_print) {
 						/*模拟请求数据 start*/
 						/*var re = '<ul class="clearfix" node-index="10"><li data-id="327" style="text-indent:'+(nodeIndex+1)+'em'"><div class="col_0 col_item" ><a href="javascript:;" class="jt leaf"></a></div>' + '<div class="col_1 col_item">12123123</div><div class="col_2 col_item" ></div>' + '<div class="col_3 col_item">123123123真的吗真3真的吗真3真的吗真的吗真的啊</div><div class="col_4 col_item"></div><div class="col_5 col_item"><span class="proc-bar" style="width:20%"></span></div>' + '</li></ul>';
 						$(this).parent().parent().after(re);
@@ -34,9 +36,11 @@ define(function(require, exports, module) {
 						/*模拟请求数据 end*/
 						
 						/*获取child*/
-						$.get(reloadUrl+"/"+nodeId, {
-							ip : data_ip,
-							app: data_app,
+						$.get(reloadUrl, {
+							parentordernos: parent_order_nos,
+							datatime: data_time,
+							fingerprint: finger_print,
+							layerno: layer_no + 1,
 							nodeIndex: nodeIndex + 1
 						}, function(re) {
 							me.parent().parent().after(re);
@@ -50,6 +54,12 @@ define(function(require, exports, module) {
 					$(this).attr('class', 'jt closed');
 				}
 
+			});
+
+			$('body').delegate('.ips', 'click', function() {
+				var load_url = $(this).attr('href_url') +"&qtime="+$("#data_time").val();
+				//alert(load_url);
+				window.location = load_url;
 			});
 		},
 		initIcon : function() {
