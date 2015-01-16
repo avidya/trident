@@ -19,6 +19,7 @@ public class TridentAgent {
     
     // 单独抽离的main是为了以后可能实现的agentmain调用方便考虑
     public static void main(String args, Instrumentation inst) {
+    
         inst.addTransformer(new ProfilerTransformer(), true);
     }
 }

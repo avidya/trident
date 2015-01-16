@@ -148,4 +148,5 @@ public class Transaction implements StatInfo, Serializable {
         result.append(" [F]: " + endTime);
         return result.toString();
     }
+    
 }

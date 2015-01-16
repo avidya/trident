@@ -37,7 +37,7 @@ public class ProfilerTransformer implements ClassFileTransformer {
     public static final String[] UNMATCH_PACKAGE = {
             "^com/tc/trident/.*",
             "^com/tc/trinity/.*",
-            ".*BySpringCGLIB.*", 
+            ".*BySpringCGLIB.*",
             ".*ByCGLIB.*"
     };
     
@@ -65,7 +65,7 @@ public class ProfilerTransformer implements ClassFileTransformer {
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
     
         if (match(className)) {
-            System.out.println(">>>>> " + className + " is gonna to be transformed!");
+            System.out.println(">>>>>>>>>>> " + className + " is gonna to be transformed!");
             String normalClassName = normalizeClassPath(className);
             try {
                 ClassPool pool = ClassPool.getDefault();
@@ -88,10 +88,10 @@ public class ProfilerTransformer implements ClassFileTransformer {
                 }
                 return cc.toBytecode();
             } catch (NotFoundException e) {
-                System.err.println(">>>> Cannot load class " + className + " in ClassLoader: " + loader);
+                System.err.println(">>>>>>>>>>> Cannot load class " + className + " in ClassLoader: " + loader);
                 e.printStackTrace();
             } catch (CannotCompileException e) {
-                System.err.println(">>>> Cannot compile " + className + " in ClassLoader: " + loader);
+                System.err.println(">>>>>>>>>>> Cannot compile " + className + " in ClassLoader: " + loader);
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();

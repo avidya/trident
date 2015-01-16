@@ -23,7 +23,7 @@ DESTINATION = '/queue/stat-info'
 MIN_MESSAGE_LEN = 10
 
 # http
-HTTP_PORT = 8080
+HTTP_PORT = 9090
 HTTP_HOST = '0.0.0.0'
 
 

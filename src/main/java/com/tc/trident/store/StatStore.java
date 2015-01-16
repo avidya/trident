@@ -1,6 +1,8 @@
 
 package com.tc.trident.store;
 
+import java.io.Closeable;
+
 import com.tc.trident.core.StatInfo;
 import com.tc.trident.core.TridentException;
 
@@ -11,7 +13,7 @@ import com.tc.trident.core.TridentException;
  * @date Dec 12, 2014 1:54:59 PM
  * @id $Id$
  */
-public interface StatStore {
+public interface StatStore extends Closeable {
     
     /**
      * to persist StatInfo
@@ -21,7 +23,5 @@ public interface StatStore {
     void store(StatInfo statInfo) throws TridentException;
     
     void init() throws TridentException;
-    
-    void close() throws TridentException;
     
 }
