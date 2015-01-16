@@ -17,7 +17,8 @@ wc=0
 
 
 [[ $((wd+wt+wc)) -eq 0 ]] && {
-    echo '>>> You can also add with_dubbo | with_trinity | with_cat parameter to this script to augmenting functionality! :)'
+    echo '>>> You can also add with_dubbo | with_trinity | with_cat parameter to this 
+    script to augmenting functionality! :)'
     echo ">>> ./pom_gen.sh [with_dubbo] [with_trinity] [with_cat]"
     echo 
 }

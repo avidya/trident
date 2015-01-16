@@ -21,18 +21,19 @@ import com.tc.trident.core.StatContext;
 import com.tc.trident.core.Transaction;
 import com.tc.trident.core.TridentException;
 import com.tc.trident.core.conf.Configuration;
+import com.tc.trident.store.QueueStatStore;
 import com.tc.trident.store.StatStore;
 import com.tc.trident.util.HostUtils;
 
 /**
- * This filter is supposed to intercept before any other ones.
+ * This filter is supposed to intercept before any target class to get working.
  * 
  * <p>
  * When in init phase, this filter will attempt to initialize a StatStore instance specified in web.xml, such StatStore
  * implementation MUST provide a constructor without parameters.
  * 
  * <p>
- * For each request, one correspond StatContext will be instantiated in ThreadLocal for any consequent transactions to
+ * For each request, a correspond StatContext will be instantiated in ThreadLocal for any consequent transactions to
  * attach to.
  * 
  * @author kozz.gaof
@@ -61,14 +62,16 @@ public class StatFilter implements Filter {
         try {
             
             String storeName = filterConfig.getInitParameter(STORE_NAME);
-            Class<?> statStoreClass = Class.forName(storeName, true, Thread.currentThread().getContextClassLoader());
-            logger.info("Loading StatStore class: " + statStoreClass);
-            statStore = (StatStore) statStoreClass.newInstance();
-            statStore.init();
-            this.state = true;
-            logger.info("Finish initializing StatStore. ");
-            
-            loadStatCollectorIfAvailable();
+            if (storeName != null) {
+                statStore = loadStatStore(storeName);
+                if (QueueStatStore.class.isAssignableFrom(statStore.getClass())) {
+                    ((QueueStatStore) statStore).setQueueName(Configuration.PERFORMANCE_QUEUE_NAME);
+                }
+                this.state = true;
+                logger.info(">>>>>>>>>>> Finish initializing StatStore. ");
+                
+                startStatCollectorIfAvailable(storeName);
+            }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             this.state = false;
             throw new ServletException("Failed to load StatStore, please check the configuration of filter in web.xml", e);
@@ -78,13 +81,26 @@ public class StatFilter implements Filter {
         }
     }
     
-    private void loadStatCollectorIfAvailable() {
+    private StatStore loadStatStore(String storeClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException, TridentException {
+    
+        Class<?> statStoreClass = Class.forName(storeClass, true, Thread.currentThread().getContextClassLoader());
+        logger.info(">>>>>>>>>>> Loading StatStore class: " + statStoreClass);
+        StatStore statStore = (StatStore) statStoreClass.newInstance();
+        statStore.init();
+        return statStore;
+    }
+    
+    private void startStatCollectorIfAvailable(String storeName) throws TridentException {
     
         try {
             Class<?> collectorClass = Class.forName("com.tc.trident.vmstatus.StatCollector");
             Method setStatStoreMethod = collectorClass.getDeclaredMethod("setStatStore", com.tc.trident.store.StatStore.class);
             final Object collector = collectorClass.newInstance();
             
+            StatStore statStore = loadStatStore(storeName);
+            if (QueueStatStore.class.isAssignableFrom(statStore.getClass())) {
+                ((QueueStatStore) statStore).setQueueName(Configuration.STATUS_QUEUE_NAME);
+            }
             setStatStoreMethod.invoke(collector, statStore);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 
@@ -99,13 +115,15 @@ public class StatFilter implements Filter {
                     }
                 }
             });
-            new Thread((Runnable) collector).start();
+            Thread collectorThread = (Thread) collector;
+            collectorThread.setName("JVM runtime information collector [StatCollector]");
+            collectorThread.start();
         } catch (ClassNotFoundException ex) {
-            System.out.println("==========> no StatCollector found. JVM status won't be collected.");
+            logger.info(">>>>>>>>>>> no StatCollector founded. JVM status won't be collected.");
         } catch (InstantiationException | IllegalAccessException |
                 NoSuchMethodException | SecurityException |
                 IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
+            logger.error("==========> Error in starting StatCollector.", e);
         }
     }
     
@@ -116,9 +134,9 @@ public class StatFilter implements Filter {
             Transaction t = null;
             
             if (request instanceof HttpServletRequest) {
-                HttpServletRequest r = (HttpServletRequest) request;
-                boolean isAsyncRequest = r.getHeader(ASYNC_HEADER) != null;
-                String requestPath = r.getContextPath() + r.getServletPath();
+                HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+                boolean isAsyncRequest = httpServletRequest.getHeader(ASYNC_HEADER) != null;
+                String requestPath = httpServletRequest.getContextPath() + httpServletRequest.getServletPath();
                 Object[] parameters = request.getParameterMap().values().toArray();
                 WebRequest webRequest = new WebRequest(requestPath, parameters);
                 webRequest.setAsyncRequest(isAsyncRequest);

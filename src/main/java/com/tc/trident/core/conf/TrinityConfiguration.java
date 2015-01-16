@@ -51,8 +51,11 @@ public class TrinityConfiguration extends AbstractConfigurable {
             if (StringUtils.isBlank(Configuration.BROKER_PASSWORD)) {
                 Configuration.BROKER_PASSWORD = properties.getProperty(Constants.BROKER_PASSWORD);
             }
-            if (StringUtils.isBlank(Configuration.QUEUE_NAME)) {
-                Configuration.QUEUE_NAME = properties.getProperty(Constants.QUEUE_NAME);
+            if (StringUtils.isBlank(Configuration.PERFORMANCE_QUEUE_NAME)) {
+                Configuration.PERFORMANCE_QUEUE_NAME = properties.getProperty(Constants.PERFORMANCE_QUEUE_NAME);
+            }
+            if (StringUtils.isBlank(Configuration.STATUS_QUEUE_NAME)) {
+                Configuration.STATUS_QUEUE_NAME = properties.getProperty(Constants.STATUS_QUEUE_NAME);
             }
             if (StringUtils.isBlank(Configuration.LOCAL_QUEUE_SIZE)) {
                 Configuration.LOCAL_QUEUE_SIZE = properties.getProperty(Constants.LOCAL_QUEUE_SIZE);

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Dec 12, 2014 1:43:45 PM
@@ -17,12 +16,6 @@ public class StatContext implements StatInfo, Serializable {
     private static final long serialVersionUID = -3973541459226247268L;
     
     public static final String GLOBAL = "GLOBAL";
-    
-    public static final String HOSTNAME = "hostname";
-    
-    public static final String APPNAME = "app";
-    
-    public static final String HOSTIP = "ip";
     
     private static final ThreadLocal<StatContext> contextLocal = new ThreadLocal<StatContext>();
     

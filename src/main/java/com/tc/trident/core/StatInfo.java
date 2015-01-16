@@ -11,6 +11,14 @@ import java.util.Map;
  */
 public interface StatInfo {
     
+    
+    public static final String HOSTNAME = "hostname";
+    
+    public static final String APPNAME = "app";
+    
+    public static final String HOSTIP = "ip";
+    
+    
     Map<String, Object> compact();
     
     /**

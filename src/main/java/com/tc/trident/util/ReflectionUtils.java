@@ -4,7 +4,6 @@ package com.tc.trident.util;
 import java.lang.reflect.Method;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Jan 13, 2015 4:08:27 PM

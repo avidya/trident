@@ -15,16 +15,22 @@ import com.dianping.cat.status.model.IVisitor;
 import com.dianping.cat.status.model.entity.StatusInfo;
 import com.tc.trident.core.TridentException;
 import com.tc.trident.store.StatStore;
+import com.tc.trident.util.HostUtils;
 
 /**
+ * A daemon thread indented to collect JVM runtime information.
  *
  * @author kozz.gaof
  * @date Jan 14, 2015 11:24:47 AM
  * @id $Id$
  */
-public class StatCollector implements Runnable, Closeable {
+public class StatCollector extends Thread implements Closeable {
     
     private static final Logger logger = LoggerFactory.getLogger(StatCollector.class);
+    
+    private static final String HOSTNAME = HostUtils.getLocalHostName();
+    
+    private static final String HOSTIP = HostUtils.getHostIP();
     
     private StatStore statStore;
     
@@ -34,10 +40,10 @@ public class StatCollector implements Runnable, Closeable {
     
     public void setStatStore(StatStore statStore) {
     
-        this.statStore = statStore; 
+        this.statStore = statStore;
     }
     
-    public void stop() {
+    public void stopCollector() {
     
         running = false;
     }
@@ -51,14 +57,16 @@ public class StatCollector implements Runnable, Closeable {
             IVisitor visitor = (IVisitor) getStatusInfoCollectorInstance(new DefaultMessageStatistics());
             if (visitor != null) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(">>>>>>>>>>> start collecting JVM status information...");
+                    logger.debug(">>>>>>>>>>> start collecting JVM runtime information...");
                 }
                 status.accept(visitor);
-                HeartBeat heartBeat = new HeartBeat(status.getMemory(), status.getThread());
+                HeartBeat heartBeat = new HeartBeat(HOSTNAME, HOSTIP);
+                heartBeat.setMemoryInfo(status.getMemory());
+                heartBeat.setThreadsInfo(status.getThread());
                 try {
                     statStore.store(heartBeat);
                 } catch (TridentException e) {
-                    logger.error("Failed in store statistics info! " + heartBeat, e);
+                    logger.error("==========> Failed in store statistics info! " + heartBeat, e);
                 }
             }
             
@@ -69,7 +77,7 @@ public class StatCollector implements Runnable, Closeable {
                     Thread.sleep(interval - elapsed);
                 } catch (InterruptedException e) {
                     
-                    logger.warn("============> stop collecting because of InterruptedException");
+                    logger.warn("==========> stop collecting because of InterruptedException");
                     break;
                 }
             }
@@ -101,6 +109,7 @@ public class StatCollector implements Runnable, Closeable {
     public void close() throws IOException {
     
         running = false;
+        this.interrupt();
         statStore.close();
     }
 }

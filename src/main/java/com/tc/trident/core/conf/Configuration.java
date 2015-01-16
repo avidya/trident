@@ -30,7 +30,9 @@ public class Configuration {
     
     public static String BROKER_PASSWORD;
     
-    public static String QUEUE_NAME;
+    public static String PERFORMANCE_QUEUE_NAME;
+    
+    public static String STATUS_QUEUE_NAME;
     
     public static String LOCAL_QUEUE_SIZE;
     
@@ -46,7 +48,8 @@ public class Configuration {
                 BROKER_PORT = props.getProperty(Constants.BROKER_PORT);
                 BROKER_USERNAME = props.getProperty(Constants.BROKER_USERNAME);
                 BROKER_PASSWORD = props.getProperty(Constants.BROKER_PASSWORD);
-                QUEUE_NAME = props.getProperty(Constants.QUEUE_NAME);
+                PERFORMANCE_QUEUE_NAME = props.getProperty(Constants.PERFORMANCE_QUEUE_NAME);
+                STATUS_QUEUE_NAME = props.getProperty(Constants.STATUS_QUEUE_NAME);
                 LOCAL_QUEUE_SIZE = props.getProperty(Constants.LOCAL_QUEUE_SIZE);
                 APP_NAME = props.getProperty(Constants.APP_NAME);
             } catch (Exception e) {
