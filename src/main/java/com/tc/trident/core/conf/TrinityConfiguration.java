@@ -22,6 +22,12 @@ public class TrinityConfiguration extends AbstractConfigurable {
     
     private static final Logger logger = LoggerFactory.getLogger(TrinityConfiguration.class);
     
+    private static final String GLOBAL_PROPERTIES = "/eetop/conf/global.properties";
+    
+    private static final String ENVIRONMENT_KEY = "trinity.config.environment";
+    
+    private static final String PRODUCT = "product";
+    
     @Override
     public String getName() {
     
