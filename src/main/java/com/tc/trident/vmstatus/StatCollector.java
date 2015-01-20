@@ -3,16 +3,16 @@ package com.tc.trident.vmstatus;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dianping.cat.message.internal.MilliSecondTimer;
-import com.dianping.cat.message.spi.MessageStatistics;
-import com.dianping.cat.message.spi.internal.DefaultMessageStatistics;
-import com.dianping.cat.status.model.IVisitor;
-import com.dianping.cat.status.model.entity.StatusInfo;
 import com.tc.trident.core.TridentException;
 import com.tc.trident.store.StatStore;
 import com.tc.trident.util.HostUtils;
@@ -52,25 +52,21 @@ public class StatCollector extends Thread implements Closeable {
     public void run() {
     
         while (running) {
-            long start = MilliSecondTimer.currentTimeMillis();
-            StatusInfo status = new StatusInfo();
-            IVisitor visitor = (IVisitor) getStatusInfoCollectorInstance(new DefaultMessageStatistics());
-            if (visitor != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(">>>>>>>>>>> start collecting JVM runtime information...");
-                }
-                status.accept(visitor);
-                HeartBeat heartBeat = new HeartBeat(HOSTNAME, HOSTIP);
-                heartBeat.setMemoryInfo(status.getMemory());
-                heartBeat.setThreadsInfo(status.getThread());
-                try {
-                    statStore.store(heartBeat);
-                } catch (TridentException e) {
-                    logger.error("==========> Failed in store statistics info! " + heartBeat, e);
-                }
+            long start = System.currentTimeMillis();
+            if (logger.isDebugEnabled()) {
+                logger.debug(">>>>>>>>>>> start collecting JVM runtime information...");
+            }
+            HeartBeat heartBeat = new HeartBeat(HOSTNAME, HOSTIP);
+            heartBeat.setMemoryInfo(getMemoryInfo());
+            heartBeat.setThreadsInfo(getThreadInfo());
+            heartBeat.setGcInfoList(getGCInfoList());
+            try {
+                statStore.store(heartBeat);
+            } catch (TridentException e) {
+                logger.error("==========> Failed in store statistics info! " + heartBeat, e);
             }
             
-            long elapsed = MilliSecondTimer.currentTimeMillis() - start;
+            long elapsed = System.currentTimeMillis() - start;
             
             if (elapsed < interval) {
                 try {
@@ -85,24 +81,82 @@ public class StatCollector extends Thread implements Closeable {
         
     }
     
-    private Class<?> statusInfoCollectorClass = null;
-    private Constructor<?> cons = null;
+    public MemoryInfo getMemoryInfo() {
     
-    // since Frankie.Wu remove the <b>public</b> modifier from StatusInfoCollector.
-    // some dirty hack must be put here.
-    public Object getStatusInfoCollectorInstance(MessageStatistics messageStatistics) {
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryInfo memoryInfo = new MemoryInfo();
+        memoryInfo.setMaxHeap(memoryMXBean.getHeapMemoryUsage().getMax());
+        memoryInfo.setUsedHeap(memoryMXBean.getHeapMemoryUsage().getUsed());
+        memoryInfo.setMaxNonHeap(memoryMXBean.getNonHeapMemoryUsage().getMax());
+        memoryInfo.setUsedNonHeap(memoryMXBean.getNonHeapMemoryUsage().getUsed());
+        
+        return memoryInfo;
+    }
     
-        try {
-            if (statusInfoCollectorClass == null || cons == null) {
-                statusInfoCollectorClass = Thread.currentThread().getContextClassLoader().loadClass("com.dianping.cat.status.StatusInfoCollector");
-                cons = statusInfoCollectorClass.getConstructor(MessageStatistics.class);
-                cons.setAccessible(true); // to neglect the default access modifier.
+    public ThreadInfo getThreadInfo() {
+    
+        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+        threadMXBean.setThreadContentionMonitoringEnabled(true);
+        ThreadInfo threadInfo = new ThreadInfo();
+        threadInfo.setActive(threadMXBean.getThreadCount());
+        threadInfo.setDaemon(threadMXBean.getDaemonThreadCount());
+        threadInfo.setPeek(threadMXBean.getPeakThreadCount());
+        
+        java.lang.management.ThreadInfo[] threads = threadMXBean.dumpAllThreads(true, true);
+        int tomcatThreadsCount = countThreadsByPrefix(threads, "http-");
+        int jettyThreadsCount = countThreadsBySubstring(threads, "qtp");
+        
+        threadInfo.setHttp(tomcatThreadsCount + jettyThreadsCount);
+        return threadInfo;
+    }
+    
+    private int countThreadsByPrefix(java.lang.management.ThreadInfo[] threads, String... prefixes) {
+    
+        int count = 0;
+        
+        for (java.lang.management.ThreadInfo thread : threads) {
+            for (String prefix : prefixes) {
+                if (thread.getThreadName().startsWith(prefix)) {
+                    count++;
+                }
             }
-            return cons.newInstance(messageStatistics);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
+        
+        return count;
+    }
+    
+    private int countThreadsBySubstring(java.lang.management.ThreadInfo[] threads, String... substrings) {
+    
+        int count = 0;
+        
+        for (java.lang.management.ThreadInfo thread : threads) {
+            for (String str : substrings) {
+                if (thread.getThreadName().contains(str)) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+    
+    public List<GCInfo> getGCInfoList() {
+    
+        List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        ArrayList<GCInfo> gcInfoList = new ArrayList<GCInfo>();
+        
+        for (GarbageCollectorMXBean gcMXbean : gcMXBeans) {
+            if (gcMXbean.isValid()) {
+                GCInfo gc = new GCInfo();
+                
+                gc.setName(gcMXbean.getName());
+                gc.setCount(gcMXbean.getCollectionCount());
+                gc.setTime(gcMXbean.getCollectionTime());
+                gcInfoList.add(gc);
+            }
+        }
+        
+        return gcInfoList;
     }
     
     @Override

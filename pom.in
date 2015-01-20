@@ -107,8 +107,6 @@
             <sourceExclude>**/TrinityConfiguration.java</sourceExclude>
             <sourceExclude>**/TridentProxyFactory.java</sourceExclude>
             <sourceExclude>**/TridentInvokerInvocationHandler.java</sourceExclude>
-            <sourceExclude>**/StatCollector.java</sourceExclude>
-            <sourceExclude>**/HeartBeat.java</sourceExclude>
           </sourceExcludes>
         </configuration>
       </plugin>
@@ -131,8 +129,6 @@
                 <exclude>**/TrinityConfiguration.java</exclude>
                 <exclude>**/TridentProxyFactory.java</exclude>
                 <exclude>**/TridentInvokerInvocationHandler.java</exclude>
-                <exclude>**/StatCollector.java</exclude>
-                <exclude>**/HeartBeat.java</exclude>
               </excludes>
             </configuration>
           </execution>

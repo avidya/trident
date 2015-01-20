@@ -63,7 +63,10 @@ public class StatFilter implements Filter {
             
             String storeName = filterConfig.getInitParameter(STORE_NAME);
             if (storeName != null) {
+                
                 statStore = loadStatStore(storeName);
+                
+                // queue name is required for QueueStatStore.
                 if (QueueStatStore.class.isAssignableFrom(statStore.getClass())) {
                     ((QueueStatStore) statStore).setQueueName(Configuration.PERFORMANCE_QUEUE_NAME);
                 }
@@ -72,36 +75,49 @@ public class StatFilter implements Filter {
                 
                 startStatCollectorIfAvailable(storeName);
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            this.state = false;
-            throw new ServletException("Failed to load StatStore, please check the configuration of filter in web.xml", e);
         } catch (TridentException e) {
             this.state = false;
             throw new ServletException("Failed in initializing StatStore", e);
         }
     }
     
-    private StatStore loadStatStore(String storeClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException, TridentException {
+    private StatStore loadStatStore(String storeClass) throws TridentException, ServletException {
     
-        Class<?> statStoreClass = Class.forName(storeClass, true, Thread.currentThread().getContextClassLoader());
-        logger.info(">>>>>>>>>>> Loading StatStore class: " + statStoreClass);
-        StatStore statStore = (StatStore) statStoreClass.newInstance();
-        statStore.init();
-        return statStore;
+        try {
+            Class<?> statStoreClass = Class.forName(storeClass, true, Thread.currentThread().getContextClassLoader());
+            logger.info(">>>>>>>>>>> Loading StatStore class: " + statStoreClass);
+            StatStore statStore = (StatStore) statStoreClass.newInstance();
+            statStore.init();
+            return statStore;
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            throw new ServletException("Failed to load StatStore, please check the configuration of filter in web.xml", e);
+        }
     }
     
-    private void startStatCollectorIfAvailable(String storeName) throws TridentException {
+    /**
+     * start the StatCollector, if we could find it in classpath.
+     * 
+     * @param storeName
+     * @throws TridentException
+     * @throws ServletException
+     */
+    private void startStatCollectorIfAvailable(String storeName) throws TridentException, ServletException {
     
         try {
             Class<?> collectorClass = Class.forName("com.tc.trident.vmstatus.StatCollector");
-            Method setStatStoreMethod = collectorClass.getDeclaredMethod("setStatStore", com.tc.trident.store.StatStore.class);
             final Object collector = collectorClass.newInstance();
             
             StatStore statStore = loadStatStore(storeName);
+            
+            // queue name is required for QueueStatStore.
             if (QueueStatStore.class.isAssignableFrom(statStore.getClass())) {
                 ((QueueStatStore) statStore).setQueueName(Configuration.STATUS_QUEUE_NAME);
             }
+            
+            // since StatCollector is absent at compile time, reflection is required for invoking target methods.
+            Method setStatStoreMethod = collectorClass.getDeclaredMethod("setStatStore", com.tc.trident.store.StatStore.class);
             setStatStoreMethod.invoke(collector, statStore);
+            
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 
                 @Override
@@ -110,14 +126,15 @@ public class StatFilter implements Filter {
                     try {
                         ((Closeable) collector).close();
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
             });
+            
             Thread collectorThread = (Thread) collector;
             collectorThread.setName("JVM runtime information collector [StatCollector]");
             collectorThread.start();
+            
         } catch (ClassNotFoundException ex) {
             logger.info(">>>>>>>>>>> no StatCollector founded. JVM status won't be collected.");
         } catch (InstantiationException | IllegalAccessException |

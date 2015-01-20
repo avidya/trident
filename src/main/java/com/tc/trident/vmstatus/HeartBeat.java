@@ -2,10 +2,9 @@
 package com.tc.trident.vmstatus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.dianping.cat.status.model.entity.MemoryInfo;
-import com.dianping.cat.status.model.entity.ThreadsInfo;
 import com.tc.trident.core.StatInfo;
 import com.tc.trident.core.conf.Configuration;
 
@@ -23,7 +22,9 @@ public class HeartBeat implements StatInfo {
     
     private MemoryInfo memoryInfo;
     
-    private ThreadsInfo threadsInfo;
+    private ThreadInfo threadInfo;
+    
+    private List<GCInfo> gcInfoList;
     
     public HeartBeat(String hostname, String ip) {
     
@@ -36,9 +37,19 @@ public class HeartBeat implements StatInfo {
         this.memoryInfo = memoryInfo;
     }
     
-    public void setThreadsInfo(ThreadsInfo threadsInfo) {
+    public void setThreadsInfo(ThreadInfo threadsInfo) {
     
-        this.threadsInfo = threadsInfo;
+        this.threadInfo = threadsInfo;
+    }
+    
+    public List<GCInfo> getGcInfoList() {
+    
+        return gcInfoList;
+    }
+    
+    public void setGcInfoList(List<GCInfo> gcInfoList) {
+    
+        this.gcInfoList = gcInfoList;
     }
     
     @Override
@@ -49,7 +60,8 @@ public class HeartBeat implements StatInfo {
         heartBeat.put(HOSTIP, ip);
         heartBeat.put(APPNAME, Configuration.APP_NAME);
         heartBeat.put("memory", memoryInfo);
-        heartBeat.put("threads", threadsInfo);
+        heartBeat.put("thread", threadInfo);
+        heartBeat.put("gcinfo", gcInfoList);
         return heartBeat;
     }
     
