@@ -27,7 +27,7 @@ dependencies=
     <dependency>\n\
       <groupId>com.tc.mw</groupId>\n\
       <artifactId>trinity</artifactId>\n\
-      <version>1.2-SNAPSHOT</version>\n\
+      <version>1.3-SNAPSHOT</version>\n\
       <scope>provided</scope>\n\
     </dependency>"
 }

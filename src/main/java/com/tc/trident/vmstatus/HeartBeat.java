@@ -62,6 +62,7 @@ public class HeartBeat implements StatInfo {
         heartBeat.put("memory", memoryInfo);
         heartBeat.put("thread", threadInfo);
         heartBeat.put("gcinfo", gcInfoList);
+        heartBeat.put("timestamp", System.currentTimeMillis());
         return heartBeat;
     }
     
