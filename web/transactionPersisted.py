@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-# Filename:dbPersisted.py
+# Filename:transactionPersisted.py
 
 # 以整个调用链的url取一个指纹，并以这个指纹为区分，将相同指纹的调用分组处理，分别计算不同层级的平均调用时间。考虑到同一层的循环调用时url相
 # 同，所以再加上一个同层级的序号来定位，如下：
@@ -104,6 +104,7 @@
 # 	audit_ip character varying(16) NOT NULL,
 # 	audit_ip_encode character varying(40) NOT NULL,
 #   audit_app_encode character varying(40) NOT NULL,
+#   host_name character varying(50),
 # 	CONSTRAINT pk_trident_audit_ip PRIMARY KEY (audit_ip_encode, audit_app_encode)
 # );
 #
@@ -134,7 +135,7 @@ class DbPersisted:
     # 格式化时间
     def format_date(self, date_time, is_begin):
         # 认为是字符串格式的
-        if date_time is not None and type(date_time) is str and len(date_time) >= 8:
+        if date_time is not None and type(date_time) is not int and len(date_time) >= 8:
             try:
                 t_date_time = int(time.mktime(time.strptime(date_time, "%Y%m%d")))
             except Exception, e:
@@ -168,6 +169,7 @@ class DbPersisted:
         _status_ = "status"
         _children_ = "children"
         _attachments_ = "attachments"
+        _hostname_ = "hostname"
 
         # insert_sql
         #                             "values(%s,       %s,            %s,              '%s',     '%s', '%s',  '%s',  '%s', '%s',        %s,         %s,       %s,           '%s',    '%s',      '%s');"
@@ -186,7 +188,7 @@ class DbPersisted:
         def insert_data_batch(audit_data_list, root_Id, parent_Id, phost_name, pip, papp, pip_encode, papp_encode, reference_data, layer_no, parent_order_no):
 
             # 保存ip，允许失败
-            def saveHostIp(ip, app):
+            def saveHostIp(ip, app, hostName):
                 try:
                     hashapp_tp = hashlib.md5()
                     hashapp_tp.update(app)
@@ -195,7 +197,7 @@ class DbPersisted:
                     haship_tp.update(ip)
 
                     if db.query("select count(audit_ip) from trident_audit_ip where audit_ip_encode ='%s' and audit_app_encode='%s' " % (haship_tp.hexdigest(), hashapp_tp.hexdigest())).getresult()[0][0] == 0:
-                        db.query("insert into trident_audit_ip(audit_ip, audit_ip_encode, audit_app_encode) values('%s', '%s', '%s')" % (ip, haship_tp.hexdigest(), hashapp_tp.hexdigest()))
+                        db.query("insert into trident_audit_ip(audit_ip, audit_ip_encode, audit_app_encode, host_name) values('%s', '%s', '%s', '%s')" % (ip, haship_tp.hexdigest(), hashapp_tp.hexdigest(), hostName))
                 except Exception, e:
                     self.get_log().warn("save audit_ip failed, ret=%s" % e.args[0])
                 return
@@ -248,7 +250,7 @@ class DbPersisted:
                         ip_encode = haship_tp.hexdigest()
                         reference_data[3] = ip_encode
 
-                        saveHostIp(ip_tp, app_tp)
+                        saveHostIp(ip_tp, app_tp, audit_data[_hostname_])
                         saveHostApp(app_tp)
 
                     else:
@@ -465,11 +467,12 @@ class DbPersisted:
                     item['audit_ip'] = row[0]
                     item['audit_ip_encode'] = row[1]
                     item['audit_app_encode'] = row[2]
+                    item['host_name'] = row[3]
                     retList.append(item)
 
                 return retList
 
-            return ip_list(db.query("select audit_ip, audit_ip_encode, audit_app_encode from trident_audit_ip where audit_app_encode='%s' " % app))
+            return ip_list(db.query("select audit_ip, audit_ip_encode, audit_app_encode, host_name from trident_audit_ip where audit_app_encode='%s' " % app))
 
         # 查询app
         def get_apps():
@@ -513,5 +516,5 @@ if __name__ == '__main__':
         dbPersisted.get_log().error("operation failed, ret=%s" % e.args[0])
 
 
-# End of dbPersisted.py
+# End of transactionPersisted.py
 

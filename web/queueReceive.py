@@ -6,7 +6,7 @@
 
 __author__ = 'yuyichuan'
 
-from dbPersisted import DbPersisted
+from transactionPersisted import DbPersisted
 from stomp import StatsListener, WaitingListener
 import stomp
 import time
@@ -28,8 +28,8 @@ class StatInfoListener(StatsListener, WaitingListener):
         if len(message) < configCur.MIN_MESSAGE_LEN:
             get_log().warn('discard message:%s' % message)
             self.on_receipt(headers, message)
-        else:
-            self.dbPersisted.save_json_data(message)
+#        else:
+#            self.dbPersisted.save_json_data(message)
 
 def get_log():
         return logging.getLogger("statInfoListener")
@@ -44,7 +44,8 @@ if __name__ == '__main__':
     conn.set_listener('fisher', statInfoListener)
     conn.start()
     conn.connect(wait=True)
-    conn.subscribe(destination=configCur.DESTINATION, id=statInfoListener.id, ack="auto")
+#    conn.subscribe(destination=configCur.TRANSACTION_DESTINATION, id=statInfoListener.id, ack="auto")
+    conn.subscribe(destination=configCur.STATUS_INFO_DESTINATION, id=statInfoListener.id, ack="auto")
 
     statInfoListener.wait_on_receipt()
     conn.disconnect()

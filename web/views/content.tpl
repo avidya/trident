@@ -13,7 +13,7 @@
 				<p><strong>create date:&nbsp;</strong><input type="text" value="{{viewmodel['data_time']}}" id="data_time" style="border: #f00 1px solid;width:70px;height:25px;"/></p>
 				<strong>hosts:</strong>
 %for ip in viewmodel["ips"]:
-			<a href_url="/content?ip={{ip['audit_ip_encode']}}&app={{ip['audit_app_encode']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}</a>;
+			<a href_url="/content?ip={{ip['audit_ip_encode']}}&app={{ip['audit_app_encode']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>;
 %end
 							<p>&nbsp;</p>
 		</div>
