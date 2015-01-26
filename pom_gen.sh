@@ -10,15 +10,14 @@ OUTPUT=pom.xml
 
 wd=0
 wt=0
-wc=0
 [[ $params == *with_dubbo* ]] && wd=1 
 [[ $params == *with_trinity* ]] && wt=1 
-[[ $params == *with_cat* ]] && wc=1 
 
 
-[[ $((wd+wt+wc)) -eq 0 ]] && {
-    echo '>>> You can also add with_dubbo | with_trinity | with_cat parameter to this script to augmenting functionality! :)'
-    echo ">>> ./pom_gen.sh [with_dubbo] [with_trinity] [with_cat]"
+[[ $((wd+wt)) -eq 0 ]] && {
+    echo '>>> You can also add with_dubbo | with_trinity parameter to this 
+    script to augmenting functionality! :)'
+    echo ">>> ./pom_gen.sh [with_dubbo] [with_trinity]"
     echo 
 }
 
@@ -28,9 +27,9 @@ dependencies=
     <dependency>\n\
       <groupId>com.tc.mw</groupId>\n\
       <artifactId>trinity</artifactId>\n\
-      <version>1.2-SNAPSHOT</version>\n\
+      <version>1.3-SNAPSHOT</version>\n\
       <scope>provided</scope>\n\
-    </dependency>\n"
+    </dependency>"
 }
 
 [[ $wd -eq 1 ]] && {
@@ -40,30 +39,14 @@ dependencies=
       <artifactId>dubbo</artifactId>\n\
       <version>2.4.9</version>\n\
       <scope>provided</scope>\n\
-    </dependency>\n"
+    </dependency>"
 }
 
-[[ $wc -eq 1 ]] && {
-    dependencies="$dependencies\n\
-    <dependency>\n\
-      <groupId>com.dianping.cat</groupId>\n\
-      <artifactId>cat-core</artifactId>\n\
-      <version>0.4.1</version>\n\
-      <exclusions>\n\
-        <exclusion>\n\
-          <groupId>com.site.common</groupId>\n\
-          <artifactId>lookup</artifactId>\n\
-        </exclusion>\n\
-        <exclusion>\n\
-          <groupId>org.jboss.netty</groupId>\n\
-          <artifactId>netty</artifactId>\n\
-        </exclusion>\n\
-      </exclusions>\n\
-    </dependency>\n"
+echo $dependencies | grep -q -E "^\s*$" && {
+    sed -r "/^#_DEPENDENCY_PLACEHOLDER_#.*$/d" $TEMPLATE > $OUTPUT
+} || {
+    sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^${dependencies/\n/}^" $TEMPLATE > $OUTPUT
 }
-
-#echo $dependencies
-sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^$dependencies^" $TEMPLATE > $OUTPUT
 
 [[ $wt -eq 1 ]] && {
     sed -r '/^\s+<exclude>\*\*\/com.tc.trinity.core.spi.Configurable<\/exclude>/d' -i $OUTPUT
@@ -77,13 +60,6 @@ sed -r "s^#_DEPENDENCY_PLACEHOLDER_#^$dependencies^" $TEMPLATE > $OUTPUT
     sed -r '/^\s+<sourceExclude>\*\*\/TridentInvokerInvocationHandler.java<\/sourceExclude>/d' -i $OUTPUT
     sed -r '/^\s+<exclude>\*\*\/TridentProxyFactory.java<\/exclude>/d' -i $OUTPUT
     sed -r '/^\s+<exclude>\*\*\/TridentInvokerInvocationHandler.java<\/exclude>/d' -i $OUTPUT
-}
-
-[[ $wc -eq 1 ]] && {
-    sed -r '/^\s+<sourceExclude>\*\*\/StatCollector.java<\/sourceExclude>/d' -i $OUTPUT
-    sed -r '/^\s+<sourceExclude>\*\*\/HeartBeat.java<\/sourceExclude>/d' -i $OUTPUT
-    sed -r '/^\s+<exclude>\*\*\/StatCollector.java<\/exclude>/d' -i $OUTPUT
-    sed -r '/^\s+<exclude>\*\*\/HeartBeat.java<\/exclude>/d' -i $OUTPUT
 }
 
 echo '>> Complete!'

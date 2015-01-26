@@ -9,7 +9,6 @@ import com.alibaba.dubbo.rpc.proxy.AbstractProxyFactory;
 import com.alibaba.dubbo.rpc.proxy.AbstractProxyInvoker;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Jan 11, 2015 9:13:55 PM

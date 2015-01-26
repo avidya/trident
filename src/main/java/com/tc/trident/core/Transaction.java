@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Dec 12, 2014 1:48:29 PM
@@ -84,7 +83,8 @@ public class Transaction implements StatInfo, Serializable {
     }
     
     /**
-     * 开启一个执行事务。<b>必须确保和<{@link #submit()}>方法结对出现！</b>
+     * To start a transaction.
+     * <b>Make sure a correspond <{@link #submit()}> method be invoked after processing!</b>
      */
     public void begin() {
     
@@ -94,7 +94,8 @@ public class Transaction implements StatInfo, Serializable {
     }
     
     /**
-     * 提交一个执行事务。<b>必须确保和<{@link #begin()}>方法结对出现！</b>
+     * To submit a transaction.
+     * <b>Make sure a correspond <{@link #begin()}> method be invoked beforehand!</b>
      */
     public void submit() {
     

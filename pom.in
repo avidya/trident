@@ -20,7 +20,6 @@
     <activemq.version>5.10.0-tc</activemq.version>
     <xbean.version>3.7</xbean.version>
     <fastjson.version>1.2.3</fastjson.version>
-    <cat.version>0.4.1</cat.version>
   </properties>
 
   <distributionManagement>
@@ -80,7 +79,11 @@
       <version>${servlet.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- generated automatically:begin -->
 #_DEPENDENCY_PLACEHOLDER_#
+    <!-- generated automatically:end -->
+
   </dependencies>
 
   <build>
@@ -104,8 +107,6 @@
             <sourceExclude>**/TrinityConfiguration.java</sourceExclude>
             <sourceExclude>**/TridentProxyFactory.java</sourceExclude>
             <sourceExclude>**/TridentInvokerInvocationHandler.java</sourceExclude>
-            <sourceExclude>**/StatCollector.java</sourceExclude>
-            <sourceExclude>**/HeartBeat.java</sourceExclude>
           </sourceExcludes>
         </configuration>
       </plugin>
@@ -128,8 +129,6 @@
                 <exclude>**/TrinityConfiguration.java</exclude>
                 <exclude>**/TridentProxyFactory.java</exclude>
                 <exclude>**/TridentInvokerInvocationHandler.java</exclude>
-                <exclude>**/StatCollector.java</exclude>
-                <exclude>**/HeartBeat.java</exclude>
               </excludes>
             </configuration>
           </execution>

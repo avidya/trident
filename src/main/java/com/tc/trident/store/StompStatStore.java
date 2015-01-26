@@ -15,13 +15,12 @@ import com.tc.trident.core.TridentException;
 import com.tc.trident.core.conf.Configuration;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Jan 1, 2015 2:41:02 PM
  * @id $Id$
  */
-public class StompStatStore extends AbstractAsyncBatchStatStore {
+public class StompStatStore extends AbstractAsyncBatchStatStore implements QueueStatStore {
     
     private static final Logger logger = LoggerFactory.getLogger(StompStatStore.class);
     
@@ -29,15 +28,15 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
     
     private Boolean closed = false;
     
+    private String queueName;
+    
     private static final String misConfMsg = "Error in intializing StompStatStore, please check the Configuration either in trident.properties or Configuration Center/Trinity";
     
     @Override
     public void init() throws TridentException {
     
-        if (StringUtils.isBlank(Configuration.BROKER_URL)
-                || StringUtils.isBlank(Configuration.BROKER_PORT)
-                || StringUtils.isBlank(Configuration.QUEUE_NAME)) {
-            logger.error(misConfMsg);
+        if (StringUtils.isBlank(Configuration.BROKER_URL) || StringUtils.isBlank(Configuration.BROKER_PORT)) {
+            logger.error("==========> " + misConfMsg);
             throw new IllegalStateException(misConfMsg);
         }
         
@@ -45,7 +44,7 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
             connection.open(Configuration.BROKER_URL, Integer.parseInt(Configuration.BROKER_PORT));
             connection.connect(Configuration.BROKER_USERNAME, Configuration.BROKER_PASSWORD);
         } catch (NumberFormatException e) {
-            logger.error(misConfMsg);
+            logger.error("==========> " + misConfMsg);
             throw new IllegalStateException(misConfMsg);
         } catch (Exception e) {
             throw new TridentException(e);
@@ -66,7 +65,7 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
                 }
             }
         } catch (IOException e) {
-            logger.error("Error in closing StompConnection", e);
+            logger.error("==========> Error in closing StompConnection", e);
             throw e;
         }
     }
@@ -77,13 +76,19 @@ public class StompStatStore extends AbstractAsyncBatchStatStore {
         try {
             connection.begin("tx1");
             for (StatInfo stat : queueStatInfo) {
-                connection.send("/queue/stat-info", JSON.toJSONString(stat.compact(), SerializerFeature.DisableCircularReferenceDetect), "tx1", null);
+                connection.send(this.queueName, JSON.toJSONString(stat.compact(), SerializerFeature.DisableCircularReferenceDetect), "tx1", null);
             }
             connection.commit("tx1");
         } catch (Exception e) {
-            logger.warn("Error in pushing message to Broker, stat-info is discarding...", e);
+            logger.warn("==========> Error in pushing message to Broker, stat-info is discarding...", e);
         } finally {
             queueStatInfo.clear();
         }
+    }
+    
+    @Override
+    public void setQueueName(String queueName) {
+    
+        this.queueName = queueName;
     }
 }

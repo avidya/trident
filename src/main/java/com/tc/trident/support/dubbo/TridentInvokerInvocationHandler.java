@@ -11,7 +11,6 @@ import com.tc.trident.core.Transaction;
 import com.tc.trident.util.ReflectionUtils;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Jan 11, 2015 10:11:35 PM

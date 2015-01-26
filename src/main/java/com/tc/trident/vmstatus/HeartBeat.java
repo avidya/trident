@@ -2,14 +2,13 @@
 package com.tc.trident.vmstatus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.dianping.cat.status.model.entity.MemoryInfo;
-import com.dianping.cat.status.model.entity.ThreadsInfo;
 import com.tc.trident.core.StatInfo;
+import com.tc.trident.core.conf.Configuration;
 
 /**
- * TODO 类的功能描述。
  *
  * @author kozz.gaof
  * @date Jan 13, 2015 2:17:13 PM
@@ -17,22 +16,53 @@ import com.tc.trident.core.StatInfo;
  */
 public class HeartBeat implements StatInfo {
     
+    private String hostname;
+    
+    private String ip;
+    
     private MemoryInfo memoryInfo;
     
-    private ThreadsInfo threadsInfo;
+    private ThreadInfo threadInfo;
     
-    public HeartBeat(MemoryInfo memoryInfo, ThreadsInfo threadsInfo) {
+    private List<GCInfo> gcInfoList;
+    
+    public HeartBeat(String hostname, String ip) {
+    
+        this.hostname = hostname;
+        this.ip = ip;
+    }
+    
+    public void setMemoryInfo(MemoryInfo memoryInfo) {
     
         this.memoryInfo = memoryInfo;
-        this.threadsInfo = threadsInfo;
+    }
+    
+    public void setThreadsInfo(ThreadInfo threadsInfo) {
+    
+        this.threadInfo = threadsInfo;
+    }
+    
+    public List<GCInfo> getGcInfoList() {
+    
+        return gcInfoList;
+    }
+    
+    public void setGcInfoList(List<GCInfo> gcInfoList) {
+    
+        this.gcInfoList = gcInfoList;
     }
     
     @Override
     public Map<String, Object> compact() {
     
         HashMap<String, Object> heartBeat = new HashMap<String, Object>();
+        heartBeat.put(HOSTNAME, hostname);
+        heartBeat.put(HOSTIP, ip);
+        heartBeat.put(APPNAME, Configuration.APP_NAME);
         heartBeat.put("memory", memoryInfo);
-        heartBeat.put("threads", threadsInfo);
+        heartBeat.put("thread", threadInfo);
+        heartBeat.put("gcinfo", gcInfoList);
+        heartBeat.put("timestamp", System.currentTimeMillis());
         return heartBeat;
     }
     
