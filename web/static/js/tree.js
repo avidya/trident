@@ -13,9 +13,27 @@ define(function(require, exports, module) {
 	var reloadUrl = $dispatcher.attr('data-reloadUrl');
 	var Main = {
 		init : function() {
+			Main.initLeftNav();
 			Main.initPages();
-			//Main.initIcon();
 			Main.pages();
+		},
+		initLeftNav : function() {
+			var urlStatus = false;
+			$('.leftNav li').each(function() {
+				var me = $(this);
+				var url = window.location.href;
+				var loUrl = me.find('a').attr('href');
+				if ((url + '/').indexOf(loUrl) > -1 && loUrl != '') {
+					me.addClass('active').siblings('li').removeClass('active');
+					urlStatus=true;
+				} else {
+					me.removeClass('active');
+				}
+
+			});
+			if (!urlStatus) {
+				$('.leftNav li').eq(0).addClass('active');
+			}
 		},
 		initPages : function() {
 			$('body').delegate('.jt', 'click', function() {
