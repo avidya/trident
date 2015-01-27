@@ -5,7 +5,7 @@
 __author__ = 'yuyichuan'
 
 
-from dbPersisted import DbPersisted
+from transactionPersisted import DbPersisted
 from bottle import route, run, template, request, redirect, static_file, get, post
 import logging
 import logging.config
@@ -16,6 +16,10 @@ import time
 @route('/hello')
 def hello():
     return "Hello World!"
+
+@route('/bar_tp/<filename:path>')
+def send_file(filename):
+    return static_file(filename, root=configCur.BAR_PATH)
 
 @route('/static/<filename:path>')
 def send_file(filename):

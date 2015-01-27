@@ -4,8 +4,8 @@
 	margin: 0;
 	border: 0;
 }
-a{
-	text-decoration:none;
+a {
+	text-decoration: none;
 }
 ol, ul {
 	list-style: none;
@@ -16,6 +16,16 @@ ol, ul {
 }
 .clearfix:after {
 	clear: both;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-size: inherit;
+	font-weight: normal;
+}
+.fl {
+	float: left;
+}
+.fr {
+	float: right;
 }
 /* For IE 6/7 (trigger hasLayout) */
 .clearfix {
@@ -32,9 +42,169 @@ body {
 	font-size: 14px;
 	font-family: "微软雅黑";
 }
+.box {
+	width: 1024px;
+	margin: 0 auto;
+}
+/*header*/
+#header {
+	height: 55px;
+	background: #1A7AB9;
+	color: #FFFFFF;
+	font-size: 24px;
+}
+#header h1 {
+	width: 100px;
+	height: 100%;
+	line-height: 55px;
+	float: left;
+	margin-right: 20px;
+}
+#header .title {
+	float: left;
+	height: 100%;
+	line-height: 55px;
+	font-size: 18px;
+}
+#header p.mode {
+	float: right;
+}
+#header p.mode a {
+	float: left;
+	display: block;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	color: #FFFFFF;
+	margin: 15px 5px 8px 0px;
+	background: #F4B04F;
+	padding: 0px 3px;
+}
+#header p.mode a.nc {
+	background: #E66454;
+}
+/*左侧栏*/
+.container .leftNav {
+	font-family: "微软雅黑";
+	float: left;
+	width: 200px;
+	min-height: 500px;
+	background: #23272D;
+	margin-right: 10px;
+}
+.leftNav li {
+	text-indent: 10px;
+}
+.leftNav li.active {
+	background: #181b1f;
+	color: #fff;
+}
+.leftNav li.active a {
+	border-left: 6px solid #1A7AB9;
+	color: #fff;
+}
+.leftNav a {
+	padding: 10px 20px 10px 0px;
+	line-height: 20px;
+	display: block;
+	color: #808b9c;
+	transition: all .2s;
+}
 .container {
-	margin: 20px auto;
-	width: 1566px;
+	margin: 10px auto;
+	width: 1576px;
+}
+.content {
+	float: left;
+	width: 1360px;
+}
+/*头部菜单*/
+.topMenu {
+	background: #f6f6f6;
+	border-bottom: 1px solid #e9e9e9;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	color: #555;
+	font-size: 20px;
+}
+.topMenu li {
+	line-height: 28px;
+	width: auto;
+	margin: 0px 10px 10px 0px;
+	border-bottom: 1px solid #ccc;
+	padding-right: 3px;
+}
+.topMenu .i_title {
+	margin-right: 3px;
+	background: #E0E0E3;
+	border: 1px solid #ccc;
+}
+.topMenu .li_item {
+	float: left;
+	margin-right: 10px;
+}
+.li_item .i_title{
+	width:auto;
+	line-height:28px;
+	float:left;
+}
+.topMenu .inpt_txt {
+	float: left;
+	line-height:28px;
+	padding: 2px 3px;
+	display: inline-block;
+	width: 150px;
+	height: 26px;
+}
+.topMenu .li_btn {
+	display: block;
+	width: 50px;
+	height: 28px;
+	font-size: 14px;
+	font-weight: bold;
+	cursor:pointer;
+}
+.topMenu #timeSubmit{
+	color:#FFFFFF;
+	background:#1A7AB9;
+}
+.topMenu .changeBtn {
+	width: 90px;
+	color: #ED8925;
+}
+.li_ip {
+	width: 90%;
+}
+.li_ip a {
+	margin-right: 5px;
+	background: #77B7C5;
+	padding: 0px 2px;
+}
+/*模式切换区域*/
+.actionArea {
+	margin: 10px 0px;
+	font-weight: bold;
+}
+.actionArea .act_title {
+	float: left;
+	color: #1D89CF;
+	margin-right: 5px;
+}
+.action_ul, .actionDate {
+	float: left;
+}
+.actionArea li {
+	float: left;
+	width: 50px;
+}
+.actionArea li.remove a {
+	color: #5EBD5E;
+}
+.actionArea li.add a {
+	color: #E66454;
+}
+.actionArea li.now a {
+	color: #1D89CF;
 }
 .tr_tit {
 	background: #c4e9ff;
@@ -70,7 +240,7 @@ text-indent:10px;
 	width: 100%;
 }
 .ul_bg {
-	background: url("../imgs/btn_bg_repeat-x.jpg") repeat-x left top;
+	background: url("../img/btn_bg_repeat-x.jpg") repeat-x left top;
 }
 .tree_content li {
 	width: 100%;
@@ -78,8 +248,6 @@ text-indent:10px;
 	display: block;
 }
 .tree_content div.col_item {
-border-right:1px solid #ccc;
-text-indent:2px;
 	display: block;
 	float: left;
 	height: 35px;
@@ -98,15 +266,17 @@ text-indent:2px;
 	width: 48%;
 }
 .col_3 {
-	width: 6%;
+	width: 8%;
 }
 .col_4 {
 	width: 4%;
 }
 .col_5 {
-	width: 20%;
+	width: 18%;
 }
-
+.col_6 {
+	width: 22%;
+}
 .child_ul{
     float:left;
     width:100%;
@@ -116,43 +286,53 @@ float:right;
 .child_ul li{
     border-bottom:1px solid #ccc;
 }
-
-
-#treeMenu .col_6 {
-	width: 21.7%;
-	border:none;
-}
 #treeMenu a.jt {
 	display: inline-block;
-	width: 14px;
+	width: 38px;
 	height: 35px;
 	overflow: hidden;
 	cursor: pointer;
 	vertical-align: middle;
 }
 #treeMenu a.opened {
-	background: url(../imgs/opened.gif) no-repeat 3px 8px;
+	background: url(../img/opened.gif) no-repeat 3px 8px;
 }
 #treeMenu a.closed {
-	background: url(../imgs/closed.gif) no-repeat 3px 8px;
+	background: url(../img/closed.gif) no-repeat 3px 8px;
 }
 #treeMenu a.leaf {
-	background: url(../imgs/leaf.gif) no-repeat 16px 8px;
+	background: url(../img/leaf.gif) no-repeat 16px 8px;
 }
 .proc-bar {
-	margin-left:42px;
 	display: block;
 	width: 0;
 	height: 13px;
 	margin-top: 12px;
-	background: #E00;
+	background: #D5C3E5;
 }
-.bar_warp{
-	float:right;
-	width:100%
+.bar_warp {
+	float: left;
+	width: 42%;
 }
-.pro_i{
-	width:auto;
+.pro_i {
+	width: auto;
+}
+.sortCol {
+	cursor: pointer;
+}
+.container .u_icon, .container .d_icon {
+	background: url("../img/add_btn.png") no-repeat;
+	display: inline-block;
+	width: 7px;
+	height: 10px;
+}
+.container .u_icon {
+	background-position: 0 -241px;
+	margin-left: 5px;
+}
+.container .d_icon {
+	background-position: -18px -241px;
+	margin-left: 5px;
 }
 /*分页*/
 .pager {
@@ -236,9 +416,14 @@ float:right;
 	line-height: 18px;
 	border: 1px solid #ccc
 }
-
-.left-header {
-	margin-top:3px;
-	height: 50px;
-	background: url(../imgs/btn_bg_repeat-x.jpg) repeat;
+/*柱状图*/
+.clmItem {
+	float: left;
+	width: 300px;
+	height: 300px;
+	margin: 0px 10px 20px 0px;
+	border: 1px solid #CCCCCC;
+}
+.clmItem.ZW {
+	border: 1px solid #FFFFFF;
 }
