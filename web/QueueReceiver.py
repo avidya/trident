@@ -12,7 +12,7 @@ import stomp
 import time
 import logging
 import logging.config
-import Config
+from Config import *
 
 class StatInfoListener(StatsListener, WaitingListener):
 
@@ -25,7 +25,7 @@ class StatInfoListener(StatsListener, WaitingListener):
 
     def on_message(self, headers, message):
         get_log().info('received a message: %s' % message)
-        if len(message) < configCur.MIN_MESSAGE_LEN:
+        if len(message) < MIN_MESSAGE_LEN:
             get_log().warn('discard message:%s' % message)
             self.on_receipt(headers, message)
 #        else:
@@ -36,16 +36,16 @@ def get_log():
 
 if __name__ == '__main__':
 
-    logging.config.fileConfig(configCur.LOG_CONFIG)
+    logging.config.fileConfig(LOG_CONFIG)
 
     statInfoListener = StatInfoListener("DISCONNECT", 1)
 
-    conn = stomp.Connection(host_and_ports=[(configCur.STOMP_HOST, configCur.STOMP_PORT)])
+    conn = stomp.Connection(host_and_ports=[(STOMP_HOST, STOMP_PORT)])
     conn.set_listener('fisher', statInfoListener)
     conn.start()
     conn.connect(wait=True)
 #    conn.subscribe(destination=configCur.TRANSACTION_DESTINATION, id=statInfoListener.id, ack="auto")
-    conn.subscribe(destination=configCur.STATUS_INFO_DESTINATION, id=statInfoListener.id, ack="auto")
+    conn.subscribe(destination=STATUS_INFO_DESTINATION, id=statInfoListener.id, ack="auto")
 
     statInfoListener.wait_on_receipt()
     conn.disconnect()

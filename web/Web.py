@@ -9,7 +9,7 @@ from transactionPersisted import DbPersisted
 from bottle import route, run, template, request, redirect, static_file, get, post
 import logging
 import logging.config
-import configCur
+from Config import *
 import datetime
 import time
 
@@ -19,7 +19,7 @@ def hello():
 
 @route('/bar_tp/<filename:path>')
 def send_file(filename):
-    return static_file(filename, root=configCur.BAR_PATH)
+    return static_file(filename, root=BAR_PATH)
 
 @route('/static/<filename:path>')
 def send_file(filename):
@@ -71,7 +71,7 @@ def content():
             page = 1
         else:
             page = int(page)
-        offset = (page -1) * configCur.PAGE_SIZE
+        offset = (page -1) * PAGE_SIZE
 
         return {"page":page, "offset":offset}
 
@@ -139,22 +139,22 @@ def content():
 
     if(time_result["time_type"] == '1'): # 查询明细
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, True)
 
         #记录数量
         result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"])
 
-        result["maxpage"] = result["rowcount"] / configCur.PAGE_SIZE + 1
+        result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 
         return template("ta_real", viewmodel = result)
     else:
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, True)
 
         #记录数量
         result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"])
 
-        result["maxpage"] = result["rowcount"] / configCur.PAGE_SIZE + 1
+        result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 
         return template("ta", viewmodel = result)
 
@@ -183,7 +183,7 @@ def getItem():
     result['finger_print'] = finger_print
     result['node_index'] = nodeIndex
     result['text_indent'] = nodeIndex * 10
-    result['b_color'] = configCur.table_colors[nodeIndex%len(configCur.table_colors)]
+    result['b_color'] = table_colors[nodeIndex%len(table_colors)]
 
     if timeType == '1':
         result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print)
@@ -193,5 +193,5 @@ def getItem():
         return template("subitem", viewmodle = result)
 
 if __name__ == '__main__':
-    logging.config.fileConfig(configCur.LOG_CONFIG)
-    run(host=configCur.HTTP_HOST, port=configCur.HTTP_PORT, reloader=True)
+    logging.config.fileConfig(LOG_CONFIG)
+    run(host=HTTP_HOST, port=HTTP_PORT, reloader=True)
