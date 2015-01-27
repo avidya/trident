@@ -137,17 +137,19 @@ class DbPersisted:
         # 认为是字符串格式的
         if date_time is not None and type(date_time) is not int and len(date_time) >= 8:
             try:
-                t_date_time = int(time.mktime(time.strptime(date_time, "%Y%m%d")))
+                t_date_time = int(time.mktime(time.strptime(date_time, "%Y-%m-%d")))
             except Exception, e:
                 # 异常则当作秒来使用
                 t_date_time = date_time
+        elif date_time is not None and type(date_time) is int:
+            t_date_time = date_time
         else:
             t_date_time = int(time.time())
 
         # is_begin 表示当天零点，否则为第二天零点
-        dt = datetime.datetime.fromtimestamp(t_date_time if is_begin else (t_date_time + 60*60*24)).strftime("%Y%m%d%H%M%S")
+        dt = datetime.datetime.fromtimestamp(t_date_time if is_begin else (t_date_time + 60*60*24)).strftime("%Y-%m-%d %H:%M:%S")
 
-        d_time = time.strptime(dt, '%Y%m%d%H%M%S')
+        d_time = time.strptime(dt, '%Y-%m-%d %H:%M:%S')
         dd_time = datetime.datetime(*d_time[:3])
         i_et = int(time.mktime(dd_time.timetuple()))
         return i_et
@@ -362,37 +364,17 @@ class DbPersisted:
         # 查询指纹记录条数
         def query_finger_count(date_time, ip_encode, app_encode):
 
-            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, 0, 0, False)
+            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, 0, 0, None)
             self.get_log().debug(select_count_sql)
 
             return db.query(select_count_sql).getresult()[0][0]
 
         # 分页查询指纹数据
-        def query_finger_data_page(date_time, ip_encode, app_encode, offset, limit, order_durable):
-
-            # 格式化返回结果集合
-            def trident_finger_list(query_result):
-                retList = []
-                rows = query_result.getresult()
-
-                for row in rows:
-                    item = {}
-                    item['date_time'] = row[0]
-                    item['finger_print'] = row[1]
-                    item['url'] = row[2]
-                    item['times'] = row[3]
-                    item['elapse'] = row[4]
-                    item['elapse_bar'] = (row[4] * 100) / configCur.BAR_MAX_TIME if row[4] < configCur.BAR_MAX_TIME else 100
-                    item['ip_encode'] = row[5]
-                    item['app_encode'] = row[6]
-                    item['create_time'] = row[7]
-                    retList.append(item)
-                return retList
-
-            select_finger_data_sql = "select * from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable)
+        def query_finger_data_page(date_time, ip_encode, app_encode, offset, limit, order_durable= True):
+            select_finger_data_sql = "select date_time, finger_print, url, times, durable_time_avg, ip_encode, app_encode, create_time, '' as async from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable)
             self.get_log().debug(select_finger_data_sql)
 
-            return trident_finger_list(db.query(select_finger_data_sql))
+            return trident_show_list(db.query(select_finger_data_sql))
 
         # 格式化指纹数据查询条件
         def _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable):
@@ -400,13 +382,11 @@ class DbPersisted:
             end_time = datetime.datetime.fromtimestamp(self.format_date(date_time, False)).strftime("%Y-%m-%d")
 
             where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, start_time, end_time)
-            where_str += " order by durable_time_avg desc " if order_durable else " "
+            if order_durable is not None:
+                where_str += " order by durable_time_avg desc " if order_durable else " order by create_time desc "
+
             where_str += " limit %s offset %s " % (limit, offset) if limit > 0 else " "
             return where_str
-
-
-        # ##############################################################################################################
-        # 分组数据查询
 
         # 查询某个指纹下某一层的所有函数信息
         def query_transaction_data_group(layer_no, parent_order_no, finger_print, date_time):
@@ -452,6 +432,90 @@ class DbPersisted:
             return transaction_data_list(db.query(query_data_sql))
 
         # ##############################################################################################################
+        # 实时数据查询
+        # 格式化数据查询条件
+        def _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable):
+
+            where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S"))
+            if order_durable is not None:
+                where_str += " order by durable_time desc " if order_durable else " order by create_time desc "
+
+            where_str += " limit %s offset %s " % (limit, offset) if limit > 0 else " "
+            return where_str
+
+        # 查询数据记录数
+        def query_real_data_count(start_time, end_time, ip_encode, app_encode):
+            select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None)
+            self.get_log().debug(select_real_count_sql)
+
+            return db.query(select_real_count_sql).getresult()[0][0]
+
+        # 分页查询实时数据
+        def query_real_data_page(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable):
+            select_real_data_sql = "select begin_time as date_time, audit_id as finger_print, url, 1 as times, (end_time - begin_time) as elapse, ip_encode, app_encode, create_time, async from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable)
+            self.get_log().debug(select_real_data_sql)
+
+            return trident_show_list(db.query(select_real_data_sql))
+
+        # 子级别数据
+        def query_transaction_real_data(parent_audit_id):
+            # 格式化返回数据
+            def transaction_real_data_list(query_result):
+                retList = []
+                rows = query_result.getresult()
+
+                for row in rows:
+                    item = {}
+                    item['audit_id'] = row[0]
+                    item['elapse_bar'] = (row[1] * 100) / configCur.BAR_MAX_TIME if row[1] < configCur.BAR_MAX_TIME else 100
+                    item['elapse'] = row[1] if row[1] > 0  else " < 1 "
+                    item['order_no'] = row[2]
+                    item['async'] = row[3]
+                    item['attachments'] = row[4]
+                    item['parent_order_nos'] = "%s|%s" %(row[5], row[2]) if len(row[5]) > 0 else row[2]
+                    item['url'] = row[6]
+                    item['layer_no'] = row[7]
+                    item['create_time'] = row[8]
+                    retList.append(item)
+                return retList
+
+            query_data_sql = "select audit_id, " \
+                                    " (end_time - begin_time) as avg_t, " \
+                                    " order_no, " \
+                                    " async, " \
+                                    " attachments, " \
+                                    " parent_order_nos,	" \
+                                    " url, " \
+                                    " layer_no," \
+                                    " create_time " \
+                                    " from trident_audit where parent_audit_id = %s" % (parent_audit_id)
+
+            self.get_log().debug(query_data_sql)
+
+            return transaction_real_data_list(db.query(query_data_sql))
+
+        # ##############################################################################################################
+        # 格式化返回结果集合
+        def trident_show_list(query_result):
+            retList = []
+            rows = query_result.getresult()
+
+            for row in rows:
+                item = {}
+                item['date_time'] = row[0]
+                item['finger_print'] = row[1]
+                item['url'] = row[2]
+                item['times'] = row[3]
+                item['elapse'] = row[4]
+                item['elapse_bar'] = (row[4] * 100) / configCur.BAR_MAX_TIME if row[4] < configCur.BAR_MAX_TIME else 100
+                item['ip_encode'] = row[5]
+                item['app_encode'] = row[6]
+                item['create_time'] = row[7]
+                item['async'] = row[8]
+                retList.append(item)
+            return retList
+
+        # ##############################################################################################################
         # ip 和 app 查询
 
         # 查询ip
@@ -492,7 +556,15 @@ class DbPersisted:
 
             return app_list(db.query('select audit_app, audit_app_encode from trident_audit_app'))
 
-        ops = {'query_data_count':query_finger_count, 'query_finger_data':query_finger_data_page, 'query_transaction_data':query_transaction_data_group, 'query_ip':get_ips, 'query_app':get_apps}
+        ops = {'query_data_count':query_finger_count,
+               'query_finger_data':query_finger_data_page,
+               'query_transaction_data':query_transaction_data_group,
+               'query_ip':get_ips,
+               'query_app':get_apps,
+               'query_real_data_count':query_real_data_count,
+               'query_real_data_page':query_real_data_page,
+               'query_transaction_real_data':query_transaction_real_data
+        }
 
         return ops[op_mode]
 
