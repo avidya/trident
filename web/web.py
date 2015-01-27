@@ -9,7 +9,7 @@ from dbPersisted import DbPersisted
 from bottle import route, run, template, request, redirect, static_file, get, post
 import logging
 import logging.config
-import configCur
+import Config as config
 import datetime
 import time
 
@@ -55,7 +55,7 @@ def content():
 
     ip = request.query.ip
 
-    offset = (page -1) * configCur.PAGE_SIZE
+    offset = (page -1) * config.PAGE_SIZE
 
     dbPersisted = DbPersisted()
 
@@ -97,14 +97,14 @@ def content():
     result["ip_address"] = ip_address
 
     # 记录集合
-    result["rows"] = dbPersisted.query_operation("query_finger_data")(dt_str, ip, app, offset, configCur.PAGE_SIZE, True)
+    result["rows"] = dbPersisted.query_operation("query_finger_data")(dt_str, ip, app, offset, config.PAGE_SIZE, True)
 
     #记录数量
     result["rowcount"] = dbPersisted.query_operation("query_data_count")(dt_str, ip, app)
 
     # 页码
     result["curpage"] = page
-    result["maxpage"] = result["rowcount"] / configCur.PAGE_SIZE + 1
+    result["maxpage"] = result["rowcount"] / config.PAGE_SIZE + 1
     result["prepage"] = page - 1 if page > 1 else 1
     result["afterpage"] = page + 1
     result["app_en"] = app
@@ -142,5 +142,5 @@ def getItem():
     return template("subitem", viewmodle = result)
 
 if __name__ == '__main__':
-    logging.config.fileConfig(configCur.LOG_CONFIG)
-    run(host=configCur.HTTP_HOST, port=configCur.HTTP_PORT, reloader=True)
+    logging.config.fileConfig(config.LOG_CONFIG)
+    run(host=config.HTTP_HOST, port=config.HTTP_PORT, reloader=True)

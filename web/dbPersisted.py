@@ -1,4 +1,4 @@
-# !/usr/bin/python
+#!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
 # Filename:dbPersisted.py
@@ -124,7 +124,7 @@ import pg
 import json
 import logging
 import logging.config
-import configCur
+import Config as config
 import hashlib
 import datetime
 import time
@@ -352,7 +352,7 @@ class DbPersisted:
     # db 查询操作
     def query_operation(self, op_mode='query_data_count'):
 
-        db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+        db = pg.connect(config.DB_NAME, config.DB_HOST, config.DB_PORT, None, None, config.DB_USER, config.DB_PWD)
 
         # ##############################################################################################################
         # 指纹数据查询
