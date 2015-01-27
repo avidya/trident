@@ -21,6 +21,12 @@ h1, h2, h3, h4, h5, h6 {
 	font-size: inherit;
 	font-weight: normal;
 }
+.fl {
+	float: left;
+}
+.fr {
+	float: right;
+}
 /* For IE 6/7 (trigger hasLayout) */
 .clearfix {
 	zoom: 1;
@@ -67,15 +73,15 @@ body {
 	float: left;
 	display: block;
 	height: 30px;
-	line-height:30px;
+	line-height: 30px;
 	font-size: 14px;
 	color: #FFFFFF;
-	margin:15px 5px 8px 0px;
-	background:#F4B04F;
-	padding:0px 3px;
+	margin: 15px 5px 8px 0px;
+	background: #F4B04F;
+	padding: 0px 3px;
 }
-#header p.mode a.nc{
-	background:#E66454;
+#header p.mode a.nc {
+	background: #E66454;
 }
 /*左侧栏*/
 .container .leftNav {
@@ -106,11 +112,11 @@ body {
 }
 .container {
 	margin: 10px auto;
-	width: 1224px;
+	width: 1576px;
 }
 .content {
 	float: left;
-	width: 940px;
+	width: 1360px;
 }
 /*头部菜单*/
 .topMenu {
@@ -122,14 +128,49 @@ body {
 	font-size: 20px;
 }
 .topMenu li {
-	float: left;
+	line-height: 28px;
+	width: auto;
 	margin: 0px 10px 10px 0px;
-	border: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 	padding-right: 3px;
 }
 .topMenu .i_title {
 	margin-right: 3px;
 	background: #E0E0E3;
+	border: 1px solid #ccc;
+}
+.topMenu .li_item {
+	float: left;
+	margin-right: 10px;
+}
+.li_item .i_title{
+	width:auto;
+	line-height:28px;
+	float:left;
+}
+.topMenu .inpt_txt {
+	float: left;
+	line-height:28px;
+	padding: 2px 3px;
+	display: inline-block;
+	width: 150px;
+	height: 26px;
+}
+.topMenu .li_btn {
+	display: block;
+	width: 50px;
+	height: 28px;
+	font-size: 14px;
+	font-weight: bold;
+	cursor:pointer;
+}
+.topMenu #timeSubmit{
+	color:#FFFFFF;
+	background:#1A7AB9;
+}
+.topMenu .changeBtn {
+	width: 90px;
+	color: #ED8925;
 }
 .li_ip {
 	width: 90%;
@@ -180,7 +221,8 @@ body {
 	vertical-align: middle;
 }
 .tr_tit li {
-	float: left;
+text-indent:10px;
+	float:left;
 	height: 45px;
 	line-height: 45px;
 }
@@ -189,7 +231,6 @@ body {
 	width: 100%;
 }
 .tree_content {
-	position: relative;
 	font-size: 12px;
 	margin-top: 2px;
 	-webkit-border-radius: 4px;
@@ -204,10 +245,8 @@ body {
 .tree_content li {
 	width: 100%;
 	line-height: 35px;
-	float: left;
 	display: block;
 }
-
 .tree_content div.col_item {
 	display: block;
 	float: left;
@@ -218,33 +257,34 @@ body {
 	white-space: nowrap;
 }
 .col_0 {
-	width: 10%;
+	width: 16%;
 }
 .col_1 {
-	width: 8%;
-}
-.col_2 {
-	width: 20%;
-}
-.col_3 {
-	width: 13%;
-}
-.col_4 {
 	width: 22%;
 }
+.col_2 {
+	width: 48%;
+}
+.col_3 {
+	width: 8%;
+}
+.col_4 {
+	width: 4%;
+}
 .col_5 {
-	width: 13%;
+	width: 18%;
 }
 .col_6 {
-	width: 13%;
+	width: 22%;
 }
-.child_ul {
-	float: left;
-	width: 100%;
-	float: right;
+.child_ul{
+    float:left;
+    width:100%;
+float:right;
 }
-.child_ul li {
-	border-bottom: 1px solid #ccc;
+
+.child_ul li{
+    border-bottom:1px solid #ccc;
 }
 #treeMenu a.jt {
 	display: inline-block;
@@ -276,6 +316,23 @@ body {
 }
 .pro_i {
 	width: auto;
+}
+.sortCol {
+	cursor: pointer;
+}
+.container .u_icon, .container .d_icon {
+	background: url("../img/add_btn.png") no-repeat;
+	display: inline-block;
+	width: 7px;
+	height: 10px;
+}
+.container .u_icon {
+	background-position: 0 -241px;
+	margin-left: 5px;
+}
+.container .d_icon {
+	background-position: -18px -241px;
+	margin-left: 5px;
 }
 /*分页*/
 .pager {

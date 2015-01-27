@@ -32,13 +32,13 @@
 						<li>
 							<i class="i_title">[应用]:</i>{{viewmodel['app_name']}}
 						</li>
-						<input type="hidden" id="timeType" value="0"/>
+						<input type="hidden" id="timeType" value="1"/>
 						<li class="clearfix">
-							<div class="li_item timeDiv">
+							<div class="li_item timeDiv" style="display:none;">
 								<i class="i_title">[查询日期]:</i>
 								<input type="text" class="inpt_txt Wdate" id="createTime" value="{{viewmodel['data_time']}}"/>
 							</div>
-							<div class="fl timeDiv" style="display:none;">
+							<div class="fl timeDiv">
 								<div class="li_item">
 									<i class="i_title">[开始时间]:</i>
 									<input type="text" class="inpt_txt Wdate" id="startTime" value="{{viewmodel['start_time']}}"/>
@@ -49,7 +49,7 @@
 								</div>
 							</div>
 							<div class="li_item">
-								<a class="li_btn changeBtn normal" href="javascript:;" id="timeChange">[查看详细]</a>
+								<a class="li_btn changeBtn detail" href="javascript:;" id="timeChange">[查看概览]</a>
 							</div>
 						</li>
 						<li class="li_ip">
@@ -68,9 +68,9 @@
                         <ul class="clearfix">
                             <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
                             <li class="h-32 col_3">attachments</li>
-                            <li class="h-32 col_4">times</li>
+                            <li class="h-32 col_4">async</li>
                             <li class="h-32 col_5">create time</li>
-                            <li class="h-32 col_6">avg-elapse(ms)</li>
+                            <li class="h-32 col_6">elapse(ms)</li>
                         </ul>
                     </div>
     %for item in viewmodel["rows"]:
@@ -78,7 +78,7 @@
                         <li data-id="{{item['finger_print']}}" layerno="0" parentordernos="0" class="clearfix" node-index="0">
                             <div class="col_2 col_item" title="{{item['url']}}" ><a href="javascript:;" class="jt closed"></a>{{item['url']}}</div>
                             <div class="col_3 col_item" title="{{item['finger_print']}}">&nbsp;</div>
-                            <div class="col_4 col_item">{{item['times']}}</div>
+                            <div class="col_4 col_item">{{item['async']}}</div>
                             <div class="col_5 col_item">{{item['create_time']}}</div>
                             <div class="col_6 col_item"><div class="bar_warp"><span class="proc-bar" style="width:{{item['elapse_bar']}}%;"></span></div><i class="pro_i">{{item['elapse']}}</i></div>
                         </li>
@@ -89,11 +89,11 @@
 					<div class="scott2">
 						<span>总计：{{viewmodel["rowcount"]}}条&nbsp;&nbsp;&nbsp;</span>
 
-						<a href="?page={{viewmodel['prepage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&data_time={{viewmodel['data_time']}}&timeType=0">上一页</a>
+						<a href="?page={{viewmodel['prepage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&start_time={{viewmodel['start_time']}}&endtime={{viewmodel['end_time']}}&timeType=1">上一页</a>
 
 						<span class="current">{{viewmodel['curpage']}}</span>
 
-						<a href="?page={{viewmodel['afterpage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&data_time={{viewmodel['data_time']}}&timeType=0">下一页</a>
+						<a href="?page={{viewmodel['afterpage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&start_time={{viewmodel['start_time']}}&endtime={{viewmodel['end_time']}}&timeType=1">下一页</a>
 
 						<span>跳转第：</span>
 						<input type="text" id="page" class="pageInput J_Number" maxlength="5">
