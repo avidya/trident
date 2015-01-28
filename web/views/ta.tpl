@@ -68,9 +68,9 @@
                         <ul class="clearfix">
                             <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
                             <li class="h-32 col_3">attachments</li>
-                            <li class="h-32 col_4">times</li>
-                            <li class="h-32 col_5">create time</li>
-                            <li class="h-32 col_6">avg-elapse(ms)</li>
+                            <li class="h-32 col_4 sortCol" >times</li>
+                            <li class="h-32 col_5 sortCol" data-coltype="0"><span>create time</span><i class="d_icon"></i></li>
+                            <li class="h-32 col_6 sortCol" data-coltype="1"><span>avg-elapse(ms)</span><i class="d_icon"></i></li>
                         </ul>
                     </div>
     %for item in viewmodel["rows"]:
