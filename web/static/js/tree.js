@@ -15,8 +15,8 @@ define(function(require, exports, module) {
 	var DatePicker = require('datePicker'), dtPicker = new DatePicker();
 	var Dialog = require('dialog'), dialog = new Dialog();
 	require('formatdate');
-	var sortUrl = $dispatcher.attr('data-sortUrl');
-	var afterSort = $dispatcher.attr('data-afterUrl');
+/*	var sortUrl = $dispatcher.attr('data-sortUrl');
+	var afterSort = $dispatcher.attr('data-afterUrl');*/
 
 	var Main = {
 		init : function() {
@@ -113,8 +113,14 @@ define(function(require, exports, module) {
 			var upFlag = false;
 			$('body').delegate('.sortCol', 'click', function() {
 				var me = $(this);
+				var orderType = me.attr('data-coltype');
+				var en_app = $("#data_app").val();
+				var ip_app = $("#data_ip").val();
 				var sortCol = me.attr('data-colType');
-				if (!upFlag) {
+				var load_url = "/ta?ip="+ ip_app+"&app="+en_app +"&end_time="+$("#endTime").val()+"&start_time="+$("#startTime").val()+"&timeType="+$("#timeType").val()+"&data_time="+$("#createTime").val()+"&orderType="+orderType;
+				//alert(load_url);
+				window.location = load_url;
+				/*if (!upFlag) {
 					Main.sortColumn(sortCol, !upFlag);
 					//upFlag为是否为升序
 					me.find('i').attr('class', 'u_icon');
@@ -123,7 +129,7 @@ define(function(require, exports, module) {
 					Main.sortColumn(sortCol, !upFlag);
 					me.find('i').attr('class', 'd_icon');
 					upFlag = false;
-				}
+				}*/
 			});
 
 			//时间控件
@@ -147,7 +153,7 @@ define(function(require, exports, module) {
 			});
 		},
 
-		sortColumn : function(sortCol, upFlag) {
+		/*sortColumn : function(sortCol, upFlag) {
 			$.commonAjax({
 				type : 'post',
 				url : sortUrl,
@@ -162,7 +168,7 @@ define(function(require, exports, module) {
 					dialog.alert(msg);
 				}
 			});
-		},
+		},*/
 
 		initIcon : function() {
 			var $jts = $('.jt');
