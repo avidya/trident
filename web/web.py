@@ -137,9 +137,16 @@ def content():
     result["end_time"] = time_result["e_time"]
 
 
+    orderType = request.query.orderType
+    if orderType == '0':
+        orderType = False
+    else:
+        orderType = True
+
+
     if(time_result["time_type"] == '1'): # 查询明细
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType)
 
         #记录数量
         result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"])
@@ -149,7 +156,7 @@ def content():
         return template("ta_real", viewmodel = result)
     else:
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType)
 
         #记录数量
         result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"])
