@@ -16,92 +16,16 @@
 #   "thread":{"active":58,"daemon":34,"http":8,"peek":65}
 # }
 
-# CREATE TABLE trident_heartbeat_audit
-# (
-#   audit_id serial NOT NULL,
-#   info_time_stamp bigint NOT NULL, -- 消息采集时间， 精确到秒
-#   info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
-#   info_name character varying (30) NOT NULL,
-#   info_value bigint NOT NULL, --记录项值
-#   info_second_value_name character varying(30), --第二项值名称
-#   info_second_value bigint, --第二项值
-#   ip character varying(100) NOT NULL,
-#   app character varying(100) NOT NULL,
-#   ip_encode character varying(40) NOT NULL,
-#   app_encode character varying(40) NOT NULL,
-#   remark character varying(100),
-#   create_time timestamp with time zone NOT NULL DEFAULT now(),
-#   CONSTRAINT pk_trident_heartbeat_audit PRIMARY KEY (audit_id)
-# );
-# CREATE INDEX i_heartbeat_audit_ip_app_encode
-#    ON trident_heartbeat_audit
-#    USING btree
-#    (ip_encode, app_encode);
-#
-#
-#
-# CREATE TABLE trident_heartbeat_audit_hour
-# (
-#   audit_id serial NOT NULL,
-#   info_time_stamp bigint NOT NULL, -- 消息采集时间, 精确到分钟
-#   info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
-#   info_name character varying (30) NOT NULL,
-#   info_value bigint NOT NULL, --记录项值
-#   info_second_value_name character varying(30), --第二项值名称
-#   info_second_value bigint, --第二项值
-#   ip character varying(100) NOT NULL,
-#   app character varying(100) NOT NULL,
-#   ip_encode character varying(40) NOT NULL,
-#   app_encode character varying(40) NOT NULL,
-#   times integer NOT NULL DEFAULT 1, --记录的次数
-#   remark character varying(100),
-#   create_time timestamp with time zone NOT NULL DEFAULT now(),
-#   CONSTRAINT pk_trident_heartbeat_hour_audit PRIMARY KEY (audit_id)
-# );
-#
-# CREATE INDEX i_trident_heartbeat_audit_hour_ip_app_encode
-#    ON trident_heartbeat_audit_hour
-#    USING btree
-#    (ip_encode, app_encode);
-#
-#
-#
-# CREATE TABLE trident_heartbeat_audit_day
-# (
-#   audit_id serial NOT NULL,
-#   info_time_stamp bigint NOT NULL, -- 消息采集时间，精确到小时
-#   info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
-#   info_name character varying (30) NOT NULL,
-#   info_value bigint NOT NULL, --记录项值
-#   info_second_value_name character varying(30), --第二项值名称
-#   info_second_value bigint, --第二项值
-#   ip character varying(100) NOT NULL,
-#   app character varying(100) NOT NULL,
-#   ip_encode character varying(40) NOT NULL,
-#   app_encode character varying(40) NOT NULL,
-#   times integer NOT NULL DEFAULT 1, --记录的次数
-#   remark character varying(100),
-#   create_time timestamp with time zone NOT NULL DEFAULT now(),
-#   CONSTRAINT pk_trident_heartbeat_day_audit PRIMARY KEY (audit_id)
-# );
-# CREATE INDEX i_trident_heartbeat_audit_day_ip_app_encode
-#    ON trident_heartbeat_audit_day
-#    USING btree
-#    (ip_encode, app_encode);
-#
-
-
 __author__ = 'yuyichuan'
 
 import pg
 import json
 import logging
 import logging.config
-import configCur
+from Config import *
 import hashlib
 import datetime
 import time
-import infoBargraphs
 
 class HeartBeatPgPersisted:
 
@@ -128,7 +52,7 @@ class HeartBeatPgPersisted:
         return logging.getLogger("PgPersisted")
 
     # 保存接收到的消息数据
-    def save_heart_beat_info_json(self, data_str):
+    def save_json_data(self, data_str):
 
         # 保存ip，允许失败
         def saveHostIp(ip, app, hostName):
@@ -200,7 +124,7 @@ class HeartBeatPgPersisted:
 
         # to connect db
         try:
-            db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+            db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
         except Exception, e:
             # print e.args[0]
             self.get_log().error("to connect db failed, ret=%s" % e.args[0])
@@ -334,7 +258,7 @@ class HeartBeatPgPersisted:
             # 到分
             return query_data(end_time, ip_encode, app_encode, info_type, unit_hour)
 
-        db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+        db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 
         ops = {'minute': query_minute, 'hour':query_hour, 'day':query_day}
 
@@ -343,7 +267,7 @@ class HeartBeatPgPersisted:
 # main
 if __name__ == '__main__':
 
-    logging.config.fileConfig(configCur.LOG_CONFIG)
+    logging.config.fileConfig(LOG_CONFIG)
     dbPersisted = HeartBeatPgPersisted()
     # insert test
     json_str ='{' \
