@@ -136,23 +136,45 @@ def content():
     result["start_time"] = time_result["s_time"]
     result["end_time"] = time_result["e_time"]
 
+    #排序类型
+    orderType = request.query.orderType
+    if orderType == '0':
+        orderType = False
+        result['order_type'] = '0'
+    else:
+        orderType = True
+        result['order_type'] = '1'
+
+    #时间下限值
+    low_times = request.query.low_times
+    if low_times is None or len(low_times) == 0:
+        low_times = 0
+    else:
+        try:
+            low_times = int(low_times)
+        except:
+            low_times = 0
+
+    result['low_times'] = low_times
 
     if(time_result["time_type"] == '1'): # 查询明细
+        result['timeType'] = '1'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, orderType, low_times)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"])
+        result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], low_times)
 
         result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 
         return template("ta_real", viewmodel = result)
     else:
+        result['timeType'] = '0'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, True)
+        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, orderType, low_times)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"])
+        result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"], low_times)
 
         result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 
@@ -160,7 +182,7 @@ def content():
 
 # 获取下一级内容
 @route("/subitems")
-def getItem():
+def getSubItems():
     # 查询模式, 1, 表示查询明细， 0, 表示该蓝
     timeType = request.query.timeType
 
@@ -180,17 +202,95 @@ def getItem():
 
     result = {}
 
+    #时间下限值
+    low_times = request.query.low_times
+    if low_times is None or len(low_times) == 0:
+        low_times = 0
+    else:
+        try:
+            low_times = int(low_times)
+        except:
+            low_times = 0
+
+    result['low_times'] = low_times
     result['finger_print'] = finger_print
     result['node_index'] = nodeIndex
     result['text_indent'] = nodeIndex * 10
     result['b_color'] = table_colors[nodeIndex%len(table_colors)]
 
     if timeType == '1':
-        result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print)
+        result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print, low_times)
         return template("subitem_real", viewmodle = result)
     else:
-        result['rows'] = dbPersisted.query_operation("query_transaction_data")(layer_no, parent_order_nos, finger_print, data_time)
+        result['rows'] = dbPersisted.query_operation("query_transaction_data")(layer_no, parent_order_nos, finger_print, data_time, low_times)
         return template("subitem", viewmodle = result)
+
+# 获取下一级内容,以甘特的样子展现
+@route("/gantt")
+def getSubItemsGantt():
+
+    # 显示的空白行列数
+    show_cloumns = 7
+    total_bar_width = 1200 # 满格宽度为1200px
+
+    # 组装表内容数据
+    def format_sub_result(sub_items_result, parent_result, parent_time_show):
+        p_begin_time = long(parent_result['begin_time'])
+
+        f_sub_items_result = []
+        for item in sub_items_result:
+            sub_item = {}
+            # 起始位置为（（当前开始时间 - 父节点开始时间 ）* 100 / 父节点总共花费的时间 ） %
+            left = (long(item['begin_time']) - p_begin_time) * total_bar_width / parent_time_show
+            sub_item['left'] = left
+            sub_item['middle'] = int((long(item['end_time']) - long(item['begin_time'])) * 1200 / parent_time_show)
+            sub_item['url'] =  item['url'].replace('java.lang.', '')
+            sub_item['d_time'] = int(long(item['begin_time']) - p_begin_time)
+            sub_item['c_time'] = int(long(item['end_time']) - long(item['begin_time']))
+            f_sub_items_result.append(sub_item)
+
+        return f_sub_items_result
+
+    # 组装表头数据
+    def format_parent_audit(parent_result, parent_time_show):
+        parent_infos = []
+        time_split = int(parent_time_show/show_cloumns)
+        for i in xrange(1,8):
+            p_item = {}
+            p_item['tr_no'] = i
+            p_item['tr_time'] = (i-1) * time_split
+            parent_infos.append(p_item)
+
+        return parent_infos
+
+    # 父亲节点id
+    parent_audit_id = request.query.parent_audit_id
+
+    #时间下限值
+    low_times = request.query.low_times
+
+    if low_times is None or len(low_times) == 0:
+        low_times = 0
+    else:
+        try:
+            low_times = int(low_times)
+        except:
+            low_times = 0
+    result = {}
+    dbPersisted = DbPersisted()
+
+    # 父节点记录信息
+    parent_audit_item = dbPersisted.query_operation("query_transaction_real_data_by_id")(parent_audit_id)
+
+    parent_time_show = int(parent_audit_item['durable_time'])
+    # 最长时间设定为花费时间的1.25倍
+    parent_time_show = int((parent_time_show + show_cloumns - parent_time_show % show_cloumns) * 5 / 4)
+
+    result['tr_items'] = format_parent_audit(parent_audit_item, parent_time_show)
+    result['parent_url'] = parent_audit_item['url']
+    result['sub_items'] = format_sub_result(dbPersisted.query_operation("query_transaction_real_data")(parent_audit_id, low_times), parent_audit_item, parent_time_show)
+
+    return template("gantt", viewmodel = result)
 
 if __name__ == '__main__':
     logging.config.fileConfig(LOG_CONFIG)

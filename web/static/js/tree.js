@@ -10,14 +10,14 @@
  */
 define(function(require, exports, module) {
 	var $dispatcher = $("#dispatcher");
-	var reloadUrl = $dispatcher.attr('data-reloadUrl');
+	var subItemsUrl = $dispatcher.attr('data-subItemsUrl');
 	var Util = require('util'), util = new Util();
 	var DatePicker = require('datePicker'), dtPicker = new DatePicker();
 	var Dialog = require('dialog'), dialog = new Dialog();
 	require('formatdate');
-	var sortUrl = $dispatcher.attr('data-sortUrl');
-	var afterSort = $dispatcher.attr('data-afterUrl');
 
+/*	var sortUrl = $dispatcher.attr('data-sortUrl');
+	var afterSort = $dispatcher.attr('data-afterUrl');*/
 	var Main = {
 		init : function() {
 			Main.initLeftNav();
@@ -43,34 +43,39 @@ define(function(require, exports, module) {
 			}
 		},
 		initPages : function() {
-			//时间空间面板切换
+			//明细和概览面板切换
 			$('body').delegate('#timeChange.normal', 'click', function() {
 				var me = $(this);
 				$('.timeDiv').toggle();
 				me.text('[查看概览]');
 				me.attr('class', 'li_btn changeBtn detail');
-				$('#timeType').val('1');
+				$('#time_type').val('1');
 			});
 			$('body').delegate('#timeChange.detail', 'click', function() {
 				var me = $(this);
 				$('.timeDiv').toggle();
 				me.text('[查看详细]');
 				me.attr('class', 'li_btn changeBtn normal');
-				$('#timeType').val('0');
+				$('#time_type').val('0');
 			});
-			//菜单展开收缩
+
+			//明细展开收缩
 			$('body').delegate('.jt', 'click', function() {
 				var me=$(this);
-
-				var finger_print = $(this).parent().parent().attr('data-id');
 				var data_time = $("#createTime").val();
 				var start_time = $("#startTime").val();
 				var end_time = $("#endTime").val();
-				var parent_order_nos = $(this).parent().parent().attr('parentordernos');
-				var layer_no = parseInt($(this).parent().parent().attr('layerno'));
-				var nodeIndex = parseInt($(this).parent().parent().attr('node-index'));
-				var timeType = $("#timeType").val();
-				var hasChild = $(this).parent().parent().parent().find('ul').length;
+				var time_type = $("#time_type").val();
+				var ip_encode = $("#ip_encode").val();
+				var app_encode = $("#app_encode").val();
+				var low_times = $("#low_times").val();
+
+				var finger_print = me.parent().parent().attr('data-id');
+				var parent_order_nos = me.parent().parent().attr('parentordernos');
+				var layer_no = parseInt(me.parent().parent().attr('layerno'));
+				var nodeIndex = parseInt(me.parent().parent().attr('node-index'));
+
+				var hasChild = me.parent().parent().parent().find('ul').length;
 				if (hasChild == 0) {
 					if (finger_print) {
 						/*模拟请求数据 start*/
@@ -80,21 +85,22 @@ define(function(require, exports, module) {
 						/*模拟请求数据 end*/
 						
 						/*获取child*/
-						$.get(reloadUrl, {
+						$.get(subItemsUrl, {
+							ip: ip_encode,
+							app: app_encode,
 							parentordernos: parent_order_nos,
 							fingerprint: finger_print,
 							layerno: layer_no + 1,
 							nodeIndex: nodeIndex + 1,
-							timeType: timeType,
+							timeType: time_type,
 							data_time: data_time,
 							end_time: end_time,
-							start_time: start_time
+							start_time: start_time,
+							low_times: low_times
 						}, function(re) {
 							me.parent().parent().after(re);
 							me.attr('class', 'jt opened');
-							//Main.initColor();
 						}, 'html');
-						/*获取child*/
 					}
 				} else {
 					$(this).parent().parent().parent().find('ul').remove();
@@ -103,27 +109,26 @@ define(function(require, exports, module) {
 
 			});
 
+			//切换host
 			$('body').delegate('.ips', 'click', function() {
-				var load_url = $(this).attr('href_url') +"&end_time="+$("#endTime").val()+"&start_time="+$("#startTime").val()+"&timeType="+$("#timeType").val()+"&data_time="+$("#createTime").val();
+				var load_url = Main.get_url($(this).attr('href_url'), false, true, false);
 				//alert(load_url);
 				window.location = load_url;
 			});
 
-			//表格升序降序
-			var upFlag = false;
+			//表格降序
 			$('body').delegate('.sortCol', 'click', function() {
+				var load_url = Main.get_url($(this).parent().attr('href_url'), true, false, true) + "&orderType="+$(this).attr('order_type');
+				//alert(load_url);
+				window.location = load_url;
+			});
+
+			//切换页面
+			$('body').delegate('.change_page', 'click', function() {
 				var me = $(this);
-				var sortCol = me.attr('data-colType');
-				if (!upFlag) {
-					Main.sortColumn(sortCol, !upFlag);
-					//upFlag为是否为升序
-					me.find('i').attr('class', 'u_icon');
-					upFlag = true;
-				} else {
-					Main.sortColumn(sortCol, !upFlag);
-					me.find('i').attr('class', 'd_icon');
-					upFlag = false;
-				}
+				var load_url = Main.get_url($(this).parent().attr('href_url'), true, true, false)+"&page="+$(this).attr('page_index');
+				//alert(load_url);
+				window.location = load_url;
 			});
 
 			//时间控件
@@ -133,21 +138,68 @@ define(function(require, exports, module) {
 					dateFmt : 'yyyy-MM-dd'
 				});
 			});
+
 			$("#startTime").on("click focus", function() {
 				dtPicker.initByCfg({
 					maxDate : $.formatDate(new Date(), 'yyyy-MM-dd'),
 					dateFmt : 'yyyy-MM-dd HH:mm:ss'
 				});
 			});
+
 			$("#endTime").on("click focus", function() {
 				dtPicker.initByCfg({
 					maxDate : $.formatDate(new Date(), 'yyyy-MM-dd'),
 					dateFmt : 'yyyy-MM-dd HH:mm:ss'
 				});
 			});
+			//查看调用时序
+			$('body').delegate('.GantBtn', 'click', function() {
+				var me = $(this);
+				var dataId=me.parent().parent().parent().parent().attr('data-id');
+				var low_times = $("#low_times").val();
+				//console.log(dataId);
+				$.get($("#get_gannt_url").val(), {
+					parent_audit_id:dataId,
+					low_times:low_times
+				}, function(html) {
+					$.dialog({
+						title : '调用时序',
+						lock : true,
+						content : html,
+						cancel : true,
+						width : 1024,
+						height :'auto',
+						ok : function() {
+						}
+					});
+				});
+			});
 		},
 
-		sortColumn : function(sortCol, upFlag) {
+		get_url: function(base_url, same_host, same_order_type, same_page){
+			var data_time = $("#createTime").val();
+			var start_time = $("#startTime").val();
+			var end_time = $("#endTime").val();
+			var time_type = $("#time_type").val();
+			var ip_encode = $("#ip_encode").val();
+			var app_encode = $("#app_encode").val();
+			var orderType = $("#order_type").val();
+			var cur_page = $("#cur_page").val();
+			var low_times = $("#low_times").val();
+
+			var tp_url = base_url+"&start_time="+start_time+"&end_time="+end_time+"&data_time="+data_time+"&timeType="+time_type+"&low_times="+low_times;
+			if(same_host){
+				tp_url = tp_url+"&ip="+ip_encode+"&app="+app_encode;
+			}
+			if(same_order_type){
+				tp_url = tp_url+"&orderType="+orderType;
+			}
+			if(same_page){
+				tp_url = tp_url+"&page="+cur_page;
+			}
+			return tp_url;
+		},
+		/*sortColumn : function(sortCol, upFlag) {
 			$.commonAjax({
 				type : 'post',
 				url : sortUrl,
@@ -162,7 +214,7 @@ define(function(require, exports, module) {
 					dialog.alert(msg);
 				}
 			});
-		},
+		},*/
 
 		initIcon : function() {
 			var $jts = $('.jt');
@@ -180,7 +232,6 @@ define(function(require, exports, module) {
 			$('#pageSubmit').click(function() {
 				var pageIndexStr = $('#page').val();
 				var maxNumber = $('#maxpage').val();
-				var urlParams = $('#urlParams').val();
 				var pageIndex = ~~pageIndexStr;
 				if (pageIndexStr != pageIndex || pageIndexStr.indexOf(".") > -1) {
 					alert('跳转页码必须为数值');
@@ -196,7 +247,8 @@ define(function(require, exports, module) {
 				if (pageIndex < 1) {
 					pageIndex = 1;
 				}
-				window.location = "?page=" + pageIndex + urlParams;
+
+				window.location = Main.get_url($(this).parent().attr('href_url'), true, true, false)+"&page="+ pageIndex;
 			});
 		},
         //处理缩进

@@ -263,13 +263,13 @@ text-indent:10px;
 	width: 22%;
 }
 .col_2 {
-	width: 48%;
+	width: 46%;
 }
 .col_3 {
 	width: 8%;
 }
 .col_4 {
-	width: 4%;
+	width: 6%;
 }
 .col_5 {
 	width: 18%;
@@ -304,15 +304,28 @@ float:right;
 	background: url(../img/leaf.gif) no-repeat 16px 8px;
 }
 .proc-bar {
+    background: none repeat scroll 0 0 #d5c3e5;
 	display: block;
-	width: 0;
+    float: left;
 	height: 13px;
-	margin-top: 12px;
+	margin-top: 5px;
 	background: #D5C3E5;
 }
 .bar_warp {
 	float: left;
-	width: 42%;
+	width: 78%;
+}
+.GantBtn {
+    background: none repeat scroll 0 0 #ed8925;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    float: left;
+    height: 20px;
+    line-height: 20px;
+    margin: 8px 5px 0 0;
+    padding: 0 4px;
+    width: 30px;
 }
 .pro_i {
 	width: auto;
@@ -334,7 +347,78 @@ float:right;
 	background-position: -18px -241px;
 	margin-left: 5px;
 }
-/*分页*/
+#gantDlg {
+    width: 1580px;
+}
+#gantDlg .tree_content {
+    background: url("../img/bg.jpg") repeat scroll left top rgba(0, 0, 0, 0);
+}
+#gantDlg .tr_tit ul {
+    height: 32px;
+    position: relative;
+}
+#gantDlg .t1, #gantDlg .t2, #gantDlg .t3, #gantDlg .t4, #gantDlg .t5, #gantDlg .t6, #gantDlg .t7 {
+    position: absolute;
+}
+#gantDlg .t1 {
+    left: 0;
+    top: 0;
+}
+#gantDlg .t2 {
+    left: 240px;
+    top: 0;
+}
+#gantDlg .t3 {
+    left: 480px;
+    top: 0;
+}
+#gantDlg .t4 {
+    left: 720px;
+    top: 0;
+}
+#gantDlg .t5 {
+    left: 960px;
+    top: 0;
+}
+#gantDlg .t6 {
+    left: 1200px;
+    top: 0;
+}
+#gantDlg .t7 {
+    left: 1440px;
+    top: 0;
+}
+#gantDlg .col_1 {
+    width: 99%;
+}
+#gantDlg .zk {
+    float: left;
+    height: 35px;
+}
+#gantDlg .bar_warp {
+    position: relative;
+    width: 20%;
+}
+#gantDlg .bar_warp1 {
+    position: relative;
+    width: 100%;
+}
+#gantDlg .proc-bar {
+    height: 20px;
+    margin-top: 8px;
+}
+#gantDlg .bar_warp1 .proc-bar {
+    background: none repeat scroll 0 0 #74c478;
+}
+#gantDlg .pro-name {
+    font-style: normal;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+#gantDlg .child_ul li {
+    border-bottom: medium none;
+}
 .pager {
 	padding-top: 17px;
 	height: 40px;

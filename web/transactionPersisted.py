@@ -266,26 +266,29 @@ class DbPersisted:
         # 指纹数据查询
 
         # 查询指纹记录条数
-        def query_finger_count(date_time, ip_encode, app_encode):
+        def query_finger_count(date_time, ip_encode, app_encode, low_times):
 
-            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, 0, 0, None)
+            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, 0, 0, None, low_times)
             self.get_log().debug(select_count_sql)
 
             return db.query(select_count_sql).getresult()[0][0]
 
         # 分页查询指纹数据
-        def query_finger_data_page(date_time, ip_encode, app_encode, offset, limit, order_durable= True):
-            select_finger_data_sql = "select date_time, finger_print, url, times, durable_time_avg, ip_encode, app_encode, create_time, '' as async from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable)
+        def query_finger_data_page(date_time, ip_encode, app_encode, offset, limit, order_durable= True, low_times=0):
+            select_finger_data_sql = "select date_time, finger_print, url, times, durable_time_avg, ip_encode, app_encode, create_time, '' as async from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable, low_times)
             self.get_log().debug(select_finger_data_sql)
 
             return trident_show_list(db.query(select_finger_data_sql))
 
         # 格式化指纹数据查询条件
-        def _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable):
+        def _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
             start_time = datetime.datetime.fromtimestamp(self.format_date(date_time, True)).strftime("%Y-%m-%d")
             end_time = datetime.datetime.fromtimestamp(self.format_date(date_time, False)).strftime("%Y-%m-%d")
 
             where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, start_time, end_time)
+            if low_times > 0:
+                where_str +=" and durable_time_avg >= %s " % low_times
+
             if order_durable is not None:
                 where_str += " order by durable_time_avg desc " if order_durable else " order by create_time desc "
 
@@ -293,7 +296,7 @@ class DbPersisted:
             return where_str
 
         # 查询某个指纹下某一层的所有函数信息
-        def query_transaction_data_group(layer_no, parent_order_no, finger_print, date_time):
+        def query_transaction_data_group(layer_no, parent_order_no, finger_print, date_time, low_times):
             # 格式化返回数据
             def transaction_data_list(query_result):
                 retList = []
@@ -302,7 +305,7 @@ class DbPersisted:
                 for row in rows:
                     item = {}
                     item['ncount'] = row[0]
-                    item['elapse_bar'] = (row[1] * 100) / BAR_MAX_TIME if row[1] < BAR_MAX_TIME else 100
+                    item['elapse_bar'] = (row[1] * 100) / BAR_MAX_TIME if row[1] < BAR_MAX_TIME else 99
                     item['elapse'] = row[1] if row[1] > 0  else " < 1 "
                     item['order_no'] = row[2]
                     item['async'] = row[3]
@@ -328,8 +331,8 @@ class DbPersisted:
                                     " min(url) as url, " \
                                     " min(layer_no) as layer_no," \
                                     " min(create_time) as create_time " \
-                                    " from trident_audit where layer_no=%s and parent_order_nos='%s' and finger_print='%s' and create_time >= '%s' and create_time < '%s' group by order_no" \
-                                ") as tp order by order_no" % (layer_no, parent_order_no, finger_print, start_time, end_time)
+                                    " from trident_audit where layer_no=%s and parent_order_nos='%s' and finger_print='%s' and create_time >= '%s' and create_time < '%s' and durable_time >=%s group by order_no" \
+                                ") as tp order by order_no" % (layer_no, parent_order_no, finger_print, start_time, end_time, low_times)
 
             self.get_log().debug(query_data_sql)
 
@@ -338,9 +341,12 @@ class DbPersisted:
         # ##############################################################################################################
         # 实时数据查询
         # 格式化数据查询条件
-        def _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable):
+        def _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
 
             where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S"))
+            if low_times > 0:
+                where_str += " and durable_time >=%s" % low_times
+
             if order_durable is not None:
                 where_str += " order by durable_time desc " if order_durable else " order by create_time desc "
 
@@ -348,21 +354,21 @@ class DbPersisted:
             return where_str
 
         # 查询数据记录数
-        def query_real_data_count(start_time, end_time, ip_encode, app_encode):
-            select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None)
+        def query_real_data_count(start_time, end_time, ip_encode, app_encode, low_times):
+            select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None, low_times)
             self.get_log().debug(select_real_count_sql)
 
             return db.query(select_real_count_sql).getresult()[0][0]
 
         # 分页查询实时数据
-        def query_real_data_page(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable):
-            select_real_data_sql = "select begin_time as date_time, audit_id as finger_print, url, 1 as times, (end_time - begin_time) as elapse, ip_encode, app_encode, create_time, async from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable)
+        def query_real_data_page(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
+            select_real_data_sql = "select begin_time as date_time, audit_id as finger_print, url, 1 as times, (end_time - begin_time) as elapse, ip_encode, app_encode, create_time, async from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times)
             self.get_log().debug(select_real_data_sql)
 
             return trident_show_list(db.query(select_real_data_sql))
 
         # 子级别数据
-        def query_transaction_real_data(parent_audit_id):
+        def query_transaction_real_data(parent_audit_id, low_times):
             # 格式化返回数据
             def transaction_real_data_list(query_result):
                 retList = []
@@ -380,24 +386,41 @@ class DbPersisted:
                     item['url'] = row[6]
                     item['layer_no'] = row[7]
                     item['create_time'] = row[8]
+                    item['begin_time'] = row[9]
+                    item['end_time'] = row[10]
                     retList.append(item)
                 return retList
 
             query_data_sql = "select audit_id, " \
-                                    " (end_time - begin_time) as avg_t, " \
+                                    " durable_time as avg_t, " \
                                     " order_no, " \
                                     " async, " \
                                     " attachments, " \
                                     " parent_order_nos,	" \
                                     " url, " \
                                     " layer_no," \
-                                    " create_time " \
-                                    " from trident_audit where parent_audit_id = %s" % (parent_audit_id)
+                                    " create_time, " \
+                                    " begin_time, " \
+                                    " end_time " \
+                                    " from trident_audit where parent_audit_id = %s and durable_time >= %s order by begin_time asc " % (parent_audit_id, low_times)
 
             self.get_log().debug(query_data_sql)
 
             return transaction_real_data_list(db.query(query_data_sql))
 
+        # 某个节点详细数据
+        def query_transaction_real_data_by_id(audit_id):
+
+            query_data_by_id = "select begin_time, end_time, durable_time, url from trident_audit where audit_id=%s" % audit_id
+            self.get_log().debug(query_data_by_id)
+            result = {}
+            rows = db.query(query_data_by_id).getresult()
+            result['begin_time'] = rows[0][0]
+            result['end_time'] = rows[0][1]
+            result['durable_time'] = rows[0][2]
+            result['url'] = rows[0][3]
+
+            return result
         # ##############################################################################################################
         # 格式化返回结果集合
         def trident_show_list(query_result):
@@ -410,8 +433,8 @@ class DbPersisted:
                 item['finger_print'] = row[1]
                 item['url'] = row[2]
                 item['times'] = row[3]
-                item['elapse'] = row[4]
-                item['elapse_bar'] = (row[4] * 100) / BAR_MAX_TIME if row[4] < BAR_MAX_TIME else 100
+                item['elapse'] = row[4] if row[4] > 0  else " < 1 "
+                item['elapse_bar'] = (row[4] * 100) / BAR_MAX_TIME if row[4] < BAR_MAX_TIME else 99
                 item['ip_encode'] = row[5]
                 item['app_encode'] = row[6]
                 item['create_time'] = row[7]
@@ -467,7 +490,8 @@ class DbPersisted:
                'query_app':get_apps,
                'query_real_data_count':query_real_data_count,
                'query_real_data_page':query_real_data_page,
-               'query_transaction_real_data':query_transaction_real_data
+               'query_transaction_real_data':query_transaction_real_data,
+               'query_transaction_real_data_by_id':query_transaction_real_data_by_id
         }
 
         return ops[op_mode]

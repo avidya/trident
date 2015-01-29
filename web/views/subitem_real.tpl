@@ -5,7 +5,7 @@
         <div class="col_3 col_item">{{item['attachments']}}</div>
         <div class="col_4 col_item"></div>
         <div class="col_5 col_item">{{item['create_time']}}</div>
-        <div class="col_6 col_item" style="background:#fff;"><div class="bar_warp"><span class="proc-bar" style="width:{{item['elapse_bar']}}%;"></span></div><i class="pro_i">{{item['elapse']}}</i></div>
+        <div class="col_6 col_item" style="background:#fff;"><div class="bar_warp"><span class="proc-bar" style="width:{{item['elapse_bar']}}%;"><a class="GantBtn" title="点击查看时序" href="javascript:;">gantt</a></span></div><i class="pro_i">{{item['elapse']}}</i></div>
     </li>
 </ul>
 %end
