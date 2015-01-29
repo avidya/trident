@@ -90,3 +90,80 @@ CREATE TABLE trident_audit_app
 	audit_app_encode character varying(40) NOT NULL,
 	CONSTRAINT pk_trident_audit_app PRIMARY KEY (audit_app_encode)
 );
+
+DROP TABLE IF EXISTS trident_heartbeat_audit
+CREATE TABLE trident_heartbeat_audit
+(
+  audit_id serial NOT NULL,
+  info_time_stamp bigint NOT NULL, -- 消息采集时间， 精确到秒
+  info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
+  info_name character varying (30) NOT NULL,
+  info_value bigint NOT NULL, --记录项值
+  info_second_value_name character varying(30), --第二项值名称
+  info_second_value bigint, --第二项值
+  ip character varying(100) NOT NULL,
+  app character varying(100) NOT NULL,
+  ip_encode character varying(40) NOT NULL,
+  app_encode character varying(40) NOT NULL,
+  remark character varying(100),
+  create_time timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT pk_trident_heartbeat_audit PRIMARY KEY (audit_id)
+);
+CREATE INDEX i_heartbeat_audit_ip_app_encode
+   ON trident_heartbeat_audit
+   USING btree
+   (ip_encode, app_encode);
+
+
+
+DROP TABLE IF EXISTS trident_heartbeat_audit_hour
+CREATE TABLE trident_heartbeat_audit_hour
+(
+  audit_id serial NOT NULL,
+  info_time_stamp bigint NOT NULL, -- 消息采集时间, 精确到分钟
+  info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
+  info_name character varying (30) NOT NULL,
+  info_value bigint NOT NULL, --记录项值
+  info_second_value_name character varying(30), --第二项值名称
+  info_second_value bigint, --第二项值
+  ip character varying(100) NOT NULL,
+  app character varying(100) NOT NULL,
+  ip_encode character varying(40) NOT NULL,
+  app_encode character varying(40) NOT NULL,
+  times integer NOT NULL DEFAULT 1, --记录的次数
+  remark character varying(100),
+  create_time timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT pk_trident_heartbeat_hour_audit PRIMARY KEY (audit_id)
+);
+
+CREATE INDEX i_trident_heartbeat_audit_hour_ip_app_encode
+   ON trident_heartbeat_audit_hour
+   USING btree
+   (ip_encode, app_encode);
+
+
+
+DROP TABLE IF EXISTS trident_heartbeat_audit_day
+CREATE TABLE trident_heartbeat_audit_day
+(
+  audit_id serial NOT NULL,
+  info_time_stamp bigint NOT NULL, -- 消息采集时间，精确到小时
+  info_type smallint NOT NULL, -- YONGC， OLDGC， HEAP， NOHEAP， THREAD
+  info_name character varying (30) NOT NULL,
+  info_value bigint NOT NULL, --记录项值
+  info_second_value_name character varying(30), --第二项值名称
+  info_second_value bigint, --第二项值
+  ip character varying(100) NOT NULL,
+  app character varying(100) NOT NULL,
+  ip_encode character varying(40) NOT NULL,
+  app_encode character varying(40) NOT NULL,
+  times integer NOT NULL DEFAULT 1, --记录的次数
+  remark character varying(100),
+  create_time timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT pk_trident_heartbeat_day_audit PRIMARY KEY (audit_id)
+);
+CREATE INDEX i_trident_heartbeat_audit_day_ip_app_encode
+   ON trident_heartbeat_audit_day
+   USING btree
+   (ip_encode, app_encode);
+
