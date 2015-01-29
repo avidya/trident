@@ -433,7 +433,7 @@ class DbPersisted:
                 item['finger_print'] = row[1]
                 item['url'] = row[2]
                 item['times'] = row[3]
-                item['elapse'] = row[4]
+                item['elapse'] = row[4] if row[4] > 0  else " < 1 "
                 item['elapse_bar'] = (row[4] * 100) / BAR_MAX_TIME if row[4] < BAR_MAX_TIME else 99
                 item['ip_encode'] = row[5]
                 item['app_encode'] = row[6]
