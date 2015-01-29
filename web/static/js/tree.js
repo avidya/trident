@@ -152,6 +152,28 @@ define(function(require, exports, module) {
 					dateFmt : 'yyyy-MM-dd HH:mm:ss'
 				});
 			});
+			//查看调用时序
+			$('body').delegate('.GantBtn', 'click', function() {
+				var me = $(this);
+				var dataId=me.parent().parent().parent().parent().attr('data-id');
+				var low_times = $("#low_times").val();
+				//console.log(dataId);
+				$.get($("#get_gannt_url").val(), {
+					parent_audit_id:dataId,
+					low_times:low_times
+				}, function(html) {
+					$.dialog({
+						title : '调用时序',
+						lock : true,
+						content : html,
+						cancel : true,
+						width : 1024,
+						height :'auto',
+						ok : function() {
+						}
+					});
+				});
+			});
 		},
 
 		get_url: function(base_url, same_host, same_order_type, same_page){

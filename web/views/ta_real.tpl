@@ -85,6 +85,7 @@
                             <li class="h-32 col_6 sortCol" order_type="1"  title="按消耗时间倒排"><span>avg-elapse(ms)</span><i class="d_icon"></i></li>
                         </ul>
                     </div>
+					<input type="hidden" id="get_gannt_url" value="/gantt"/>
     %for item in viewmodel["rows"]:
                     <ul class="tree_content clearfix ul_bg">
                         <li data-id="{{item['finger_print']}}" layerno="0" parentordernos="0" class="clearfix" node-index="0">
@@ -92,7 +93,7 @@
                             <div class="col_3 col_item" title="{{item['finger_print']}}">&nbsp;</div>
                             <div class="col_4 col_item">{{item['async']}}</div>
                             <div class="col_5 col_item">{{item['create_time']}}</div>
-                            <div class="col_6 col_item"><div class="bar_warp"><span class="proc-bar" style="width:{{item['elapse_bar']}}%;"></span></div><i class="pro_i">{{item['elapse']}}</i></div>
+                            <div class="col_6 col_item"><div class="bar_warp"><span class="proc-bar" style="width:{{item['elapse_bar']}}%;"><a class="GantBtn" title="点击查看时序" href="javascript:;">gantt</a></span></div><i class="pro_i">{{item['elapse']}}</i></div>
                         </li>
                     </ul>
     %end

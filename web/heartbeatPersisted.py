@@ -97,7 +97,7 @@ import pg
 import json
 import logging
 import logging.config
-import configCur
+from Config import *
 import hashlib
 import datetime
 import time
@@ -200,7 +200,7 @@ class HeartBeatPgPersisted:
 
         # to connect db
         try:
-            db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+            db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
         except Exception, e:
             # print e.args[0]
             self.get_log().error("to connect db failed, ret=%s" % e.args[0])
@@ -334,7 +334,7 @@ class HeartBeatPgPersisted:
             # 到分
             return query_data(end_time, ip_encode, app_encode, info_type, unit_hour)
 
-        db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+        db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 
         ops = {'minute': query_minute, 'hour':query_hour, 'day':query_day}
 
@@ -343,7 +343,7 @@ class HeartBeatPgPersisted:
 # main
 if __name__ == '__main__':
 
-    logging.config.fileConfig(configCur.LOG_CONFIG)
+    logging.config.fileConfig(LOG_CONFIG)
     dbPersisted = HeartBeatPgPersisted()
     # insert test
     json_str ='{' \

@@ -8,7 +8,7 @@ from pyx import *
 import hashlib
 import logging
 import logging.config
-import configCur
+from Config import *
 import os
 
 
@@ -39,8 +39,8 @@ class Bargraphs:
 
             _file_name = "%s.png" % hash_file_name.hexdigest()
 
-        _full_file_name = "%s/%s.png" % (configCur.BAR_PATH, _file_name)
-        _full_file_name_data = "%s/%s.txt" % (configCur.BAR_PATH, _file_name)
+        _full_file_name = "%s/%s.png" % (BAR_PATH, _file_name)
+        _full_file_name_data = "%s/%s.txt" % (BAR_PATH, _file_name)
         self.get_log().debug("临时文件名：%s" % _full_file_name)
         self.get_log().debug("临时文件名：%s" % _full_file_name_data)
 
@@ -71,7 +71,7 @@ class Bargraphs:
 # main
 if __name__ == '__main__':
 
-    logging.config.fileConfig(configCur.LOG_CONFIG)
+    logging.config.fileConfig(LOG_CONFIG)
 
     __data_dict = {
         "y" : [1.0, 3.0, 8.0, 13.0, 18.0, 21.0, 23.0, 23.0, 19.0, 13.0, 6.0, 2.0, 1.0, 3.0, 8.0, 13.0, 18.0, 21.0, 23.0, 23.0, 19.0, 13.0, 6.0, 2.0],

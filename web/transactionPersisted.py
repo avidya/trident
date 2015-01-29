@@ -1,4 +1,4 @@
-# !/usr/bin/python
+#!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
 # Filename:transactionPersisted.py
@@ -23,109 +23,13 @@
 #
 # 指纹的计算方式为函数调用链上的各个函数依次处理，再加上对应的应用，以及该应用所在的app
 
-# 将监控消息内容存入关系数据库中，存放的表结构如下：
-#
-# --drop table trident_audit;
-# --消息记录详情表
-# CREATE TABLE trident_audit
-# (
-#   audit_id serial NOT NULL,
-#   root_audit_id integer NOT NULL,                 --根节点id
-#   parent_audit_id integer NOT NULL,               --父节点id，0表示顶层记录
-#   hostname character varying(50) NOT NULL,        --主机名
-#   ip character varying(100) NOT NULL,             --ip地址
-#   app character varying(100) NOT NULL,            --应用名
-#   ip_encode character varying(40) NOT NULL,       --ip地址 md5
-#   app_encode character varying(40) NOT NULL,      --应用名 md5
-#   async character varying(20) NOT NULL,           --异步或同步调用
-#   url character varying(800) NOT NULL,            --函数调用的方法
-#   attachments character varying(800),             --函数调用方法时传送的参数
-#   begin_time bigint NOT NULL,                     --函数调用开始时间
-#   end_time bigint NOT NULL,                       --函数调用结束时间
-#   durable_time integer NOT NULL,                  --函数调用所花时长
-#   success character varying(6) NOT NULL,          --函数调用成功与否
-#   layer_no  integer NOT NULL,                     --在函数调用链上的层次编号
-#   order_no  integer NOT NULL,                     --在同一层次上的序号
-#   parent_order_nos character varying(500)  NOT NULL,   --上一层次的order，格式为 上层-上层-上层......
-#   finger_print character varying(64) NOT NULL DEFAULT ''::character varying,    --改函数调用所在的指纹
-#   create_time timestamp with time zone NOT NULL DEFAULT now(),    --信息采集的时间
-#   CONSTRAINT pk_trident_audit PRIMARY KEY (audit_id)
-# );
-#
-# CREATE INDEX i_trident_audit_root_audit_id
-#   ON trident_audit
-#   USING btree
-#   (root_audit_id);
-#
-# CREATE INDEX i_trident_audit_finger_print_layer_order
-#   ON trident_audit
-#   USING btree
-#   (finger_print, layer_no, order_no);
-#
-#  CREATE INDEX i_trident_audit_ip_encode
-#    ON trident_audit
-#    USING btree
-#    (ip_encode);
-#
-#  CREATE INDEX i_trident_audit_app_encode
-#    ON trident_audit
-#    USING btree
-#    (app_encode);
-
-# -- drop table trident_audit_finger
-# CREATE TABLE trident_audit_finger
-# (
-#     date_time integer NOT NULL,                   --函数调用所在的日期
-#     finger_print character varying(64) NOT NULL,  --函数调用的指纹
-#     url character varying(800) NOT NULL,          --函数调用名称
-#     times integer NOT NULL,                       --记录的次数
-#     durable_time_avg integer NOT NULL,            --记录的平均调用时间
-#     ip_encode character varying(40) NOT NULL,     --ip地址 md5
-#     app_encode character varying(40) NOT NULL,    --应用名 md5
-#     create_time timestamp with time zone NOT NULL DEFAULT now(),    --信息采集的时间
-#     CONSTRAINT pk_trident_audit_finger_date_time_finger_print PRIMARY KEY (date_time, finger_print)
-# );
-#  CREATE INDEX i_trident_audit_finger_ip_encode
-#    ON trident_audit_finger
-#    USING btree
-#    (ip_encode);
-#
-#  CREATE INDEX i_trident_audit_finger_app_encode
-#    ON trident_audit_finger
-#    USING btree
-#    (app_encode);
-
-
-# -- 指纹记录表， 每天每个指纹一条
-# --drop table trident_audit_ip;
-# --产生消息的主机ip和app对应关系表
-# CREATE TABLE trident_audit_ip
-# (
-# 	audit_ip character varying(16) NOT NULL,
-# 	audit_ip_encode character varying(40) NOT NULL,
-#   audit_app_encode character varying(40) NOT NULL,
-#   host_name character varying(50),
-# 	CONSTRAINT pk_trident_audit_ip PRIMARY KEY (audit_ip_encode, audit_app_encode)
-# );
-#
-# --drop table trident_audit_app;
-# --产生消息的app表
-# CREATE TABLE trident_audit_app
-# (
-# 	audit_app character varying(100) NOT NULL,
-# 	audit_app_encode character varying(40) NOT NULL,
-# 	CONSTRAINT pk_trident_audit_app PRIMARY KEY (audit_app_encode)
-# );
-
-
-
 __author__ = 'yuyichuan'
 
 import pg
 import json
 import logging
 import logging.config
-import configCur
+from Config import *
 import hashlib
 import datetime
 import time
@@ -180,7 +84,7 @@ class DbPersisted:
 
         data_json = json.loads(data_str, "utf-8")
         try:
-            db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+            db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
         except Exception, e:
             # print e.args[0]
             self.get_log().error("to connect db failed, ret=%s" % e.args[0])
@@ -356,7 +260,7 @@ class DbPersisted:
     # db 查询操作
     def query_operation(self, op_mode='query_data_count'):
 
-        db = pg.connect(configCur.DB_NAME, configCur.DB_HOST, configCur.DB_PORT, None, None, configCur.DB_USER, configCur.DB_PWD)
+        db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 
         # ##############################################################################################################
         # 指纹数据查询
@@ -401,7 +305,7 @@ class DbPersisted:
                 for row in rows:
                     item = {}
                     item['ncount'] = row[0]
-                    item['elapse_bar'] = (row[1] * 100) / configCur.BAR_MAX_TIME if row[1] < configCur.BAR_MAX_TIME else 100
+                    item['elapse_bar'] = (row[1] * 100) / BAR_MAX_TIME if row[1] < BAR_MAX_TIME else 99
                     item['elapse'] = row[1] if row[1] > 0  else " < 1 "
                     item['order_no'] = row[2]
                     item['async'] = row[3]
@@ -473,7 +377,7 @@ class DbPersisted:
                 for row in rows:
                     item = {}
                     item['audit_id'] = row[0]
-                    item['elapse_bar'] = (row[1] * 100) / configCur.BAR_MAX_TIME if row[1] < configCur.BAR_MAX_TIME else 100
+                    item['elapse_bar'] = (row[1] * 100) / BAR_MAX_TIME if row[1] < BAR_MAX_TIME else 100
                     item['elapse'] = row[1] if row[1] > 0  else " < 1 "
                     item['order_no'] = row[2]
                     item['async'] = row[3]
@@ -482,6 +386,8 @@ class DbPersisted:
                     item['url'] = row[6]
                     item['layer_no'] = row[7]
                     item['create_time'] = row[8]
+                    item['begin_time'] = row[9]
+                    item['end_time'] = row[10]
                     retList.append(item)
                 return retList
 
@@ -493,13 +399,28 @@ class DbPersisted:
                                     " parent_order_nos,	" \
                                     " url, " \
                                     " layer_no," \
-                                    " create_time " \
-                                    " from trident_audit where parent_audit_id = %s and durable_time >= %s " % (parent_audit_id, low_times)
+                                    " create_time, " \
+                                    " begin_time, " \
+                                    " end_time " \
+                                    " from trident_audit where parent_audit_id = %s and durable_time >= %s order by begin_time asc " % (parent_audit_id, low_times)
 
             self.get_log().debug(query_data_sql)
 
             return transaction_real_data_list(db.query(query_data_sql))
 
+        # 某个节点详细数据
+        def query_transaction_real_data_by_id(audit_id):
+
+            query_data_by_id = "select begin_time, end_time, durable_time, url from trident_audit where audit_id=%s" % audit_id
+            self.get_log().debug(query_data_by_id)
+            result = {}
+            rows = db.query(query_data_by_id).getresult()
+            result['begin_time'] = rows[0][0]
+            result['end_time'] = rows[0][1]
+            result['durable_time'] = rows[0][2]
+            result['url'] = rows[0][3]
+
+            return result
         # ##############################################################################################################
         # 格式化返回结果集合
         def trident_show_list(query_result):
@@ -513,7 +434,7 @@ class DbPersisted:
                 item['url'] = row[2]
                 item['times'] = row[3]
                 item['elapse'] = row[4]
-                item['elapse_bar'] = (row[4] * 100) / configCur.BAR_MAX_TIME if row[4] < configCur.BAR_MAX_TIME else 100
+                item['elapse_bar'] = (row[4] * 100) / BAR_MAX_TIME if row[4] < BAR_MAX_TIME else 99
                 item['ip_encode'] = row[5]
                 item['app_encode'] = row[6]
                 item['create_time'] = row[7]
@@ -569,7 +490,8 @@ class DbPersisted:
                'query_app':get_apps,
                'query_real_data_count':query_real_data_count,
                'query_real_data_page':query_real_data_page,
-               'query_transaction_real_data':query_transaction_real_data
+               'query_transaction_real_data':query_transaction_real_data,
+               'query_transaction_real_data_by_id':query_transaction_real_data_by_id
         }
 
         return ops[op_mode]
@@ -577,7 +499,7 @@ class DbPersisted:
 # main
 if __name__ == '__main__':
 
-    logging.config.fileConfig(configCur.LOG_CONFIG)
+    logging.config.fileConfig(LOG_CONFIG)
     dbPersisted = DbPersisted()
     # insert test
     # json_str1 = '{"attachments":[],"children":[{"attachments":[],"elapse":301,"status":"S","url":"info.kozz.web.Netiquette.netiquette"}],"elapse":328,"status":"S","url":"/home/netiquette.do"}'

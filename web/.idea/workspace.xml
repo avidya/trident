@@ -24,97 +24,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="configCur.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/configCur.py">
+      <file leaf-file-name="infoBargraphs.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/infoBargraphs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="133" max-vertical-offset="765">
-              <caret line="30" column="16" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="web.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/web.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.9287975" vertical-offset="1888" max-vertical-offset="2880">
-              <caret line="208" column="9" selection-start-line="208" selection-start-column="9" selection-end-line="208" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.64398736" vertical-offset="688" max-vertical-offset="1320">
+              <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
               <folding>
-                <element signature="e#89#133#0" expanded="true" />
-                <element signature="e#731#1967#0" expanded="false" />
-                <element signature="e#2839#3303#0" expanded="false" />
+                <element signature="e#71#88#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="transactionPersisted.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/transactionPersisted.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4721" max-vertical-offset="5700">
-              <caret line="570" column="25" selection-start-line="570" selection-start-column="25" selection-end-line="570" selection-end-column="25" />
-              <folding>
-                <element signature="e#3935#3944#0" expanded="true" />
-                <element signature="e#5107#14941#0" expanded="false" />
-                <element signature="e#7484#8030#0" expanded="false" />
-                <element signature="e#24281#24901#0" expanded="false" />
-                <element signature="e#24956#25419#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="logging.conf" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/logging.conf">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.4" vertical-offset="0" max-vertical-offset="510">
-              <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ta_real.tpl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/ta_real.tpl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.625" vertical-offset="270" max-vertical-offset="1875">
-              <caret line="35" column="165" selection-start-line="35" selection-start-column="165" selection-end-line="35" selection-end-column="165" />
-              <folding>
-                <element signature="n#style#0;n#div#1;n#li#1;n#ul#0;n#div#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tree.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/static/js/tree.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1001" max-vertical-offset="3780">
-              <caret line="98" column="48" selection-start-line="98" selection-start-column="39" selection-end-line="98" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ta.tpl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/ta.tpl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.5" vertical-offset="345" max-vertical-offset="1815">
-              <caret line="35" column="165" selection-start-line="35" selection-start-column="139" selection-end-line="35" selection-end-column="165" />
-              <folding>
-                <element signature="n#style#0;n#font#0;n#strong#0;n#li#0;n#ul#0;n#div#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#div#0;n#div#4;n#li#0;n#ul#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="heartbeatPersisted.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/heartbeatPersisted.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2292" max-vertical-offset="5865">
-              <caret line="180" column="22" selection-start-line="180" selection-start-column="22" selection-end-line="180" selection-end-column="79" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -124,7 +41,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/views/subitem.tpl" />
         <option value="$PROJECT_DIR$/httpRequestProcess.py" />
         <option value="$PROJECT_DIR$/logging.conf" />
         <option value="$PROJECT_DIR$/web_n.py" />
@@ -135,21 +51,25 @@
         <option value="$PROJECT_DIR$/views/content.tpl" />
         <option value="$PROJECT_DIR$/test/min.dat" />
         <option value="$PROJECT_DIR$/test/test_bar_graph.py" />
-        <option value="$PROJECT_DIR$/heartbeatPersisted.py" />
-        <option value="$PROJECT_DIR$/infoBargraphs.py" />
         <option value="$PROJECT_DIR$/test/pychart_test.py" />
         <option value="$PROJECT_DIR$/static/js/column.js" />
         <option value="$PROJECT_DIR$/static/js/config.js" />
-        <option value="$PROJECT_DIR$/views/subitem_real.tpl" />
         <option value="$PROJECT_DIR$/trident.log" />
         <option value="$PROJECT_DIR$/static/css/nall.css" />
-        <option value="$PROJECT_DIR$/static/css/all.css" />
         <option value="$PROJECT_DIR$/configCur.py" />
         <option value="$PROJECT_DIR$/views/ta.tpl" />
-        <option value="$PROJECT_DIR$/views/ta_real.tpl" />
-        <option value="$PROJECT_DIR$/transactionPersisted.py" />
-        <option value="$PROJECT_DIR$/static/js/tree.js" />
         <option value="$PROJECT_DIR$/web.py" />
+        <option value="$PROJECT_DIR$/infoBargraphs.py" />
+        <option value="$PROJECT_DIR$/heartbeatPersisted.py" />
+        <option value="$PROJECT_DIR$/static/css/n_all.css" />
+        <option value="$PROJECT_DIR$/views/subitem.tpl" />
+        <option value="$PROJECT_DIR$/views/subitem_real.tpl" />
+        <option value="$PROJECT_DIR$/Web.py" />
+        <option value="$PROJECT_DIR$/views/gantt.tpl" />
+        <option value="$PROJECT_DIR$/transactionPersisted.py" />
+        <option value="$PROJECT_DIR$/views/ta_real.tpl" />
+        <option value="$PROJECT_DIR$/static/css/all.css" />
+        <option value="$PROJECT_DIR$/static/js/tree.js" />
       </list>
     </option>
   </component>
@@ -226,8 +146,22 @@
               <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="img" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -244,6 +178,10 @@
               <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -251,7 +189,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/bartest.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Web.py" />
     <property name="recentsLimit" value="5" />
     <property name="FullScreen" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
@@ -270,8 +208,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.web">
-    <configuration default="false" name="web" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.Web">
+    <configuration default="false" name="Web" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -283,7 +221,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="web" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/web.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Web.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
@@ -517,7 +455,7 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Python.info_bargraphs" />
-      <item index="1" class="java.lang.String" itemvalue="Python.web" />
+      <item index="1" class="java.lang.String" itemvalue="Python.Web" />
       <item index="2" class="java.lang.String" itemvalue="Python.queue_receive" />
       <item index="3" class="java.lang.String" itemvalue="Python.heartbeatPersisted" />
       <item index="4" class="java.lang.String" itemvalue="Python.test_bar_graph" />
@@ -525,7 +463,7 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.web" />
+        <item index="0" class="java.lang.String" itemvalue="Python.Web" />
         <item index="1" class="java.lang.String" itemvalue="Python.pychart_test" />
         <item index="2" class="java.lang.String" itemvalue="Python.heartbeatPersisted" />
         <item index="3" class="java.lang.String" itemvalue="Python.test_bar_graph" />
@@ -548,23 +486,23 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988626" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988626" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31851086" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885212" sideWeight="0.5002633" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.08162191" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31851086" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.12954186" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988626" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24405378" sideWeight="0.4997367" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885212" sideWeight="0.5002633" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988626" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -596,31 +534,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="136" />
+      <option name="time" value="145" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/configCur.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="765">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="289" max-vertical-offset="3000">
-          <caret line="160" column="24" selection-start-line="160" selection-start-column="16" selection-end-line="160" selection-end-column="24" />
-          <folding>
-            <element signature="e#89#133#0" expanded="true" />
-            <element signature="e#731#1967#0" expanded="false" />
-            <element signature="e#2839#3303#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/ta_real.tpl">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="630" max-vertical-offset="1875">
@@ -639,20 +557,6 @@
             <element signature="n#style#0;n#font#0;n#strong#0;n#li#0;n#ul#0;n#div#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#0;n#div#0;n#div#4;n#li#0;n#ul#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/queueReceive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="435" max-vertical-offset="780">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/configCur.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -774,13 +678,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/infoBargraphs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3185841" vertical-offset="125" max-vertical-offset="1320">
-          <caret line="58" column="30" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/img/btn_bg_repeat-x.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -800,13 +697,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/queueReceive.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="885">
-          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/js/config.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.22881356" vertical-offset="0" max-vertical-offset="590">
@@ -821,46 +711,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/subitem.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.16375546" vertical-offset="0" max-vertical-offset="916">
-          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/subitem_real.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.11462882" vertical-offset="0" max-vertical-offset="916">
-          <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/css/all.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49830508" vertical-offset="3681" max-vertical-offset="6525">
-          <caret line="265" column="13" selection-start-line="265" selection-start-column="13" selection-end-line="265" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/img/add_btn.png">
       <provider selected="true" editor-type-id="images">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/heartbeatPersisted.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2292" max-vertical-offset="5865">
-          <caret line="180" column="22" selection-start-line="180" selection-start-column="22" selection-end-line="180" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/configCur.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="133" max-vertical-offset="765">
-          <caret line="30" column="16" selection-start-line="30" selection-start-column="16" selection-end-line="30" selection-end-column="16" />
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logging.conf">
@@ -871,18 +724,114 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.68599033" vertical-offset="129" max-vertical-offset="750">
+          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/heartbeatPersisted.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="5985">
+          <caret line="66" column="1" selection-start-line="66" selection-start-column="1" selection-end-line="66" selection-end-column="1" />
+          <folding>
+            <element signature="e#3235#3244#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file:///usr/local/lib/python2.7/dist-packages/bottle-0.12.8-py2.7.egg/bottle.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3322785" vertical-offset="25755" max-vertical-offset="56130">
+        <state vertical-scroll-proportion="0.0" vertical-offset="25755" max-vertical-offset="56130">
           <caret line="1731" column="0" selection-start-line="1731" selection-start-column="0" selection-end-line="1731" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/subitem_real.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.375" vertical-offset="0" max-vertical-offset="240">
+          <caret line="7" column="146" selection-start-line="7" selection-start-column="146" selection-end-line="7" selection-end-column="146" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/subitem.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.375" vertical-offset="0" max-vertical-offset="240">
+          <caret line="7" column="83" selection-start-line="7" selection-start-column="83" selection-end-line="7" selection-end-column="83" />
+          <folding>
+            <element signature="n#style#0;n#ul#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#div#0;n#div#4;n#li#0;n#ul#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/gantt.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-17.5" vertical-offset="0" max-vertical-offset="630">
+          <caret line="28" column="100" selection-start-line="28" selection-start-column="100" selection-end-line="28" selection-end-column="100" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#div#0;n#div#0;n#li#0;n#ul#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#li#0;n#ul#0;n#ul#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#div#1;n#div#0;n#li#0;n#ul#0;n#ul#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transactionPersisted.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.035714" vertical-offset="6043" max-vertical-offset="7890">
+          <caret line="416" column="0" selection-start-line="416" selection-start-column="0" selection-end-line="416" selection-end-column="0" />
+          <folding>
+            <element signature="e#454#463#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Web.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3911" max-vertical-offset="4530">
+          <caret line="282" column="0" selection-start-line="282" selection-start-column="0" selection-end-line="282" selection-end-column="0" />
+          <folding>
+            <element signature="e#89#133#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/css/all.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38245034" vertical-offset="4494" max-vertical-offset="7785">
+          <caret line="315" column="13" selection-start-line="315" selection-start-column="13" selection-end-line="315" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/ta_real.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.916667" vertical-offset="1115" max-vertical-offset="1890">
+          <caret line="95" column="78" selection-start-line="95" selection-start-column="78" selection-end-line="95" selection-end-column="78" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#li#1;n#ul#0;n#div#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#div#0;n#div#4;n#li#0;n#ul#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/tree.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15185784" vertical-offset="2006" max-vertical-offset="4110">
+          <caret line="140" column="0" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/ta.tpl">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.5" vertical-offset="345" max-vertical-offset="1815">
-          <caret line="35" column="165" selection-start-line="35" selection-start-column="139" selection-end-line="35" selection-end-column="165" />
+        <state vertical-scroll-proportion="-0.81414473" vertical-offset="975" max-vertical-offset="1815">
+          <caret line="32" column="67" selection-start-line="32" selection-start-column="58" selection-end-line="32" selection-end-column="67" />
           <folding>
             <element signature="n#style#0;n#font#0;n#strong#0;n#li#0;n#ul#0;n#div#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#0;n#div#0;n#div#4;n#li#0;n#ul#0;n#div#1;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -890,46 +839,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/ta_real.tpl">
+    <entry file="file://$PROJECT_DIR$/infoBargraphs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.625" vertical-offset="270" max-vertical-offset="1875">
-          <caret line="35" column="165" selection-start-line="35" selection-start-column="165" selection-end-line="35" selection-end-column="165" />
+        <state vertical-scroll-proportion="0.64398736" vertical-offset="688" max-vertical-offset="1320">
+          <caret line="73" column="30" selection-start-line="73" selection-start-column="30" selection-end-line="73" selection-end-column="30" />
           <folding>
-            <element signature="n#style#0;n#div#1;n#li#1;n#ul#0;n#div#0;n#div#1;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/tree.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1001" max-vertical-offset="3780">
-          <caret line="98" column="48" selection-start-line="98" selection-start-column="39" selection-end-line="98" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transactionPersisted.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4406" max-vertical-offset="5700">
-          <caret line="570" column="25" selection-start-line="570" selection-start-column="25" selection-end-line="570" selection-end-column="25" />
-          <folding>
-            <element signature="e#3935#3944#0" expanded="true" />
-            <element signature="e#5107#14941#0" expanded="false" />
-            <element signature="e#7484#8030#0" expanded="false" />
-            <element signature="e#24281#24901#0" expanded="false" />
-            <element signature="e#24956#25419#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9287975" vertical-offset="1888" max-vertical-offset="2880">
-          <caret line="208" column="9" selection-start-line="208" selection-start-column="9" selection-end-line="208" selection-end-column="9" />
-          <folding>
-            <element signature="e#89#133#0" expanded="true" />
-            <element signature="e#731#1967#0" expanded="false" />
-            <element signature="e#2839#3303#0" expanded="false" />
+            <element signature="e#71#88#0" expanded="true" />
           </folding>
         </state>
       </provider>

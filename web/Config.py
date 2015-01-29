@@ -1,6 +1,6 @@
-# !/usr/bin/python
+#!/usr/bin/python
 # -*- coding: UTF-8 -*-
-# Filename:configCur.py
+# Filename:Config.py
 
 __author__ = 'yuyichuan'
 
@@ -8,16 +8,15 @@ __author__ = 'yuyichuan'
 LOG_CONFIG = 'logging.conf'
 
 # db config
-DB_NAME = 'tcmc_udc_sso'
-DB_HOST = '10.1.18.131'
-DB_PORT = 1933
+DB_NAME = 'stat_monitor'
+DB_HOST = '10.1.121.179'
+DB_PORT = 1949
 DB_USER = 'postgres'
 DB_PWD = '123456'
 
 # stomp config
 STOMP_HOST = '10.1.11.214'
 STOMP_PORT = 61613
-
 # 性能消息队列
 TRANSACTION_DESTINATION = '/queue/call-info'
 
