@@ -75,7 +75,7 @@ public class StatFilter implements Filter {
                 
                 startStatCollectorIfAvailable(storeName);
             }
-        } catch (TridentException e) {
+        } catch (Exception e) {
             this.state = false;
             logger.warn("Failed in initializing StatStore", e);
         }
