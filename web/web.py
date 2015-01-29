@@ -136,30 +136,45 @@ def content():
     result["start_time"] = time_result["s_time"]
     result["end_time"] = time_result["e_time"]
 
-
+    #排序类型
     orderType = request.query.orderType
     if orderType == '0':
         orderType = False
+        result['order_type'] = '0'
     else:
         orderType = True
+        result['order_type'] = '1'
 
+    #时间下限值
+    low_times = request.query.low_times
+    if low_times is None or len(low_times) == 0:
+        low_times = 0
+    else:
+        try:
+            low_times = int(low_times)
+        except:
+            low_times = 0
+
+    result['low_times'] = low_times
 
     if(time_result["time_type"] == '1'): # 查询明细
+        result['timeType'] = '1'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType)
+        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType, low_times)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"])
+        result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], low_times)
 
         result["maxpage"] = result["rowcount"] / configCur.PAGE_SIZE + 1
 
         return template("ta_real", viewmodel = result)
     else:
+        result['timeType'] = '0'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType)
+        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], configCur.PAGE_SIZE, orderType, low_times)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"])
+        result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"], low_times)
 
         result["maxpage"] = result["rowcount"] / configCur.PAGE_SIZE + 1
 
@@ -187,16 +202,27 @@ def getItem():
 
     result = {}
 
+    #时间下限值
+    low_times = request.query.low_times
+    if low_times is None or len(low_times) == 0:
+        low_times = 0
+    else:
+        try:
+            low_times = int(low_times)
+        except:
+            low_times = 0
+
+    result['low_times'] = low_times
     result['finger_print'] = finger_print
     result['node_index'] = nodeIndex
     result['text_indent'] = nodeIndex * 10
     result['b_color'] = configCur.table_colors[nodeIndex%len(configCur.table_colors)]
 
     if timeType == '1':
-        result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print)
+        result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print, low_times)
         return template("subitem_real", viewmodle = result)
     else:
-        result['rows'] = dbPersisted.query_operation("query_transaction_data")(layer_no, parent_order_nos, finger_print, data_time)
+        result['rows'] = dbPersisted.query_operation("query_transaction_data")(layer_no, parent_order_nos, finger_print, data_time, low_times)
         return template("subitem", viewmodle = result)
 
 if __name__ == '__main__':

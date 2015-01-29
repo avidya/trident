@@ -32,8 +32,8 @@
 						<li>
 							<i class="i_title">[应用]:</i>{{viewmodel['app_name']}}
 						</li>
-						<input type="hidden" id="timeType" value="0"/>
 						<li class="clearfix">
+							<div class="li_item"><i class="i_title">[下限值 ms]:</i><input type="text" id="low_times" class="inpt_txt" value="{{viewmodel['low_times']}}"/></div>
 							<div class="li_item timeDiv">
 								<i class="i_title">[查询日期]:</i>
 								<input type="text" class="inpt_txt Wdate" id="createTime" value="{{viewmodel['data_time']}}"/>
@@ -60,17 +60,29 @@
 						</li>
 					</ul>
 				</div>
-                <input type="hidden" id="data_app" value="{{viewmodel['app_en']}}"/>
-			    <input type="hidden" id="data_ip" value="{{viewmodel['ip_en']}}"/>
-                <input type="hidden" id="dispatcher" name="dispatcher" data-reloadUrl="/subitems"/>
+				<!--概览或明细-->
+				<input type="hidden" id="time_type" value="{{viewmodel['timeType']}}"/>
+				<!--页码-->
+				<input type="hidden" id="cur_page" value="{{viewmodel['curpage']}}"/>
+				<!--当前应用名称-->
+                <input type="hidden" id="app_encode" value="{{viewmodel['app_en']}}"/>
+				<!--当前ip地址-->
+			    <input type="hidden" id="ip_encode" value="{{viewmodel['ip_en']}}"/>
+				<!-- 最大页码 -->
+				<input id="maxpage" value="{{viewmodel['maxpage']}}" type="hidden"/>
+				<!--当前排序类型-->
+				<input id="order_type" value="{{viewmodel['order_type']}}" type="hidden"/>
+				<!--明细项获取url-->
+                <input type="hidden" id="dispatcher" name="dispatcher" data-subItemsUrl="/subitems"/>
+
                 <div id="treeMenu">
                     <div width="100%"  class="tr_tit" id="tr_tit">
-                        <ul class="clearfix">
+                        <ul class="clearfix" href_url="/ta?">
                             <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
                             <li class="h-32 col_3">attachments</li>
                             <li class="h-32 col_4" >times</li>
-                            <li class="h-32 col_5 sortCol" data-coltype="0"  title="按产生时间倒排"><span>create time</span><i class="d_icon"></i></li>
-                            <li class="h-32 col_6 sortCol" data-coltype="1"  title="按消耗时间倒排"><span>avg-elapse(ms)</span><i class="d_icon"></i></li>
+                            <li class="h-32 col_5 sortCol" order_type="0"  title="按产生时间倒排"><span>create time</span><i class="d_icon"></i></li>
+                            <li class="h-32 col_6 sortCol" order_type="1"  title="按消耗时间倒排"><span>avg-elapse(ms)</span><i class="d_icon"></i></li>
                         </ul>
                     </div>
     %for item in viewmodel["rows"]:
@@ -86,21 +98,15 @@
     %end
 			    </div>
                 <div class="pager">
-					<div class="scott2">
-						<span>总计：{{viewmodel["rowcount"]}}条&nbsp;&nbsp;&nbsp;</span>
-
-						<a href="?page={{viewmodel['prepage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&data_time={{viewmodel['data_time']}}&timeType=0">上一页</a>
-
+					<div class="scott2" href_url="/ta?">
+						<span>总计：{{viewmodel["rowcount"]}}条&nbsp;{{viewmodel['maxpage']}}页</span>
+						<a page_index="{{viewmodel['prepage']}}" href="javascript:;" class="change_page">上一页</a>
 						<span class="current">{{viewmodel['curpage']}}</span>
-
-						<a href="?page={{viewmodel['afterpage']}}&ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&data_time={{viewmodel['data_time']}}&timeType=0">下一页</a>
-
+						<a page_index="{{viewmodel['afterpage']}}" href="javascript:;" class="change_page">下一页</a>
 						<span>跳转第：</span>
 						<input type="text" id="page" class="pageInput J_Number" maxlength="5">
 						<span>页</span>
 						<input type="button" id="pageSubmit" value="GO" class="go">
-						<input id="maxpage" value="{{viewmodel['maxpage']}}" type="hidden">
-						<input id="urlParams" value="" type="hidden">
 					</div>
 				</div>
 		</div>
