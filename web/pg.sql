@@ -91,7 +91,7 @@ CREATE TABLE trident_audit_app
 	CONSTRAINT pk_trident_audit_app PRIMARY KEY (audit_app_encode)
 );
 
-DROP TABLE IF EXISTS trident_heartbeat_audit
+DROP TABLE IF EXISTS trident_heartbeat_audit;
 CREATE TABLE trident_heartbeat_audit
 (
   audit_id serial NOT NULL,
@@ -116,7 +116,7 @@ CREATE INDEX i_heartbeat_audit_ip_app_encode
 
 
 
-DROP TABLE IF EXISTS trident_heartbeat_audit_hour
+DROP TABLE IF EXISTS trident_heartbeat_audit_hour;
 CREATE TABLE trident_heartbeat_audit_hour
 (
   audit_id serial NOT NULL,
@@ -143,7 +143,7 @@ CREATE INDEX i_trident_heartbeat_audit_hour_ip_app_encode
 
 
 
-DROP TABLE IF EXISTS trident_heartbeat_audit_day
+DROP TABLE IF EXISTS trident_heartbeat_audit_day;
 CREATE TABLE trident_heartbeat_audit_day
 (
   audit_id serial NOT NULL,
