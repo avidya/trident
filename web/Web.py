@@ -252,9 +252,10 @@ def getSubItemsGantt():
         return f_sub_items_result
 
     # 组装表头数据
-    def format_parent_audit(parent_result, parent_time_show):
+    def format_parent_audit(parent_result, org_parent_time_show):
         parent_infos = []
-        time_split = int(parent_time_show/show_cloumns)
+        # 所有时间会占用页面上显示的5列（页面上显示的是约6.3列）
+        time_split = int(parent_time_show/(show_cloumns-2))
         for i in xrange(1,8):
             p_item = {}
             p_item['tr_no'] = i
@@ -282,11 +283,11 @@ def getSubItemsGantt():
     # 父节点记录信息
     parent_audit_item = dbPersisted.query_operation("query_transaction_real_data_by_id")(parent_audit_id)
 
-    parent_time_show = int(parent_audit_item['durable_time'])
+    org_parent_time_show = int(parent_audit_item['durable_time'])
     # 最长时间设定为花费时间的1.25倍
-    parent_time_show = int((parent_time_show + show_cloumns - parent_time_show % show_cloumns) * 5 / 4)
+    parent_time_show = int((org_parent_time_show + show_cloumns - org_parent_time_show % show_cloumns) * 5 / 4)
 
-    result['tr_items'] = format_parent_audit(parent_audit_item, parent_time_show)
+    result['tr_items'] = format_parent_audit(parent_audit_item, org_parent_time_show)
     result['parent_url'] = parent_audit_item['url']
     result['sub_items'] = format_sub_result(dbPersisted.query_operation("query_transaction_real_data")(parent_audit_id, low_times), parent_audit_item, parent_time_show)
 
