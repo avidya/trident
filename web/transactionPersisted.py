@@ -355,10 +355,12 @@ class DbPersisted:
 
         # 查询数据记录数
         def query_real_data_count(start_time, end_time, ip_encode, app_encode, low_times):
-            select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None, low_times)
-            self.get_log().debug(select_real_count_sql)
+            #select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None, low_times)
+            #self.get_log().debug(select_real_count_sql)
 
-            return db.query(select_real_count_sql).getresult()[0][0]
+            # return db.query(select_real_count_sql).getresult()[0][0]
+            # 这里不在去计算有多少页
+            return 999999999
 
         # 分页查询实时数据
         def query_real_data_page(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times):

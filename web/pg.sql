@@ -25,6 +25,10 @@ CREATE TABLE trident_audit
   CONSTRAINT pk_trident_audit PRIMARY KEY (audit_id)
 );
 
+CREATE INDEX idx_trident_audit_durable_time
+  ON trident_audit
+  USING btree
+  (durable_time);
 
 CREATE INDEX i_trident_parent_audit_id
   ON trident_audit
