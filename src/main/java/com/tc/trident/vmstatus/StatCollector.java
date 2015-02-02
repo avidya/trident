@@ -36,7 +36,7 @@ public class StatCollector extends Thread implements Closeable {
     
     private volatile boolean running = true;
     
-    private long interval = 10 * 1000; // 60 seconds
+    private long interval = 60 * 1000; // 60 seconds
     
     public void setStatStore(StatStore statStore) {
     

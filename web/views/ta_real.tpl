@@ -12,7 +12,7 @@
 				<p class="title">TC-Cloud系统监控</p>
 				<p class="mode">
                     <a href="/ta" >响应时间监控</a>
-					<a href="#" class="nc">内存监控</a>
+					<a href="/vm" class="nc">内存监控</a>
 				</p>
 			</div>
 		</div>

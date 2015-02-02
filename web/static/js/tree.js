@@ -175,11 +175,22 @@ define(function(require, exports, module) {
 				});
 			});
 		},
+		
+		parse_date: function(date_str){
+			var ds = date_str.split(" ");
+			if(ds.length == 1) {
+				return Date.parse(ds[0]) / 1000 - 8*60*60;
+			}else if(ds.length == 2){
+				return Date.parse(ds[0]) / 1000 - 8*60*60 + ds[1].split(":").reduce(function(total, num){ return total *60 + parseInt(num) }, 0);
+			}else{
+				alert("Invalid date format!");
+			}
+		},
 
 		get_url: function(base_url, same_host, same_order_type, same_page){
-			var data_time = $("#createTime").val();
-			var start_time = $("#startTime").val();
-			var end_time = $("#endTime").val();
+			var data_time = Main.parse_date($("#createTime").val());
+			var start_time = Main.parse_date($("#startTime").val());
+			var end_time = Main.parse_date($("#endTime").val());
 			var time_type = $("#time_type").val();
 			var ip_encode = $("#ip_encode").val();
 			var app_encode = $("#app_encode").val();

@@ -37,14 +37,15 @@ class HeartBeatPgPersisted:
     THREAD_DAEMON = 6
     THREAD_HTTP = 7
 
+    trivial_sub = lambda a : ''
     TYPE_NAME = {
-        YOUNG_GC: "yong gc",
-        OLD_GC:"old gc",
-        HEAP:"heap memory",
-        NON_HEAP:"noHeap memory",
-        THREAD_ACTIVE:" active thread",
-        THREAD_DAEMON:"daemon thread",
-        THREAD_HTTP:"http thread"
+        YOUNG_GC: ('young gc', 'count', lambda m : m['remark']),
+        OLD_GC: ('old gc', 'count', lambda m : m['remark']),
+        HEAP: ('heap memory', 'MB', trivial_sub),
+        NON_HEAP: ('perm memory', 'MB', trivial_sub),
+        THREAD_ACTIVE: ('active thread', 'count', trivial_sub),
+        THREAD_DAEMON: ('daemon thread', 'count', trivial_sub),
+        THREAD_HTTP: ('http thread', 'count', trivial_sub)
     }
 
     # 获取 logger
@@ -166,7 +167,7 @@ class HeartBeatPgPersisted:
         save_heart_beat_info_item([data_json["timestamp"], self.THREAD_HTTP, "http", data_json["thread"]["http"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
 
     # db 查询操作
-    def query_operation(self, op_mode="minute"):
+    def query_operation(self, watch_time, ip_encode, app_encode, op_mode="minute"):
 
         # 时间轴单位为秒
         unit_second = 1
@@ -175,12 +176,10 @@ class HeartBeatPgPersisted:
         # 时间轴单位为小时
         unit_hour = 3
 
-        def query_data(end_time, ip_encode, app_encode, info_type, unit_type):
+        def query_data(info_type, unit_type):
 
             # 格式化返回数据
-            def format_result(db_result, file_name):
-                retDict = {"file_name": file_name}
-
+            def format_result(db_result):
                 data_list = []
                 rows = db_result.getresult()
                 for row in rows:
@@ -202,23 +201,9 @@ class HeartBeatPgPersisted:
                     item['remark'] = row[6]
                     data_list.append(item)
 
-                retDict["data_list"] = data_list
-                return retDict
+                return data_list
 
-            # 生产文件名称: 以 ip, app, info_type, start_time, end_time, unit_type 来生产文件名
-            def create_file_name(start_time, end_time):
-                hash_file_name = hashlib.md5()
-                hash_file_name.update("dry_%s" % unit_type)
-                hash_file_name.update("ayz_%s" % info_type)
-                hash_file_name.update(ip_encode)
-                hash_file_name.update(app_encode)
-                hash_file_name.update("%s" % start_time)
-                hash_file_name.update("%s" % end_time)
-
-
-                return "%s" % hash_file_name.hexdigest()
-
-            time_t = time.localtime(end_time)
+            time_t = time.localtime(watch_time)
             if unit_type == unit_second:
                  dd_time = datetime.datetime(*(time_t)[:5])
                  start_time = int(time.mktime(dd_time.timetuple()))
@@ -240,23 +225,23 @@ class HeartBeatPgPersisted:
 
             sql_select = sql_select % (table_name, ip_encode, app_encode, info_type, start_time, end_time)
 
-            return format_result(db.query(sql_select), create_file_name(start_time, end_time))
+            return format_result(db.query(sql_select))
 
 
         # 时间轴以秒为单位
-        def query_minute(end_time, ip_encode, app_encode, info_type):
+        def query_minute(info_type):
            # 到秒
-           return query_data(end_time, ip_encode, app_encode, info_type, unit_second)
+           return query_data(info_type, unit_second)
 
         # 时间轴以分为单位
-        def query_hour(end_time, ip_encode, app_encode, info_type):
+        def query_hour(info_type):
             # 到小时
-            return query_data(end_time, ip_encode, app_encode, info_type, unit_minute)
+            return query_data(info_type, unit_minute)
 
         # 时间轴以小时为单位
-        def query_day(end_time, ip_encode, app_encode, info_type):
+        def query_day(info_type):
             # 到分
-            return query_data(end_time, ip_encode, app_encode, info_type, unit_hour)
+            return query_data(info_type, unit_hour)
 
         db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 
@@ -299,17 +284,26 @@ if __name__ == '__main__':
             data_list.append('0     s'+'\n')
 
             return data_list
-
-        bar = infoBargraphs.Bargraphs()
-
-        second_result = dbPersisted.query_operation()(1421817696, "281af57697156df10bc3f28458dad80f", "752a64b61ddb026c45e1158b4cd2d453", dbPersisted.THREAD_ACTIVE)
-        bar.create_bar_png(construct_bar_data(second_result), second_result["file_name"], None, None, True)
-
-        minute_result = dbPersisted.query_operation("hour")(1421817696, "281af57697156df10bc3f28458dad80f", "752a64b61ddb026c45e1158b4cd2d453", dbPersisted.NON_HEAP)
-        bar.create_bar_png(construct_bar_data(minute_result), minute_result["file_name"], None, None, True)
-
-        hour_result = dbPersisted.query_operation("day")(1421817696, "281af57697156df10bc3f28458dad80f", "752a64b61ddb026c45e1158b4cd2d453", dbPersisted.YOUNG_GC)
-        bar.create_bar_png(construct_bar_data(hour_result), hour_result["file_name"], None, None, True)
+        
+        hour_list_series = map(lambda x:str(x), range(0, 60))
+        day_list_series = map(lambda x:str(x), range(0, 24))
+        
+        query_operator = dbPersisted.query_operation(1422597546, "7931c8ca5b2e2eeafd8aa7866bcdf285", "752a64b61ddb026c45e1158b4cd2d453", 'hour')
+        
+        merger = lambda s, a: s + [str(a['info_value'])]
+        # calculus. turn [(item1, item_list1), (item2, item_list2), ... (itemN, item_listN)] into JSON format
+        collector = lambda (item_info, item_list): {'seriesData' : reduce(merger, item_list, []), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]), 'seriesName': item_info[0], 'categories' : hour_list_series}
+        
+        # ITEM:-> ITEM_LIST mapping
+        status =  map(lambda item: (dbPersisted.TYPE_NAME[item], query_operator(item)), dbPersisted.TYPE_NAME.keys())
+        print json.dumps({'status':0, 'msg':'', 'data':map(collector, status)})
+        print query_operator(dbPersisted.YOUNG_GC)
+        print query_operator(dbPersisted.OLD_GC)
+        print query_operator(dbPersisted.HEAP)
+        print query_operator(dbPersisted.NON_HEAP)
+        print query_operator(dbPersisted.THREAD_ACTIVE)
+        print query_operator(dbPersisted.THREAD_DAEMON)
+        print query_operator(dbPersisted.THREAD_HTTP)
 
     except Exception, e:
         dbPersisted.get_log().error("operation failed, ret=%s" % e.args[0])

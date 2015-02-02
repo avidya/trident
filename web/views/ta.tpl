@@ -12,7 +12,7 @@
 				<p class="title">TC-Cloud系统监控</p>
 				<p class="mode">
                     <a href="/ta" >响应时间监控</a>
-					<a href="#" class="nc">内存监控</a>
+					<a href="/vm" class="nc">内存监控</a>
 				</p>
 			</div>
 		</div>
@@ -78,11 +78,11 @@
                 <div id="treeMenu">
                     <div width="100%"  class="tr_tit" id="tr_tit">
                         <ul class="clearfix" href_url="/ta?">
-                            <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
-                            <li class="h-32 col_3">attachments</li>
-                            <li class="h-32 col_4" >times</li>
-                            <li class="h-32 col_5 sortCol" order_type="0"  title="按产生时间倒排"><span>create time</span><i class="d_icon"></i></li>
-                            <li class="h-32 col_6 sortCol" order_type="1"  title="按消耗时间倒排"><span>avg-elapse(ms)</span><i class="d_icon"></i></li>
+                            <li class="h-32 col_2"><strong>请求路径(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
+                            <li class="h-32 col_3">请求参数</li>
+                            <li class="h-32 col_4" >请求次数</li>
+                            <li class="h-32 col_5 sortCol" order_type="0"  title="按产生时间倒排"><span>请求时间</span><i class="d_icon"></i></li>
+                            <li class="h-32 col_6 sortCol" order_type="1"  title="按消耗时间倒排"><span>请求耗时(ms)</span><i class="d_icon"></i></li>
                         </ul>
                     </div>
     %for item in viewmodel["rows"]:
