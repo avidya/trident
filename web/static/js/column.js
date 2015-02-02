@@ -126,9 +126,9 @@ define(function(require, exports, module) {
 		get_url: function(base_url, same_host){
 			var data_time = Date.parse($("#createTime").val())/1000;
 			var start_time_str = $("#startTime").val();
-			var start_time = Date.parse(start_time_str.split(" ")[0]) + start_time_str.split(" ")[1] * 3600
+			var start_time = Date.parse(start_time_str.split(" ")[0])/1000 + start_time_str.split(" ")[1] * 3600
 			var end_time_str = $("#endTime").val();
-			var end_time = Date.parse(end_time_str.split(" ")[0]) + end_time_str.split(" ")[1] * 3600
+			var end_time = Date.parse(end_time_str.split(" ")[0])/1000 + end_time_str.split(" ")[1] * 3600
 			var time_type = $("#time_type").val();
 			var ip_encode = $("#ip_encode").val();
 			var app_encode = $("#app_encode").val();
