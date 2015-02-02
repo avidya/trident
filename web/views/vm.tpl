@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>虚拟机状态监控</title>
-		<link rel="stylesheet" type="text/css" href="./static/css/all2.css">
+		<link rel="stylesheet" type="text/css" href="./static/css/all.css">
 	</head>
 	<body>
 		<div id="header">
