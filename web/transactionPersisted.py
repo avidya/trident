@@ -79,8 +79,8 @@ class DbPersisted:
 
         # insert_sql
         #                             "values(%s,       %s,            %s,              '%s',     '%s', '%s',  '%s',  '%s', '%s',        %s,         %s,       %s,           '%s',    '%s',      '%s');"
-        insert_sql="insert into trident_audit(audit_id, root_audit_id, parent_audit_id, hostname, ip,   app,   async, url,  attachments, begin_time, end_time, durable_time, success, ip_encode, app_encode, layer_no, order_no, parent_order_nos) " \
-                                      "values(%s, %s, %s, '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, '%s', '%s', '%s', %s, %s, '%s');"
+        insert_sql="insert into trident_audit(audit_id, root_audit_id, parent_audit_id, hostname, audit_ip,   audit_app,   async, url,  attachments, begin_time, end_time, durable_time, success, layer_no, order_no, parent_order_nos) " \
+                                      "values(%s, %s, %s, '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, %s, '%s', %s, %s, '%s');"
 
         data_json = json.loads(data_str, "utf-8")
         try:
@@ -91,33 +91,16 @@ class DbPersisted:
             return
 
         # 递归，批量处理
-        def insert_data_batch(audit_data_list, root_Id, parent_Id, phost_name, pip, papp, pip_encode, papp_encode, reference_data, layer_no, parent_order_no):
+        def insert_data_batch(audit_data_list, root_Id, parent_Id, phost_name, pip, papp, reference_data, layer_no, parent_order_no):
 
             # 保存ip，允许失败
             def saveHostIp(ip, app, hostName):
                 try:
-                    hashapp_tp = hashlib.md5()
-                    hashapp_tp.update(app)
 
-                    haship_tp = hashlib.md5()
-                    haship_tp.update(ip)
-
-                    if db.query("select count(audit_ip) from trident_audit_ip where audit_ip_encode ='%s' and audit_app_encode='%s' " % (haship_tp.hexdigest(), hashapp_tp.hexdigest())).getresult()[0][0] == 0:
-                        db.query("insert into trident_audit_ip(audit_ip, audit_ip_encode, audit_app_encode, host_name) values('%s', '%s', '%s', '%s')" % (ip, haship_tp.hexdigest(), hashapp_tp.hexdigest(), hostName))
+                    if db.query("select count(audit_ip) from trident_audit_ip where audit_ip ='%s' and audit_app='%s' " % (ip, app)).getresult()[0][0] == 0:
+                        db.query("insert into trident_audit_ip(audit_ip, audit_app, host_name) values('%s', '%s', '%s')" % (ip, app, hostName))
                 except Exception, e:
                     self.get_log().warn("save audit_ip failed, ret=%s" % e.args[0])
-                return
-
-            # 保存app， 允许失败
-            def saveHostApp(app):
-                try:
-                    hashapp_tp = hashlib.md5()
-                    hashapp_tp.update(app)
-
-                    if db.query("select count(audit_app) from trident_audit_app where audit_app_encode ='%s'" % hashapp_tp.hexdigest()).getresult()[0][0] == 0:
-                        db.query("insert into trident_audit_app(audit_app, audit_app_encode) values('%s', '%s')" % (app, hashapp_tp.hexdigest()))
-                except Exception, e:
-                    self.get_log().warn("save audit_app failed, ret=%s" % e.args[0])
                 return
 
             try:
@@ -141,30 +124,19 @@ class DbPersisted:
                         hostname_tp = audit_data[_host_name_]
                         app_tp = audit_data[_app_]
                         ip_tp = audit_data[_ip_]
+                        reference_data[3] = ip_tp
+                        reference_data[4] = app_tp
 
                         # 记录指纹数据：ip, app
                         reference_data[0].update(app_tp)
                         reference_data[0].update(ip_tp)
 
-                        hashapp_tp = hashlib.md5()
-                        hashapp_tp.update(app_tp)
-                        app_encode = hashapp_tp.hexdigest()
-                        reference_data[4] = app_encode
-
-                        haship_tp = hashlib.md5()
-                        haship_tp.update(ip_tp)
-                        ip_encode = haship_tp.hexdigest()
-                        reference_data[3] = ip_encode
-
                         saveHostIp(ip_tp, app_tp, audit_data[_hostname_])
-                        saveHostApp(app_tp)
 
                     else:
                         hostname_tp = phost_name
                         ip_tp = pip
-                        ip_encode = pip_encode
                         app_tp = papp
-                        app_encode = papp_encode
                         
                 # 记录指纹数据：url
                     reference_data[0].update(audit_data[_url_])
@@ -187,8 +159,6 @@ class DbPersisted:
                                                     end_tp,
                                                     elapse_tp,
                                                     audit_data[_status_],
-                                                    ip_encode,
-                                                    app_encode,
                                                     layer_no,
                                                     i,
                                                     parent_order_no if parent_order_no is not None else ''
@@ -198,7 +168,7 @@ class DbPersisted:
 
                 # 有子节点， 递归调用
                     if audit_data.has_key(_children_) :
-                        insert_data_batch(audit_data[_children_], root_Id, cur_id, hostname_tp, ip_tp, app_tp, ip_encode, app_encode, reference_data, layer_no + 1,
+                        insert_data_batch(audit_data[_children_], root_Id, cur_id, hostname_tp, ip_tp, app_tp, reference_data, layer_no + 1,
                                           "%s|%s" % (parent_order_no, i) if parent_order_no is not None else i)
             except Exception, e:
                 # print e.args[0]
@@ -219,7 +189,7 @@ class DbPersisted:
 
             count_finger_print_sql_str = "select count(*) from trident_audit_finger where date_time=%s and finger_print='%s'" %(i_et, reference_data[0].hexdigest())
 
-            insert_finger_print_sql_str = "insert into trident_audit_finger(date_time, finger_print, url, times, durable_time_avg, ip_encode, app_encode) " \
+            insert_finger_print_sql_str = "insert into trident_audit_finger(date_time, finger_print, url, times, durable_time_avg, audit_ip, audit_app) " \
                                           "values(%s, '%s', '%s', %s, %s, '%s', '%s') " % (i_et, reference_data[0].hexdigest(), reference_data[6], 1, reference_data[1], reference_data[3], reference_data[4])
 
             update_finger_print_sql_str = "update trident_audit_finger set times = times +1 , durable_time_avg = (times * durable_time_avg + %s) / (times + 1) " \
@@ -242,10 +212,10 @@ class DbPersisted:
         try:
             record_finger_print = hashlib.sha256()
 
-            # 临时记录数据结构：[指纹, 所花时间, 根节点id, ip_encode, app_encode, begintime, url]
+            # 临时记录数据结构：[指纹, 所花时间, 根节点id, audit_ip, audit_app, begintime, url]
             reference_data = [record_finger_print, 0, 0, "ip", "app", 0, 0]
 
-            insert_data_batch([data_json], 0, 0, None, None, None, None, None, reference_data, 0, None)
+            insert_data_batch([data_json], 0, 0, None, None, None, reference_data, 0, None)
 
             update_trident_audit_with_finger_print(reference_data)
 
@@ -258,7 +228,7 @@ class DbPersisted:
             return
 
     # db 查询操作
-    def query_operation(self, op_mode='query_data_count'):
+    def query_operation(self, audit_ip=None, audit_app=None, low_times=0, op_mode='query_data_count'):
 
         db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 
@@ -266,26 +236,26 @@ class DbPersisted:
         # 指纹数据查询
 
         # 查询指纹记录条数
-        def query_finger_count(date_time, ip_encode, app_encode, low_times):
+        def query_finger_count(date_time):
 
-            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, 0, 0, None, low_times)
+            select_count_sql = "select count(*) from trident_audit_finger where %s" % _format_finger_data_sql(date_time, 0, 0, None)
             self.get_log().debug(select_count_sql)
 
             return db.query(select_count_sql).getresult()[0][0]
 
         # 分页查询指纹数据
-        def query_finger_data_page(date_time, ip_encode, app_encode, offset, limit, order_durable= True, low_times=0):
-            select_finger_data_sql = "select date_time, finger_print, url, times, durable_time_avg, ip_encode, app_encode, create_time, '' as async from trident_audit_finger where %s" % _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable, low_times)
+        def query_finger_data_page(date_time, offset, limit, order_durable= True):
+            select_finger_data_sql = "select date_time, finger_print, url, times, durable_time_avg, audit_ip, audit_app, create_time, '' as async from trident_audit_finger where %s" % _format_finger_data_sql(date_time, offset, limit, order_durable)
             self.get_log().debug(select_finger_data_sql)
 
             return trident_show_list(db.query(select_finger_data_sql))
 
         # 格式化指纹数据查询条件
-        def _format_finger_data_sql(date_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
+        def _format_finger_data_sql(date_time, offset, limit, order_durable):
             start_time = datetime.datetime.fromtimestamp(self.format_date(date_time, True)).strftime("%Y-%m-%d")
             end_time = datetime.datetime.fromtimestamp(self.format_date(date_time, False)).strftime("%Y-%m-%d")
 
-            where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, start_time, end_time)
+            where_str = " audit_ip='%s' and audit_app='%s' and create_time >= '%s' and create_time < '%s' " % (audit_ip, audit_app, start_time, end_time)
             if low_times > 0:
                 where_str +=" and durable_time_avg >= %s " % low_times
 
@@ -296,7 +266,7 @@ class DbPersisted:
             return where_str
 
         # 查询某个指纹下某一层的所有函数信息
-        def query_transaction_data_group(layer_no, parent_order_no, finger_print, date_time, low_times):
+        def query_transaction_data(layer_no, parent_order_no, finger_print, date_time):
             # 格式化返回数据
             def transaction_data_list(query_result):
                 retList = []
@@ -341,9 +311,9 @@ class DbPersisted:
         # ##############################################################################################################
         # 实时数据查询
         # 格式化数据查询条件
-        def _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
+        def _format_real_data_sql(start_time, end_time,  offset, limit, order_durable):
 
-            where_str = " ip_encode='%s' and app_encode='%s' and create_time >= '%s' and create_time < '%s' " % (ip_encode, app_encode, datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S"))
+            where_str = " audit_ip='%s' and audit_app='%s' and create_time >= '%s' and create_time < '%s' " % (audit_ip, audit_app, datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S"))
             if low_times > 0:
                 where_str += " and durable_time >=%s" % low_times
 
@@ -354,7 +324,7 @@ class DbPersisted:
             return where_str
 
         # 查询数据记录数
-        def query_real_data_count(start_time, end_time, ip_encode, app_encode, low_times):
+        def query_real_data_count(start_time, end_time):
             #select_real_count_sql = "select count(*) from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, 0, 0, None, low_times)
             #self.get_log().debug(select_real_count_sql)
 
@@ -363,14 +333,14 @@ class DbPersisted:
             return 999999999
 
         # 分页查询实时数据
-        def query_real_data_page(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times):
-            select_real_data_sql = "select begin_time as date_time, audit_id as finger_print, url, 1 as times, (end_time - begin_time) as elapse, ip_encode, app_encode, create_time, async from trident_audit where %s" % _format_real_data_sql(start_time, end_time, ip_encode, app_encode, offset, limit, order_durable, low_times)
+        def query_real_data_page(start_time, end_time, offset, limit, order_durable):
+            select_real_data_sql = "select begin_time as date_time, audit_id as finger_print, url, 1 as times, (end_time - begin_time) as elapse, audit_ip, audit_app, create_time, async from trident_audit where %s" % _format_real_data_sql(start_time, end_time, offset, limit, order_durable)
             self.get_log().debug(select_real_data_sql)
 
             return trident_show_list(db.query(select_real_data_sql))
 
         # 子级别数据
-        def query_transaction_real_data(parent_audit_id, low_times):
+        def query_transaction_real_data(parent_audit_id):
             # 格式化返回数据
             def transaction_real_data_list(query_result):
                 retList = []
@@ -437,8 +407,8 @@ class DbPersisted:
                 item['times'] = row[3]
                 item['elapse'] = row[4] if row[4] > 0  else " < 1 "
                 item['elapse_bar'] = (row[4] * 100) / BAR_MAX_TIME if row[4] < BAR_MAX_TIME else 99
-                item['ip_encode'] = row[5]
-                item['app_encode'] = row[6]
+                item['audit_ip'] = row[5]
+                item['audit_app'] = row[6]
                 item['create_time'] = row[7]
                 item['async'] = row[8]
                 retList.append(item)
@@ -447,7 +417,7 @@ class DbPersisted:
         # ##############################################################################################################
         # ip 和 app 查询
         
-        def get_all_apps():
+        def query_all_apps():
             # 格式化ip列表
             def ip_list(queryResult):
                 retList = []
@@ -464,54 +434,15 @@ class DbPersisted:
 
             return ip_list(db.query("select audit_ip, audit_app, host_name from trident_audit_ip"))            
             
-        # 查询ip
-        def get_ips(app):
 
-            # 格式化ip列表
-            def ip_list(queryResult):
-                retList = []
-                rows = queryResult.getresult()
-
-                for row in rows:
-                    item = {}
-                    item['audit_ip'] = row[0]
-                    item['audit_ip_encode'] = row[1]
-                    item['audit_app_encode'] = row[2]
-                    item['host_name'] = row[3]
-                    retList.append(item)
-
-                return retList
-
-            return ip_list(db.query("select audit_ip, audit_ip_encode, audit_app_encode, host_name from trident_audit_ip where audit_app_encode='%s' " % app))
-
-        # 查询app
-        def get_apps():
-
-            # 格式化app列表
-            def app_list(queryResult):
-                retList = []
-                rows = queryResult.getresult()
-
-                for row in rows:
-                    item = {}
-                    item['audit_app'] = row[0]
-                    item['audit_app_encode'] = row[1]
-                    retList.append(item)
-
-                return retList
-
-            return app_list(db.query('select audit_app, audit_app_encode from trident_audit_app'))
-
-        ops = {'query_data_count':query_finger_count,
-               'query_finger_data':query_finger_data_page,
-               'query_transaction_data':query_transaction_data_group,
-               'query_ip':get_ips,
-               'query_app':get_apps,
+        ops = {'query_finger_count':query_finger_count,
+               'query_finger_data_page':query_finger_data_page,
+               'query_transaction_data':query_transaction_data,
                'query_real_data_count':query_real_data_count,
                'query_real_data_page':query_real_data_page,
                'query_transaction_real_data':query_transaction_real_data,
                'query_transaction_real_data_by_id':query_transaction_real_data_by_id,
-               'query_all_apps' : get_all_apps
+               'query_all_apps': query_all_apps
         }
 
         return ops[op_mode]
@@ -529,9 +460,9 @@ if __name__ == '__main__':
 
     # query test
     try:
-        dbPersisted.get_log().warn(dbPersisted.query_operation()(None, "281af57697156df10bc3f28458dad80f", "752a64b61ddb026c45e1158b4cd2d453"))
-        dbPersisted.get_log().warn(dbPersisted.query_operation("query_finger_data")(None, "281af57697156df10bc3f28458dad80f", "752a64b61ddb026c45e1158b4cd2d453", 0, 10, True))
-        dbPersisted.get_log().warn(dbPersisted.query_operation("query_transaction_data")(1, '0', "0ef8f7d3c8dba747a7be7513ec331e50f7d4b3ac83a8fcbf0c3810ef6ec695bf", None))
+        dbPersisted.get_log().warn(dbPersisted.query_operation("10.1.26.20", "his-web")(None))
+        dbPersisted.get_log().warn(dbPersisted.query_operation("10.1.26.20", "his-web", "query_finger_data_page")(None,0, 10, True))
+        dbPersisted.get_log().warn(dbPersisted.query_operation("10.1.26.20", "his-web", "query_transaction_data")(1, '0', "0ef8f7d3c8dba747a7be7513ec331e50f7d4b3ac83a8fcbf0c3810ef6ec695bf", None))
     except Exception, e:
         dbPersisted.get_log().error("operation failed, ret=%s" % e.args[0])
 

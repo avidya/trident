@@ -63,54 +63,43 @@ def content():
 
         return {"page":page, "offset":offset}
 
-    # 格式化ip信息
-    def format_ip(app):
-        ip = request.query.ip
-        # ip 列表,若没有传入，默认取第一个ip
-        ips =  dbPersisted.query_operation("query_ip")(app)
+    # 格式化 app 信息, 默认取第一个app
+    def format_app(app_ip_result):
+        audit_app = request.query.audit_app
 
-        result["ips"] = ips
-        if len(ip) <= 0 :
-            ip = ips[0]['audit_ip_encode']
-            ip_address = ips[0]["audit_ip"]
-        else:
-            for ip_tp in ips:
-                if ip_tp["audit_ip_encode"] == ip :
-                    ip_address = ip_tp["audit_ip"]
-                    break
-        return {"ip": ip, "ip_address": ip_address, "ips": ips}
+        if len(app_ip_result) > 0:
+            if len(audit_app) <= 0:
+                result["audit_app"] = app_ip_result[0]["audit_app"]
+            else:
+                result["audit_app"] = audit_app
+        return
 
     # 格式化 app 信息, 默认取第一个app
-    def format_app():
-        apps = dbPersisted.query_operation("query_app")()
-        app = request.query.app
-        app_name = "None"
-        if len(apps) > 0:
-            if len(app) <= 0:
-                app = apps[0]["audit_app_encode"]
+    def format_ip(app_ip_result, app_name):
+        audit_ip = request.query.audit_ip
 
-            # app name
-            for app_tp in apps:
-                if app_tp["audit_app_encode"] == app:
-                    app_name = app_tp["audit_app"]
-                    break
-        return {"apps": apps, "app": app, "app_name": app_name}
+        if len(app_ip_result) > 0:
+            if(len(audit_ip) < 0):
+                for audit_app_tp in app_ip_result:
+                    if audit_app_tp["audit_app"] == app_name:
+                        result['audit_ip'] = audit_app_tp['audit_ip']
+                        break;
+            else:
+                result['audit_ip'] = audit_ip
+        return
 
     dbPersisted = DbPersisted()
+
     # model
     result={}
 
     # 左面应用名称
-    app_result = format_app()
-    result["left"] = app_result["apps"]
-    result["app_name"] = app_result["app_name"]
-    result["app_en"] = app_result["app"]
+    apps = dbPersisted.query_operation(None, None, 0, "query_all_apps")()
 
-    # ip address for human
-    ip_result = format_ip(app_result["app"])
-    result["ips"] = ip_result["ips"]
-    result["ip_address"] = ip_result["ip_address"]
-    result["ip_en"] = ip_result["ip"]
+    result["ips"] = apps
+    result["left"] = Set(map(lambda x:x['audit_app'], apps))
+    format_app(apps)
+    format_ip(apps, result["audit_app"])
 
     # page info
     page_result = format_page()
@@ -148,10 +137,10 @@ def content():
     if(time_result["time_type"] == '1'): # 查询明细
         result['timeType'] = '1'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_real_data_page")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, orderType, low_times)
+        result["rows"] = dbPersisted.query_operation(result["audit_ip"], result["audit_app"], result['low_times'], "query_real_data_page")(time_result["start_time"], time_result["end_time"], page_result["offset"], PAGE_SIZE, orderType)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_real_data_count")(time_result["start_time"], time_result["end_time"], ip_result["ip"], app_result["app"], low_times)
+        result["rowcount"] = dbPersisted.query_operation(result["audit_ip"], result["audit_app"], result['low_times'], "query_real_data_count")(time_result["start_time"], time_result["end_time"])
 
         result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 
@@ -159,10 +148,10 @@ def content():
     else:
         result['timeType'] = '0'
         # 记录集合
-        result["rows"] = dbPersisted.query_operation("query_finger_data")(time_result["data_time"], ip_result["ip"], app_result["app"], page_result["offset"], PAGE_SIZE, orderType, low_times)
+        result["rows"] = dbPersisted.query_operation(result["audit_ip"], result["audit_app"], result['low_times'], "query_finger_data_page")(time_result["data_time"], page_result["offset"], PAGE_SIZE, orderType)
 
         #记录数量
-        result["rowcount"] = dbPersisted.query_operation("query_data_count")(time_result["data_time"], ip_result["ip"], app_result["app"], low_times)
+        result["rowcount"] = dbPersisted.query_operation(result["audit_ip"], result["audit_app"], result['low_times'], "query_finger_count")(time_result["data_time"])
 
         result["maxpage"] = result["rowcount"] / PAGE_SIZE + 1
 

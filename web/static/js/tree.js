@@ -66,8 +66,8 @@ define(function(require, exports, module) {
 				var start_time = $("#startTime").val();
 				var end_time = $("#endTime").val();
 				var time_type = $("#time_type").val();
-				var ip_encode = $("#ip_encode").val();
-				var app_encode = $("#app_encode").val();
+				var audit_ip = $("#audit_ip").val();
+				var audit_app = $("#audit_app").val();
 				var low_times = $("#low_times").val();
 
 				var finger_print = me.parent().parent().attr('data-id');
@@ -86,8 +86,8 @@ define(function(require, exports, module) {
 						
 						/*获取child*/
 						$.get(subItemsUrl, {
-							ip: ip_encode,
-							app: app_encode,
+							audit_ip: audit_ip,
+							audit_app: audit_app,
 							parentordernos: parent_order_nos,
 							fingerprint: finger_print,
 							layerno: layer_no + 1,
@@ -192,15 +192,15 @@ define(function(require, exports, module) {
 			var start_time = Main.parse_date($("#startTime").val());
 			var end_time = Main.parse_date($("#endTime").val());
 			var time_type = $("#time_type").val();
-			var ip_encode = $("#ip_encode").val();
-			var app_encode = $("#app_encode").val();
+			var audit_ip = $("#audit_ip").val();
+			var audit_app = $("#audit_app").val();
 			var orderType = $("#order_type").val();
 			var cur_page = $("#cur_page").val();
 			var low_times = $("#low_times").val();
 
 			var tp_url = base_url+"&start_time="+start_time+"&end_time="+end_time+"&data_time="+data_time+"&timeType="+time_type+"&low_times="+low_times;
 			if(same_host){
-				tp_url = tp_url+"&ip="+ip_encode+"&app="+app_encode;
+				tp_url = tp_url+"&audit_ip="+audit_ip+"&audit_app="+audit_app;
 			}
 			if(same_order_type){
 				tp_url = tp_url+"&orderType="+orderType;

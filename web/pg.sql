@@ -6,10 +6,8 @@ CREATE TABLE trident_audit
   root_audit_id integer NOT NULL,                 --根节点id
   parent_audit_id integer NOT NULL,               --父节点id，0表示顶层记录
   hostname character varying(50) NOT NULL,        --主机名
-  ip character varying(100) NOT NULL,             --ip地址
-  app character varying(100) NOT NULL,            --应用名
-  ip_encode character varying(40) NOT NULL,       --ip地址 md5
-  app_encode character varying(40) NOT NULL,      --应用名 md5
+  audit_ip character varying(100) NOT NULL,             --ip地址
+  audit_app character varying(100) NOT NULL,            --应用名
   async character varying(20) NOT NULL,           --异步或同步调用
   url character varying(800) NOT NULL,            --函数调用的方法
   attachments character varying(800),             --函数调用方法时传送的参数
@@ -48,12 +46,12 @@ CREATE INDEX i_trident_audit_finger_print_layer_order
 CREATE INDEX i_trident_audit_ip_encode
    ON trident_audit
    USING btree
-   (ip_encode);
+   (audit_ip);
 
 CREATE INDEX i_trident_audit_app_encode
    ON trident_audit
    USING btree
-   (app_encode);
+   (audit_app);
 
 DROP TABLE IF EXISTS trident_audit_finger;
 CREATE TABLE trident_audit_finger
@@ -63,8 +61,8 @@ CREATE TABLE trident_audit_finger
     url character varying(800) NOT NULL,          --函数调用名称
     times integer NOT NULL,                       --记录的次数
     durable_time_avg integer NOT NULL,            --记录的平均调用时间
-    ip_encode character varying(40) NOT NULL,     --ip地址 md5
-    app_encode character varying(40) NOT NULL,    --应用名 md5
+    audit_ip character varying(40) NOT NULL,     --ip地址 md5
+    audit_app character varying(40) NOT NULL,    --应用名 md5
     create_time timestamp with time zone NOT NULL DEFAULT now(),    --信息采集的时间
     CONSTRAINT pk_trident_audit_finger_date_time_finger_print PRIMARY KEY (date_time, finger_print)
 );
@@ -72,12 +70,12 @@ CREATE TABLE trident_audit_finger
 CREATE INDEX i_trident_audit_finger_ip_encode
    ON trident_audit_finger
    USING btree
-   (ip_encode);
+   (audit_ip);
 
 CREATE INDEX i_trident_audit_finger_app_encode
    ON trident_audit_finger
    USING btree
-   (app_encode);
+   (audit_app);
 
 
 -- 指纹记录表， 每天每个指纹一条
@@ -85,21 +83,12 @@ DROP TABLE IF EXISTS trident_audit_ip;
 --产生消息的主机ip和app对应关系表
 CREATE TABLE trident_audit_ip
 (
-	audit_ip character varying(16) NOT NULL,
-	audit_ip_encode character varying(40) NOT NULL,
-  audit_app_encode character varying(40) NOT NULL,
-  host_name character varying(50),
-	CONSTRAINT pk_trident_audit_ip PRIMARY KEY (audit_ip_encode, audit_app_encode)
+	audit_ip character varying(40) NOT NULL,
+    audit_app character varying(40) NOT NULL,
+    host_name character varying(50),
+	CONSTRAINT pk_trident_audit_ip PRIMARY KEY (audit_ip, audit_app)
 );
 
-DROP TABLE IF EXISTS trident_audit_app;
---产生消息的app表
-CREATE TABLE trident_audit_app
-(
-	audit_app character varying(100) NOT NULL,
-	audit_app_encode character varying(40) NOT NULL,
-	CONSTRAINT pk_trident_audit_app PRIMARY KEY (audit_app_encode)
-);
 
 DROP TABLE IF EXISTS trident_heartbeat_audit;
 CREATE TABLE trident_heartbeat_audit
@@ -113,16 +102,14 @@ CREATE TABLE trident_heartbeat_audit
   info_second_value bigint, --第二项值
   ip character varying(100) NOT NULL,
   app character varying(100) NOT NULL,
-  ip_encode character varying(40) NOT NULL,
-  app_encode character varying(40) NOT NULL,
   remark character varying(100),
   create_time timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT pk_trident_heartbeat_audit PRIMARY KEY (audit_id)
 );
-CREATE INDEX i_heartbeat_audit_ip_app_encode
+CREATE INDEX i_heartbeat_audit_ip_app
    ON trident_heartbeat_audit
    USING btree
-   (ip_encode, app_encode);
+   (ip, app);
 
 
 
@@ -138,18 +125,16 @@ CREATE TABLE trident_heartbeat_audit_hour
   info_second_value bigint, --第二项值
   ip character varying(100) NOT NULL,
   app character varying(100) NOT NULL,
-  ip_encode character varying(40) NOT NULL,
-  app_encode character varying(40) NOT NULL,
   times integer NOT NULL DEFAULT 1, --记录的次数
   remark character varying(100),
   create_time timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT pk_trident_heartbeat_hour_audit PRIMARY KEY (audit_id)
 );
 
-CREATE INDEX i_trident_heartbeat_audit_hour_ip_app_encode
+CREATE INDEX i_trident_heartbeat_audit_hour_ip_app
    ON trident_heartbeat_audit_hour
    USING btree
-   (ip_encode, app_encode);
+   (ip, app);
 
 
 
@@ -165,15 +150,13 @@ CREATE TABLE trident_heartbeat_audit_day
   info_second_value bigint, --第二项值
   ip character varying(100) NOT NULL,
   app character varying(100) NOT NULL,
-  ip_encode character varying(40) NOT NULL,
-  app_encode character varying(40) NOT NULL,
   times integer NOT NULL DEFAULT 1, --记录的次数
   remark character varying(100),
   create_time timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT pk_trident_heartbeat_day_audit PRIMARY KEY (audit_id)
 );
-CREATE INDEX i_trident_heartbeat_audit_day_ip_app_encode
+CREATE INDEX i_trident_heartbeat_audit_day_ip_app
    ON trident_heartbeat_audit_day
    USING btree
-   (ip_encode, app_encode);
+   (ip, app);
 

@@ -64,22 +64,10 @@ class HeartBeatPgPersisted:
                 haship_tp = hashlib.md5()
                 haship_tp.update(ip)
 
-                if db.query("select count(audit_ip) from trident_audit_ip where audit_ip_encode ='%s' and audit_app_encode='%s' " % (haship_tp.hexdigest(), hashapp_tp.hexdigest())).getresult()[0][0] == 0:
-                    db.query("insert into trident_audit_ip(audit_ip, audit_ip_encode, audit_app_encode, host_name) values('%s', '%s', '%s', '%s')" % (ip, haship_tp.hexdigest(), hashapp_tp.hexdigest(), hostName))
+                if db.query("select count(audit_ip) from trident_audit_ip where audit_ip ='%s' and audit_app='%s' " % (ip, app)).getresult()[0][0] == 0:
+                    db.query("insert into trident_audit_ip(audit_ip, audit_app, host_name) values('%s', '%s',  '%s')" % (ip, app, hostName))
             except Exception, e:
                 self.get_log().warn("save audit_ip failed, ret=%s" % e.args[0])
-            return
-
-        # 保存app， 允许失败
-        def saveHostApp(app):
-            try:
-                hashapp_tp = hashlib.md5()
-                hashapp_tp.update(app)
-
-                if db.query("select count(audit_app) from trident_audit_app where audit_app_encode ='%s'" % hashapp_tp.hexdigest()).getresult()[0][0] == 0:
-                    db.query("insert into trident_audit_app(audit_app, audit_app_encode) values('%s', '%s')" % (app, hashapp_tp.hexdigest()))
-            except Exception, e:
-                self.get_log().warn("save audit_app failed, ret=%s" % e.args[0])
             return
 
         # 保存心跳消息数据, 精确到秒
@@ -132,14 +120,13 @@ class HeartBeatPgPersisted:
             return
 
         saveHostIp(data_json["ip"], data_json["app"], data_json["hostname"])
-        saveHostApp(data_json["app"])
 
 
-        sql_insert_format = "insert into %s (info_time_stamp, info_type, info_name, info_value, info_second_value_name, info_second_value, ip, app, ip_encode, app_encode, remark) " \
-                            "values(%s, %s, '%s', %s, '%s', %s, '%s', '%s', '%s', '%s', '%s')"
-        sql_update_format = "update %s set info_value = (times * info_value + %s)/(times + 1), times = times + 1 where info_time_stamp = %s and ip_encode = '%s' and app_encode = '%s' and info_type = %s "
+        sql_insert_format = "insert into %s (info_time_stamp, info_type, info_name, info_value, info_second_value_name, info_second_value, ip, app, remark) " \
+                            "values(%s, %s, '%s', %s, '%s', %s, '%s', '%s', '%s')"
+        sql_update_format = "update %s set info_value = (times * info_value + %s)/(times + 1), times = times + 1 where info_time_stamp = %s and ip = '%s' and app = '%s' and info_type = %s "
 
-        sql_count_format = "select count(*) from %s where ip_encode ='%s' and app_encode='%s' and info_time_stamp =%s and info_type=%s "
+        sql_count_format = "select count(*) from %s where ip ='%s' and app='%s' and info_time_stamp =%s and info_type=%s "
 
         hashapp_tp = hashlib.md5()
         hashapp_tp.update(data_json["app"])
@@ -167,7 +154,7 @@ class HeartBeatPgPersisted:
         save_heart_beat_info_item([data_json["timestamp"], self.THREAD_HTTP, "http", data_json["thread"]["http"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
 
     # db 查询操作
-    def query_operation(self, watch_time, ip_encode, app_encode, op_mode="minute"):
+    def query_operation(self, watch_time, ip, app, op_mode="minute"):
 
         # 时间轴单位为秒
         unit_second = 1
@@ -221,9 +208,9 @@ class HeartBeatPgPersisted:
                  table_name = "trident_heartbeat_audit_day"
 
             sql_select = "select info_time_stamp, info_type, info_name, info_value, info_second_value_name, info_second_value, remark from %s " \
-                         "where ip_encode = '%s' and app_encode = '%s' and info_type = %s and info_time_stamp >= %s and info_time_stamp < %s order by info_time_stamp asc"
+                         "where ip = '%s' and app = '%s' and info_type = %s and info_time_stamp >= %s and info_time_stamp < %s order by info_time_stamp asc"
 
-            sql_select = sql_select % (table_name, ip_encode, app_encode, info_type, start_time, end_time)
+            sql_select = sql_select % (table_name, ip, app, info_type, start_time, end_time)
 
             return format_result(db.query(sql_select))
 
