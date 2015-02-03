@@ -228,7 +228,7 @@ class DbPersisted:
             return
 
     # db 查询操作
-    def query_operation(self, audit_ip=None, audit_app=None, low_times=0, op_mode='query_data_count'):
+    def query_operation(self, audit_ip=None, audit_app=None, low_times=0, op_mode='query_all_apps'):
 
         db = pg.connect(DB_NAME, DB_HOST, DB_PORT, None, None, DB_USER, DB_PWD)
 

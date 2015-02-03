@@ -94,7 +94,7 @@ def content():
     result={}
 
     # 左面应用名称
-    apps = dbPersisted.query_operation(None, None, 0, "query_all_apps")()
+    apps = dbPersisted.query_operation(op_mode='query_all_apps')()
 
     result["ips"] = apps
     result["left"] = Set(map(lambda x:x['audit_app'], apps))
@@ -299,7 +299,7 @@ def showVMStatus():
         return {"start_time": start_time, "s_time": start_time_str, "end_time": end_time, "e_time": end_time_str, "data_time": data_time, "d_time":data_time_str, "time_type":timeType}
     
     dbPersisted = DbPersisted()
-    apps = dbPersisted.query_operation('query_all_apps')()
+    apps = dbPersisted.query_operation(op_mode='query_all_apps')()
     app = request.query.app
     ip = request.query.ip
     
