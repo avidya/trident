@@ -14,6 +14,7 @@ from Config import *
 import datetime
 import time
 import json
+from sets import Set
 
 @route('/static/<filename:path>')
 def send_file(filename):
@@ -288,6 +289,8 @@ def showVMStatus():
     def format_date():
         # 查询模式, 1, 表示查询明细， 0, 表示概览
         timeType = request.query.timeType
+        if not timeType:
+            timeType = 0
 
         # 概揽开始时间
         data_time = request.query.data_time
@@ -300,68 +303,32 @@ def showVMStatus():
         end_time = int(end_time if end_time else time.time())
         data_time = int(data_time if data_time else time.time())
             
-        start_time_str = datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S")
-        end_time_str = datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S")
+        start_time_str = datetime.datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H")
+        end_time_str = datetime.datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H")
         data_time_str = datetime.datetime.fromtimestamp(data_time).strftime("%Y-%m-%d")
 
         return {"start_time": start_time, "s_time": start_time_str, "end_time": end_time, "e_time": end_time_str, "data_time": data_time, "d_time":data_time_str, "time_type":timeType}
     
-    # 格式化 app 信息, 默认取第一个app
-    def format_app():
-        apps = dbPersisted.query_operation("query_app")()
-        app = request.query.app
-        app_name = "None"
-        if len(apps) > 0:
-            if len(app) <= 0:
-                app = apps[0]["audit_app_encode"]
-
-            # app name
-            for app_tp in apps:
-                if app_tp["audit_app_encode"] == app:
-                    app_name = app_tp["audit_app"]
-                    break
-        return {"apps": apps, "app": app, "app_name": app_name}
-
-    # 格式化ip信息
-    def format_ip(app):
-        ip = request.query.ip
-        # ip 列表,若没有传入，默认取第一个ip
-        ips =  dbPersisted.query_operation("query_ip")(app)
-
-        result["ips"] = ips
-        if len(ip) <= 0 :
-            ip = ips[0]['audit_ip_encode']
-            ip_address = ips[0]["audit_ip"]
-        else:
-            for ip_tp in ips:
-                if ip_tp["audit_ip_encode"] == ip :
-                    ip_address = ip_tp["audit_ip"]
-                    break
-        return {"ip": ip, "ip_address": ip_address, "ips": ips}
-    
     dbPersisted = DbPersisted()
+    apps = dbPersisted.query_operation('query_all_apps')()
+    app = request.query.app
+    ip = request.query.ip
     
     # model
     result={}
 
     # 左面应用名称
-    app_result = format_app()
-    result["left"] = app_result["apps"]
-    result["app_name"] = app_result["app_name"]
-    result["app_en"] = app_result["app"]
-
+    result["left"] = Set(map(lambda a:a['audit_app'], apps))
+    result["apps"] = apps
+    result["app"] = app if app else (apps[0]['audit_app'] if apps else 'N/A')
+    result["ip"] = ip if ip else (apps[0]['audit_ip'] if apps else 'N/A')
+    
     # start end time
     time_result = format_date()
     result["data_time"] = time_result["d_time"]
     result["start_time"] = time_result["s_time"]
     result["end_time"] = time_result["e_time"]
     result['timeType'] = time_result["time_type"]
-
-    # ip address for human
-    ip_result = format_ip(app_result["app"])
-    result["ips"] = ip_result["ips"]
-    result["ip_address"] = ip_result["ip_address"]
-    result["ip_en"] = ip_result["ip"]
     
     return template("vm", viewmodel = result)
 
@@ -376,12 +343,13 @@ def getVMStatus():
     
     ip=request.query.ip
     app=request.query.app
-    type=int(request.query.type) if request.query.type else 0
+    type=int(request.forms.timeType) if request.forms.timeType else 0
     
-    watch_time=request.query.data_time if request.query.timeType == 0 else request.query.start_time
+    watch_time=request.forms.data_time if request.forms.timeType == 0 else request.forms.start_time
     if not watch_time:
-        watch_time = int(time.time())
+        watch_time = time.time()
     
+    watch_time = int(watch_time)
     dbPersisted = HeartBeatPgPersisted()
         
     query_operator = dbPersisted.query_operation(watch_time, ip, app, types[type][0])
@@ -390,7 +358,7 @@ def getVMStatus():
     stuffer=(lambda type:lambda l: l + [0] * (len(types[type][1]) - len(l)))(type)
     
     # calculus. turn [(item1, item_list1), (item2, item_list2), ... (itemN, item_listN)] into JSON format
-    json_transformer = lambda (item_info, item_list): {'seriesData' : stuffer(reduce(merger, item_list, [])), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]), 'seriesName': item_info[0], 'categories' : types[type][1]}
+    json_transformer = lambda (item_info, item_list): {'seriesData' : stuffer(reduce(merger, item_list, [])), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]) if item_list else '', 'seriesName': item_info[0], 'categories' : types[type][1]}
 
     # ITEM:-> ITEM_LIST mapping
     status =  map(lambda item: (dbPersisted.TYPE_NAME[item], query_operator(item)), dbPersisted.TYPE_NAME.keys())

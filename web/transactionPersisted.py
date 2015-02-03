@@ -446,7 +446,24 @@ class DbPersisted:
 
         # ##############################################################################################################
         # ip 和 app 查询
+        
+        def get_all_apps():
+            # 格式化ip列表
+            def ip_list(queryResult):
+                retList = []
+                rows = queryResult.getresult()
 
+                for row in rows:
+                    item = {}
+                    item['audit_ip'] = row[0]
+                    item['audit_app'] = row[1]
+                    item['host_name'] = row[2]
+                    retList.append(item)
+
+                return retList
+
+            return ip_list(db.query("select audit_ip, audit_app, host_name from trident_audit_ip"))            
+            
         # 查询ip
         def get_ips(app):
 
@@ -493,7 +510,8 @@ class DbPersisted:
                'query_real_data_count':query_real_data_count,
                'query_real_data_page':query_real_data_page,
                'query_transaction_real_data':query_transaction_real_data,
-               'query_transaction_real_data_by_id':query_transaction_real_data_by_id
+               'query_transaction_real_data_by_id':query_transaction_real_data_by_id,
+               'query_all_apps' : get_all_apps
         }
 
         return ops[op_mode]

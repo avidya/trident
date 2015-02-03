@@ -12,7 +12,7 @@
 				<p class="title">TC-Cloud系统监控</p>
 				<p class="mode">
                     <a href="/ta" >响应时间监控</a>
-					<a href="#" class="nc">内存监控</a>
+					<a href="/vm" class="nc">内存监控</a>
 				</p>
 			</div>
 		</div>
@@ -21,7 +21,7 @@
 				<ul>
                     %for item in viewmodel["left"]:
                     <li>
-						<a href="/ta?app={{item['audit_app_encode']}}">{{item['audit_app']}}</a>
+						<a href="/ta?app={{item}}">{{item}}</a>
 					</li>
                     %end
 				</ul>
@@ -30,14 +30,22 @@
 				<div class="topMenu">
 					<ul class="clearfix">
 						<li>
-							<i class="i_title">[应用]:</i>{{viewmodel['app_name']}}
+							<i class="i_title">[应用{{viewmodel['timeType']}}]:</i>{{viewmodel['app']}}
 						</li>
 						<li class="clearfix">
-							<div class="li_item timeDiv">
+							<div class="li_item timeDiv"
+							%if int(viewmodel['timeType']) == 1:
+								style="display:none;"
+							%end	
+							">
 								<i class="i_title">[查询日期]:</i>
 								<input type="text" class="inpt_txt Wdate" id="createTime" value="{{viewmodel['data_time']}}"/>
 							</div>
-							<div class="fl timeDiv" style="display:none;">
+							<div class="fl timeDiv" 
+							%if int(viewmodel['timeType']) == 0:
+								style="display:none;"
+							%end								
+							>
 								<div class="li_item">
 									<i class="i_title">[开始时间]:</i>
 									<input type="text" class="inpt_txt Wdate" id="startTime" value="{{viewmodel['start_time']}}"/>
@@ -48,13 +56,17 @@
 								</div>
 							</div>
 							<div class="li_item">
+								%if int(viewmodel['timeType']) == 1:
+								<a class="li_btn changeBtn detail" href="javascript:;" id="timeChange">[查看概览]</a>
+								%else:
 								<a class="li_btn changeBtn normal" href="javascript:;" id="timeChange">[查看详细]</a>
+								%end
 							</div>
 						</li>
 						<li class="li_ip">
                             <i class="i_title">[hosts]:</i>
-                %for ip in viewmodel["ips"]:
-	                		<a href_url="/vm?ip={{ip['audit_ip_encode']}}&app={{ip['audit_app_encode']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
+                %for ip in viewmodel["apps"]:
+	                		<a class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
                 %end
 						</li>
 					</ul>
@@ -62,58 +74,58 @@
 				<!--概览或明细-->
 				<input type="hidden" id="time_type" value="{{viewmodel['timeType']}}"/>
 				<!--当前应用名称-->
-                <input type="hidden" id="app_encode" value="{{viewmodel['app_en']}}"/>
+                <input type="hidden" id="app" value="{{viewmodel['app']}}"/>
 				<!--当前ip地址-->
-			    <input type="hidden" id="ip_encode" value="{{viewmodel['ip_en']}}"/>
+			    <input type="hidden" id="ip" value="{{viewmodel['ip']}}"/>
 
 	<div class="actionArea clearfix">
-		<input type="hidden" id="dispatcher" name="dispatcher" data-getUrl="/vm/status?ip={{viewmodel['ip_en']}}&app={{viewmodel['app_en']}}&type={{viewmodel['timeType']}}" />
+		<input type="hidden" id="dispatcher" name="dispatcher" data-getUrl="/vm/status?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}" />
 		<a class="act_title now" id="changeTab" href="#">[切换到历史模式]</a>
 		<div class="action_ul clearfix">
 			<ul class="actionDate">
 				<li class="remove">
-					<a href="#">[-7d]</a>
+					<a class="timeShift" time_shift="-604800" href="javascript:;">[-7d]</a>
 				</li>
 				<li class="remove">
-					<a href="#">[-1d]</a>
+					<a class="timeShift" time_shift="-86400" href="javascript:;">[-1d]</a>
 				</li>
 				<li class="remove">
-					<a href="#">[-2h]</a>
+					<a class="timeShift" time_shift="-7200" href="javascript:;">[-2h]</a>
 				</li>
 				<li class="remove">
-					<a href="#">[-1h]</a>
+					<a class="timeShift" time_shift="-3600" href="javascript:;">[-1h]</a>
 				</li>
 				<li class="add">
-					<a href="#">[+1h]</a>
+					<a class="timeShift" time_shift="3600" href="javascript:;">[+1h]</a>
 				</li>
 				<li class="add">
-					<a href="#">[+2h]</a>
+					<a class="timeShift" time_shift="7200" href="javascript:;">[+2h]</a>
 				</li>
-				<li class="add">
-					<a href="#">[+1d]</a>
+				<li class="oneDayAfter">
+					<a class="timeShift" time_shift="86400" href="javascript:;">[+1d]</a>
 				</li>
-				<li class="add">
-					<a href="#">[+7d]</a>
+				<li class="sevenDaysAfter">
+					<a class="timeShift" time_shift="604800" href="javascript:;">[+7d]</a>
 				</li>
 				<li class="now">
-					<a href="#">[now]</a>
+					<a class="timeShift" time_shift="0" href="now">[now]</a>
 				</li>
 			</ul>
 			<ul class="actionDate" style="display: none">
 				<li class="remove">
-					<a href="#">[-7d]</a>
+					<a class="timeShift" time_shift="-604800" href="javascript:;">[-7d]</a>
 				</li>
 				<li class="remove">
-					<a href="#">[-1d]</a>
+					<a class="timeShift" time_shift="-86400" href="javascript:;">[-1d]</a>
 				</li>
 				<li class="add">
-					<a href="#">[+1d]</a>
+					<a class="timeShift" time_shift="86400" href="javascript:;">[+1d]</a>
 				</li>
 				<li class="add">
-					<a href="#">[+7d]</a>
+					<a class="timeShift" time_shift="604800" href="javascript:;">[+7d]</a>
 				</li>
 				<li class="now">
-					<a href="#">[now]</a>
+					<a class="timeShift" time_shift="0" href="now">[now]</a>
 				</li>
 			</ul>
 		</div>

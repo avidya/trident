@@ -36,9 +36,11 @@ define(function(require, exports, module) {
 			}
 		},
 		initColumn : function() {
+/**
 			$("#createTime").val($.formatDate(new Date(), 'yyyy-MM-dd'));
 			$("#startTime").val($.formatDate(new Date(), 'yyyy-MM-dd HH'));
 			$("#endTime").val($.formatDate(new Date(), 'yyyy-MM-dd HH'));
+*/
 			//时间空间面板切换
 			$('body').delegate('#timeChange.normal', 'click', function() {
 				var me = $(this);
@@ -92,6 +94,12 @@ define(function(require, exports, module) {
 			$.commonAjax({
 				url:getUrl,
 				type : 'post',
+				data : {
+					start_time : Date.parse($("#startTime").val().split(" ")[0])/1000  - 8*60*60 + $("#startTime").val().split(" ")[1] * 3600,
+					end_time : Date.parse($("#endTime").val().split(" ")[0])/1000  - 8*60*60 + $("#endTime").val().split(" ")[1] * 3600,
+					data_time: Date.parse($("#createTime").val())/1000 - 8*60*60,
+					timeType:  $("#time_type").val()
+				},
 				success : function(re) {
 					for (var i = 0; i < re.length; i++) {
 						var item = re[i];
@@ -113,25 +121,31 @@ define(function(require, exports, module) {
 			
 			//切换host
 			$('body').delegate('.ips', 'click', function() {
-				var load_url = Main.get_url($(this).attr('href_url'), false);
+				var load_url = Main.get_url($(this).attr('href_url'), false, 0);
 				//alert(load_url);
 				window.location = load_url;
 			});
+	
+			$('body').delegate('.timeShift', 'click', function() {
+				var load_url = Main.get_url($(this).attr('href_url'), false, parseInt($(this).attr('time_shift')));
+				window.location = load_url;
+			});
+						
 		},
 		init : function() {
 			Main.initLeftNav();
 			Main.initColumn();
 		},
 		
-		get_url: function(base_url, same_host){
-			var data_time = Date.parse($("#createTime").val())/1000;
+		get_url: function(base_url, same_host, time_shift){
+			var data_time = Date.parse($("#createTime").val())/1000 - 8*60*60 + time_shift;
 			var start_time_str = $("#startTime").val();
-			var start_time = Date.parse(start_time_str.split(" ")[0])/1000 + start_time_str.split(" ")[1] * 3600
+			var start_time = Date.parse(start_time_str.split(" ")[0])/1000 - 8*60*60 + start_time_str.split(" ")[1] * 3600 + time_shift
 			var end_time_str = $("#endTime").val();
-			var end_time = Date.parse(end_time_str.split(" ")[0])/1000 + end_time_str.split(" ")[1] * 3600
+			var end_time = Date.parse(end_time_str.split(" ")[0])/1000 - 8*60*60 + end_time_str.split(" ")[1] * 3600 + time_shift
 			var time_type = $("#time_type").val();
-			var ip_encode = $("#ip_encode").val();
-			var app_encode = $("#app_encode").val();
+			var ip_encode = $("#ip").val();
+			var app_encode = $("#app").val();
 
 			var tp_url = base_url+"&start_time="+start_time+"&end_time="+end_time+"&data_time="+data_time+"&timeType="+time_type;
 			if(same_host){
