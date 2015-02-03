@@ -86,7 +86,7 @@ class HeartBeatPgPersisted:
             if db.query(sql_count_format % ('trident_heartbeat_audit_hour', da[6], da[7], i_et, da[1])).getresult()[0][0] == 0:
                 db.query(sql_insert_format % ('trident_heartbeat_audit_hour', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8]))
             else:
-                db.query(sql_update_format % ('trident_heartbeat_audit_hour', da[3], i_et, da[6], da[7], da[1]))
+                db.query(sql_update_format % ('trident_heartbeat_audit_hour', da[3], '0' if da[1] == self.YOUNG_GC or da[1] == self.OLD_GC else 'times', i_et, da[6], da[7], da[1]))
             return
 
         # 保存心跳消息数据， 精确到小时
@@ -97,7 +97,7 @@ class HeartBeatPgPersisted:
             if db.query(sql_count_format % ('trident_heartbeat_audit_day', da[6], da[7], i_et, da[1])).getresult()[0][0] == 0:
                 db.query(sql_insert_format % ('trident_heartbeat_audit_day', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8]))
             else:
-                db.query(sql_update_format % ('trident_heartbeat_audit_day', da[3], i_et, da[6], da[7], da[1]))
+                db.query(sql_update_format % ('trident_heartbeat_audit_day', da[3], '0' if da[1] == self.YOUNG_GC or da[1] == self.OLD_GC else 'times', i_et, da[6], da[7], da[1]))
             return
 
         # 保存一项心跳数据
@@ -124,7 +124,7 @@ class HeartBeatPgPersisted:
 
         sql_insert_format = "insert into %s (info_time_stamp, info_type, info_name, info_value, info_second_value_name, info_second_value, ip, app, remark) " \
                             "values(%s, %s, '%s', %s, '%s', %s, '%s', '%s', '%s')"
-        sql_update_format = "update %s set info_value = (times * info_value + %s)/(times + 1), times = times + 1 where info_time_stamp = %s and ip = '%s' and app = '%s' and info_type = %s "
+        sql_update_format = "update %s set info_value = (times * info_value + %s)/(%s + 1), times = times + 1 where info_time_stamp = %s and ip = '%s' and app = '%s' and info_type = %s "
 
         sql_count_format = "select count(*) from %s where ip ='%s' and app='%s' and info_time_stamp =%s and info_type=%s "
 
