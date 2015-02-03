@@ -30,7 +30,7 @@
 				<div class="topMenu">
 					<ul class="clearfix">
 						<li>
-							<i class="i_title">[应用{{viewmodel['timeType']}}]:</i>{{viewmodel['app']}}
+							<i class="i_title">[应用]:</i>{{viewmodel['app']}}
 						</li>
 						<li class="clearfix">
 							<div class="li_item timeDiv"
@@ -66,7 +66,7 @@
 						<li class="li_ip">
                             <i class="i_title">[hosts]:</i>
                 %for ip in viewmodel["apps"]:
-	                		<a class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
+	                		<a href_url="/vm?ip={{ip['audit_ip']}}&app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
                 %end
 						</li>
 					</ul>
@@ -79,7 +79,7 @@
 			    <input type="hidden" id="ip" value="{{viewmodel['ip']}}"/>
 
 	<div class="actionArea clearfix">
-		<input type="hidden" id="dispatcher" name="dispatcher" data-getUrl="/vm/status?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}" />
+		<input type="hidden" id="dispatcher" name="dispatcher" page-getUrl="/vm" data-getUrl="/vm/status?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}" />
 		<a class="act_title now" id="changeTab" href="#">[切换到历史模式]</a>
 		<div class="action_ul clearfix">
 			<ul class="actionDate">
