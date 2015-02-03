@@ -21,7 +21,7 @@
 				<ul>
                     %for item in viewmodel["left"]:
                     <li>
-						<a href="/ta?app={{item['audit_app_encode']}}">{{item['audit_app']}}</a>
+						<a href="/ta?app={{item}}">{{item}}</a>
 					</li>
                     %end
 				</ul>
@@ -30,7 +30,7 @@
 				<div class="topMenu">
 					<ul class="clearfix">
 						<li>
-							<i class="i_title">[应用]:</i>{{viewmodel['app_name']}}
+							<i class="i_title">[应用]:</i>{{viewmodel['audit_app']}}
 						</li>
 						<li class="clearfix">
 							<div class="li_item"><i class="i_title">[下限值 ms]:</i><input type="text" id="low_times" class="inpt_txt" value="{{viewmodel['low_times']}}"/></div>
@@ -55,7 +55,7 @@
 						<li class="li_ip">
                             <i class="i_title">[hosts]:</i>
                 %for ip in viewmodel["ips"]:
-	                		<a href_url="/ta?ip={{ip['audit_ip_encode']}}&app={{ip['audit_app_encode']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
+	                		<a href_url="/ta?ip={{ip['audit_ip']}}&app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
                 %end
 						</li>
 					</ul>
@@ -65,9 +65,9 @@
 				<!--页码-->
 				<input type="hidden" id="cur_page" value="{{viewmodel['curpage']}}"/>
 				<!--当前应用名称-->
-                <input type="hidden" id="app_encode" value="{{viewmodel['app_en']}}"/>
+                <input type="hidden" id="audit_app" value="{{viewmodel['audit_app']}}"/>
 				<!--当前ip地址-->
-			    <input type="hidden" id="ip_encode" value="{{viewmodel['ip_en']}}"/>
+			    <input type="hidden" id="audit_ip" value="{{viewmodel['audit_ip']}}"/>
 				<!-- 最大页码 -->
 				<input id="maxpage" value="{{viewmodel['maxpage']}}" type="hidden"/>
 				<!--当前排序类型-->
@@ -78,7 +78,7 @@
                 <div id="treeMenu">
                     <div width="100%"  class="tr_tit" id="tr_tit">
                         <ul class="clearfix" href_url="/ta?">
-                            <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['ip_address']}}</font>)</strong></li>
+                            <li class="h-32 col_2"><strong>url(<font style="color:#f00;">{{viewmodel['audit_ip']}}</font>)</strong></li>
                             <li class="h-32 col_3">attachments</li>
                             <li class="h-32 col_4">async</li>
 							<li class="h-32 col_5 sortCol" order_type="0"  title="按产生时间倒排"><span>create time</span><i class="d_icon"></i></li>
