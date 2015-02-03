@@ -20,6 +20,8 @@ public class HeartBeat implements StatInfo {
     
     private String ip;
     
+    private Long timestamp;
+    
     private MemoryInfo memoryInfo;
     
     private ThreadInfo threadInfo;
@@ -30,6 +32,7 @@ public class HeartBeat implements StatInfo {
     
         this.hostname = hostname;
         this.ip = ip;
+        timestamp = System.currentTimeMillis();
     }
     
     public void setMemoryInfo(MemoryInfo memoryInfo) {
@@ -62,7 +65,7 @@ public class HeartBeat implements StatInfo {
         heartBeat.put("memory", memoryInfo);
         heartBeat.put("thread", threadInfo);
         heartBeat.put("gcinfo", gcInfoList);
-        heartBeat.put("timestamp", System.currentTimeMillis());
+        heartBeat.put("timestamp", timestamp);
         return heartBeat;
     }
     

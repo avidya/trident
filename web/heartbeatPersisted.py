@@ -221,7 +221,7 @@ class HeartBeatPgPersisted:
                  table_name = "trident_heartbeat_audit_day"
 
             sql_select = "select info_time_stamp, info_type, info_name, info_value, info_second_value_name, info_second_value, remark from %s " \
-                         "where ip_encode = '%s' and app_encode = '%s' and info_type = %s and info_time_stamp >= %s and info_time_stamp < %s order by info_time_stamp asc"
+                         "where ip = '%s' and app = '%s' and info_type = %s and info_time_stamp >= %s and info_time_stamp < %s order by info_time_stamp asc"
 
             sql_select = sql_select % (table_name, ip_encode, app_encode, info_type, start_time, end_time)
 

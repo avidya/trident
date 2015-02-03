@@ -368,3 +368,6 @@ def getVMStatus():
 if __name__ == '__main__':
     logging.config.fileConfig(LOG_CONFIG)
     run(host=HTTP_HOST, port=HTTP_PORT, reloader=True)
+    
+    
+    
