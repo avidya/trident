@@ -72,7 +72,7 @@ class HeartBeatPgPersisted:
 
         # 保存心跳消息数据, 精确到秒
         def save_trident_heartbeat_audit(da):
-            db.query(sql_insert_format % ('trident_heartbeat_audit', int(da[0]/1000), da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8], da[9], da[10]))
+            db.query(sql_insert_format % ('trident_heartbeat_audit', int(da[0]/1000), da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8]))
             return
 
         # 保存心跳消息数据， 精确到分钟
@@ -83,10 +83,10 @@ class HeartBeatPgPersisted:
 
 
 
-            if db.query(sql_count_format % ('trident_heartbeat_audit_hour', da[8], da[9], i_et, da[1])).getresult()[0][0] == 0:
-                db.query(sql_insert_format % ('trident_heartbeat_audit_hour', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8], da[9], da[10]))
+            if db.query(sql_count_format % ('trident_heartbeat_audit_hour', da[6], da[7], i_et, da[1])).getresult()[0][0] == 0:
+                db.query(sql_insert_format % ('trident_heartbeat_audit_hour', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8]))
             else:
-                db.query(sql_update_format % ('trident_heartbeat_audit_hour', da[3], i_et, da[8], da[9], da[1]))
+                db.query(sql_update_format % ('trident_heartbeat_audit_hour', da[3], i_et, da[6], da[7], da[1]))
             return
 
         # 保存心跳消息数据， 精确到小时
@@ -94,10 +94,10 @@ class HeartBeatPgPersisted:
             dd_time = datetime.datetime(*(time.localtime(int(da[0]/1000)))[:4])
             i_et = int(time.mktime(dd_time.timetuple()))
 
-            if db.query(sql_count_format % ('trident_heartbeat_audit_day', da[8], da[9], i_et, da[1])).getresult()[0][0] == 0:
-                db.query(sql_insert_format % ('trident_heartbeat_audit_day', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8], da[9], da[10]))
+            if db.query(sql_count_format % ('trident_heartbeat_audit_day', da[6], da[7], i_et, da[1])).getresult()[0][0] == 0:
+                db.query(sql_insert_format % ('trident_heartbeat_audit_day', i_et, da[1], da[2], da[3], da[4], da[5], da[6], da[7], da[8]))
             else:
-                db.query(sql_update_format % ('trident_heartbeat_audit_day', da[3], i_et, da[8], da[9], da[1]))
+                db.query(sql_update_format % ('trident_heartbeat_audit_day', da[3], i_et, da[6], da[7], da[1]))
             return
 
         # 保存一项心跳数据
@@ -128,30 +128,23 @@ class HeartBeatPgPersisted:
 
         sql_count_format = "select count(*) from %s where ip ='%s' and app='%s' and info_time_stamp =%s and info_type=%s "
 
-        hashapp_tp = hashlib.md5()
-        hashapp_tp.update(data_json["app"])
-        hashapp_tp_str = hashapp_tp.hexdigest()
-
-        haship_tp = hashlib.md5()
-        haship_tp.update(data_json["ip"])
-        haship_tp_str = haship_tp.hexdigest()
 
         # memory_heap save
-        save_heart_beat_info_item([data_json["timestamp"], self.HEAP, "heapMemory", int(data_json["memory"]["usedHeap"]/(1024*1024)), "maxHeap",  int(data_json["memory"]["maxHeap"]/(1024*1024)), data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
+        save_heart_beat_info_item([data_json["timestamp"], self.HEAP, "heapMemory", int(data_json["memory"]["usedHeap"]/(1024*1024)), "maxHeap",  int(data_json["memory"]["maxHeap"]/(1024*1024)), data_json["ip"], data_json["app"],''])
 
         # memory_non_heap save
-        save_heart_beat_info_item([data_json["timestamp"], self.NON_HEAP, "nonHeapMemory", int(data_json["memory"]["usedNonHeap"]/(1024*1024)), "maxNonHeap",  int(data_json["memory"]["maxNonHeap"]/(1024*1024)), data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
+        save_heart_beat_info_item([data_json["timestamp"], self.NON_HEAP, "nonHeapMemory", int(data_json["memory"]["usedNonHeap"]/(1024*1024)), "maxNonHeap",  int(data_json["memory"]["maxNonHeap"]/(1024*1024)), data_json["ip"], data_json["app"],  ''])
 
         # young gc save
-        save_heart_beat_info_item([data_json["timestamp"], self.YOUNG_GC, "count", data_json["gcinfo"][0]["count"], "time",  data_json["gcinfo"][0]["time"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, data_json["gcinfo"][0]["name"]])
+        save_heart_beat_info_item([data_json["timestamp"], self.YOUNG_GC, "count", data_json["gcinfo"][0]["count"], "time",  data_json["gcinfo"][0]["time"], data_json["ip"], data_json["app"],  data_json["gcinfo"][0]["name"]])
 
         # old gc save
-        save_heart_beat_info_item([data_json["timestamp"], self.OLD_GC, "count", data_json["gcinfo"][1]["count"], "time",  data_json["gcinfo"][1]["time"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, data_json["gcinfo"][1]["name"]])
+        save_heart_beat_info_item([data_json["timestamp"], self.OLD_GC, "count", data_json["gcinfo"][1]["count"], "time",  data_json["gcinfo"][1]["time"], data_json["ip"], data_json["app"], data_json["gcinfo"][1]["name"]])
 
         # thread save
-        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_ACTIVE, "active", data_json["thread"]["active"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
-        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_DAEMON, "daemon", data_json["thread"]["daemon"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
-        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_HTTP, "http", data_json["thread"]["http"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], haship_tp_str, hashapp_tp_str, ''])
+        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_ACTIVE, "active", data_json["thread"]["active"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"],  ''])
+        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_DAEMON, "daemon", data_json["thread"]["daemon"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], ''])
+        save_heart_beat_info_item([data_json["timestamp"], self.THREAD_HTTP, "http", data_json["thread"]["http"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], ''])
 
     # db 查询操作
     def query_operation(self, watch_time, ip, app, op_mode="minute"):
