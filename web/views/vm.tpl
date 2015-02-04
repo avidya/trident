@@ -21,7 +21,7 @@
 				<ul>
                     %for item in viewmodel["left"]:
                     <li>
-						<a href="/ta?app={{item}}">{{item}}</a>
+						<a href="/vm?app={{item}}">{{item}}</a>
 					</li>
                     %end
 				</ul>
@@ -80,9 +80,17 @@
 
 	<div class="actionArea clearfix">
 		<input type="hidden" id="dispatcher" name="dispatcher" page-getUrl="/vm" data-getUrl="/vm/status?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}" />
-		<a class="act_title now" id="changeTab" href="#">[切换到历史模式]</a>
+		%if int(viewmodel['timeType']) == 1:
+			<a class="act_title now" id="changeTab" href="#">[详细模式]</a>
+		%else:
+			<a class=act_title history" id="changeTab" href="#">[概览模式]</a>
+		%end
 		<div class="action_ul clearfix">
-			<ul class="actionDate">
+			<ul class="actionDate"
+							%if int(viewmodel['timeType']) == 0:
+								style="display:none;"
+							%end				
+			>
 				<li class="remove">
 					<a class="timeShift" time_shift="-604800" href="javascript:;">[-7d]</a>
 				</li>
@@ -108,10 +116,14 @@
 					<a class="timeShift" time_shift="604800" href="javascript:;">[+7d]</a>
 				</li>
 				<li class="now">
-					<a class="timeShift" time_shift="0" href="now">[now]</a>
+					<a class="timeShift" time_shift="0" href="/vm?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}&timeType={{viewmodel['timeType']}}">[now]</a>
 				</li>
 			</ul>
-			<ul class="actionDate" style="display: none">
+			<ul class="actionDate"
+							%if int(viewmodel['timeType']) == 1:
+								style="display:none;"
+							%end	 
+			>
 				<li class="remove">
 					<a class="timeShift" time_shift="-604800" href="javascript:;">[-7d]</a>
 				</li>
@@ -125,7 +137,7 @@
 					<a class="timeShift" time_shift="604800" href="javascript:;">[+7d]</a>
 				</li>
 				<li class="now">
-					<a class="timeShift" time_shift="0" href="now">[now]</a>
+					<a class="timeShift" time_shift="0" href="/vm?ip={{viewmodel['ip']}}&app={{viewmodel['app']}}&timeType={{viewmodel['timeType']}}">[now]</a>
 				</li>
 			</ul>
 		</div>
