@@ -55,7 +55,7 @@
 						<li class="li_ip">
                             <i class="i_title">[hosts]:</i>
                 %for ip in viewmodel["ips"]:
-	                		<a href_url="/ta?ip={{ip['audit_ip']}}&app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
+	                		<a href_url="/ta?audit_ip={{ip['audit_ip']}}&audit_app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
                 %end
 						</li>
 					</ul>

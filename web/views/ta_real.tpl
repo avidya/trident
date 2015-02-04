@@ -55,7 +55,7 @@
 						<li class="li_ip">
                             <i class="i_title">[hosts]:</i>
                 %for ip in viewmodel["ips"]:
-	                		<a href_url="/ta?ip={{ip['audit_ip']}}&app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
+	                		<a href_url="/ta?audit_ip={{ip['audit_ip']}}&audit_app={{ip['audit_app']}}" class="ips" href="javascript:;">{{ip['audit_ip']}}({{ip['host_name']}})</a>
                 %end
 						</li>
 					</ul>
@@ -100,7 +100,7 @@
 			    </div>
                 <div class="pager">
 					<div class="scott2" href_url="/ta?">
-						<span>总计：{{viewmodel["rowcount"]}}条&nbsp;{{viewmodel['maxpage']}}页</span>
+						<span>总计：---条&nbsp;---页</span>
 
 						<a page_index="{{viewmodel['prepage']}}" href="javascript:;" class="change_page">上一页</a>
 

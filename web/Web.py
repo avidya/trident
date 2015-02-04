@@ -79,7 +79,7 @@ def content():
         audit_ip = request.query.audit_ip
 
         if len(app_ip_result) > 0:
-            if(len(audit_ip) < 0):
+            if len(audit_ip) <= 0:
                 for audit_app_tp in app_ip_result:
                     if audit_app_tp["audit_app"] == app_name:
                         result['audit_ip'] = audit_app_tp['audit_ip']
@@ -96,9 +96,10 @@ def content():
     # 左面应用名称
     apps = dbPersisted.query_operation(op_mode='query_all_apps')()
 
-    result["ips"] = apps
+
     result["left"] = Set(map(lambda x:x['audit_app'], apps))
     format_app(apps)
+    result["ips"] = filter(lambda x: x['audit_app'] == result['audit_app'], apps)
     format_ip(apps, result["audit_app"])
 
     # page info
@@ -196,10 +197,10 @@ def getSubItems():
     result['b_color'] = table_colors[nodeIndex%len(table_colors)]
 
     if timeType == '1':
-        result['rows'] = dbPersisted.query_operation("query_transaction_real_data")(finger_print, low_times)
+        result['rows'] = dbPersisted.query_operation(op_mode="query_transaction_real_data", low_times = low_times)(finger_print)
         return template("subitem_real", viewmodle = result)
     else:
-        result['rows'] = dbPersisted.query_operation("query_transaction_data")(layer_no, parent_order_nos, finger_print, data_time, low_times)
+        result['rows'] = dbPersisted.query_operation(op_mode="query_transaction_data", low_times = low_times)(layer_no, parent_order_nos, finger_print, data_time)
         return template("subitem", viewmodle = result)
 
 # 获取下一级内容,以甘特的样子展现
@@ -258,7 +259,7 @@ def getSubItemsGantt():
     dbPersisted = DbPersisted()
 
     # 父节点记录信息
-    parent_audit_item = dbPersisted.query_operation("query_transaction_real_data_by_id")(parent_audit_id)
+    parent_audit_item = dbPersisted.query_operation(op_mode='query_transaction_real_data_by_id', low_times=low_times)(parent_audit_id)
 
     org_parent_time_show = int(parent_audit_item['durable_time'])
     # 最长时间设定为花费时间的1.25倍
@@ -266,7 +267,8 @@ def getSubItemsGantt():
 
     result['tr_items'] = format_parent_audit(parent_audit_item, org_parent_time_show)
     result['parent_url'] = parent_audit_item['url']
-    result['sub_items'] = format_sub_result(dbPersisted.query_operation("query_transaction_real_data")(parent_audit_id, low_times), parent_audit_item, parent_time_show)
+
+    result['sub_items'] = format_sub_result(dbPersisted.query_operation(op_mode='query_transaction_real_data', low_times = low_times)(parent_audit_id), parent_audit_item, parent_time_show)
 
     return template("gantt", viewmodel = result)
 
