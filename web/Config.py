@@ -19,6 +19,7 @@ STOMP_HOST = '10.1.11.214'
 STOMP_PORT = 61613
 # 性能消息队列
 TRANSACTION_DESTINATION = '/queue/call-info'
+TRANSACTION_THREAD = 5
 
 # 系统信息队列
 STATUS_INFO_DESTINATION = '/queue/heartbeat-info'
