@@ -210,37 +210,6 @@ def getSubItemsGantt():
     show_cloumns = 7
     total_bar_width = 1200 # 满格宽度为1200px
 
-    # 组装表内容数据
-    def format_sub_result(sub_items_result, parent_result, parent_time_show):
-        p_begin_time = long(parent_result['begin_time'])
-
-        f_sub_items_result = []
-        for item in sub_items_result:
-            sub_item = {}
-            # 起始位置为（（当前开始时间 - 父节点开始时间 ）* 100 / 父节点总共花费的时间 ） %
-            left = (long(item['begin_time']) - p_begin_time) * total_bar_width / parent_time_show
-            sub_item['left'] = left
-            sub_item['middle'] = int((long(item['end_time']) - long(item['begin_time'])) * 1200 / parent_time_show)
-            sub_item['url'] =  item['url'].replace('java.lang.', '')
-            sub_item['d_time'] = int(long(item['begin_time']) - p_begin_time)
-            sub_item['c_time'] = int(long(item['end_time']) - long(item['begin_time']))
-            f_sub_items_result.append(sub_item)
-
-        return f_sub_items_result
-
-    # 组装表头数据
-    def format_parent_audit(parent_result, org_parent_time_show):
-        parent_infos = []
-        # 所有时间会占用页面上显示的5列（页面上显示的是约6.3列）
-        time_split = int(parent_time_show/(show_cloumns-2))
-        for i in xrange(1,8):
-            p_item = {}
-            p_item['tr_no'] = i
-            p_item['tr_time'] = (i-1) * time_split
-            parent_infos.append(p_item)
-
-        return parent_infos
-
     # 父亲节点id
     parent_audit_id = request.query.parent_audit_id
 
@@ -254,20 +223,36 @@ def getSubItemsGantt():
             low_times = int(low_times)
         except:
             low_times = 0
+
     result = {}
     dbPersisted = DbPersisted()
 
     # 父节点记录信息
     parent_audit_item = dbPersisted.query_operation(op_mode='query_transaction_real_data_by_id', low_times=low_times)(parent_audit_id)
 
+    #原始的最长时间
     org_parent_time_show = int(parent_audit_item['durable_time'])
-    # 最长时间设定为花费时间的1.25倍
+    # 显示的最长时间设定为花费时间的1.25倍
     parent_time_show = int((org_parent_time_show + show_cloumns - org_parent_time_show % show_cloumns) * 5 / 4)
 
-    result['tr_items'] = format_parent_audit(parent_audit_item, org_parent_time_show)
+    # # 组装表头数据, 满页为7列（页面上显示的是约6.3列）
+    time_split = int(parent_time_show/(show_cloumns-2))#让最长时间的进度条占满前5列
+    result['tr_items'] = map(lambda x:{'tr_no':x, 'tr_time':(x-1)*time_split}, xrange(1,8))
+
+    # 函数调用的入口方法名称
     result['parent_url'] = parent_audit_item['url']
 
-    result['sub_items'] = format_sub_result(dbPersisted.query_operation(op_mode='query_transaction_real_data', low_times = low_times)(parent_audit_id), parent_audit_item, parent_time_show)
+    # 函数调用入口的起始时间
+    p_begin_time = long(parent_audit_item['begin_time'])
+
+    # 组装表内容数据
+    result['sub_items'] = map(
+        lambda item: {'left':(long(item['begin_time']) - p_begin_time) * total_bar_width / parent_time_show,
+                      'middle':int((long(item['end_time']) - long(item['begin_time'])) * 1200 / parent_time_show),
+                      'url':item['url'].replace('java.lang.', ''),
+                      'd_time':int(long(item['begin_time']) - p_begin_time),
+                      'c_time':int(long(item['end_time']) - long(item['begin_time']))
+        }, dbPersisted.query_operation(op_mode='query_transaction_real_data', low_times = low_times)(parent_audit_id))
 
     return template("gantt", viewmodel = result)
 
