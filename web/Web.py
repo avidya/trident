@@ -306,9 +306,6 @@ def showVMStatus():
     # model
     result={}
 
-    # 左面应用名称
-    result["left"] = Set(map(lambda a:a['audit_app'], apps))
-    result["apps"] = apps
     if app:
         result['app'] = app
         ls = filter(lambda k : k['audit_app'] == app, apps)
@@ -316,7 +313,11 @@ def showVMStatus():
     else:
         result["app"] = apps[0]['audit_app'] if apps else 'N/A'
         result["ip"] = ip if ip else (apps[0]['audit_ip'] if apps else 'N/A')
-    
+
+    # 左面应用名称
+    result["left"] = Set(map(lambda a:a['audit_app'], apps))
+    result["apps"] = filter(lambda x:x['audit_app'] == result['app'], apps)
+        
     # start end time
     time_result = format_date()
     result["data_time"] = time_result["d_time"]
