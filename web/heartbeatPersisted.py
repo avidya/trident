@@ -169,11 +169,11 @@ class HeartBeatPgPersisted:
                     item = {}
                     info_time = datetime.datetime(*(time.localtime(row[0]))[:6])
                     if unit_type == unit_second:
-                        info_time_x = "%sS" % info_time.timetuple().tm_sec
+                        info_time_x = info_time.timetuple().tm_sec
                     elif unit_type == unit_minute:
-                        info_time_x = "%sM" % info_time.timetuple().tm_min
+                        info_time_x = info_time.timetuple().tm_min
                     elif unit_type == unit_hour:
-                        info_time_x = "%sH" % info_time.timetuple().tm_hour
+                        info_time_x = info_time.timetuple().tm_hour
 
                     item['info_time'] = info_time_x
                     item['info_type'] = row[1]

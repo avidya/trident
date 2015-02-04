@@ -309,8 +309,13 @@ def showVMStatus():
     # 左面应用名称
     result["left"] = Set(map(lambda a:a['audit_app'], apps))
     result["apps"] = apps
-    result["app"] = app if app else (apps[0]['audit_app'] if apps else 'N/A')
-    result["ip"] = ip if ip else (apps[0]['audit_ip'] if apps else 'N/A')
+    if app:
+        result['app'] = app
+        ls = filter(lambda k : k['audit_app'] == app, apps)
+        result['ip'] = ip if ip else (ls[0]['audit_ip'] if ls else (apps[0]['audit_ip'] if apps else 'N/A'))
+    else:
+        result["app"] = apps[0]['audit_app'] if apps else 'N/A'
+        result["ip"] = ip if ip else (apps[0]['audit_ip'] if apps else 'N/A')
     
     # start end time
     time_result = format_date()

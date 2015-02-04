@@ -78,6 +78,7 @@ define(function(require, exports, module) {
 					dateFmt : 'yyyy-MM-dd HH'
 				});
 			});
+			/**
 			//模式切换
 			$('body').delegate('.act_title.now', 'click', function() {
 				var me = $(this);
@@ -91,6 +92,7 @@ define(function(require, exports, module) {
 				me.text('[切换到历史模式]');
 				me.attr('class', 'act_title now');
 			});
+			*/
 			$.commonAjax({
 				url:getUrl,
 				type : 'post',
@@ -127,7 +129,7 @@ define(function(require, exports, module) {
 			});
 	
 			$('body').delegate('.timeShift', 'click', function() {
-				var load_url = Main.get_url($(this).attr('href_url'), false, parseInt($(this).attr('time_shift')));
+				var load_url = Main.get_url("/vm?ip="+$("#ip").val()+"&app="+$("#app").val(), false, parseInt($(this).attr('time_shift')));
 				window.location = load_url;
 			});
 						
