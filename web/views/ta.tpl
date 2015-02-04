@@ -21,7 +21,7 @@
 				<ul>
                     %for item in viewmodel["left"]:
                     <li>
-						<a href="/ta?app={{item}}">{{item}}</a>
+						<a href="/ta?audit_app={{item}}">{{item}}</a>
 					</li>
                     %end
 				</ul>

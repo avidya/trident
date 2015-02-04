@@ -96,7 +96,6 @@ def content():
     # 左面应用名称
     apps = dbPersisted.query_operation(op_mode='query_all_apps')()
 
-
     result["left"] = Set(map(lambda x:x['audit_app'], apps))
     format_app(apps)
     result["ips"] = filter(lambda x: x['audit_app'] == result['audit_app'], apps)
