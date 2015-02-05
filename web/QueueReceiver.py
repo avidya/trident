@@ -41,16 +41,20 @@ if __name__ == '__main__':
 
     logging.config.fileConfig(LOG_CONFIG)
 
-    callInfoListener = StatInfoListener("DISCONNECT", 1, DbPersisted())
+    # 启动多个消费者
+    for i in xrange(0, TRANSACTION_THREAD):
+        callInfoListener = StatInfoListener("DISCONNECT", i, DbPersisted())
 
-    conn = stomp.Connection(host_and_ports=[(STOMP_HOST, STOMP_PORT)])
-    conn.set_listener('fisher', callInfoListener)
-    conn.start()
-    conn.connect(wait=True)
-    conn.subscribe(destination=TRANSACTION_DESTINATION, id=callInfoListener.id, ack="auto")
-    t1 = threading.Thread(target=callInfoListener.wait_on_receipt)
-    t1.daemon = True
-    t1.start()
+        conn = stomp.Connection(host_and_ports=[(STOMP_HOST, STOMP_PORT)])
+        conn.set_listener('fisher%s'% i, callInfoListener)
+        conn.start()
+        conn.connect(wait=True)
+        conn.subscribe(destination=TRANSACTION_DESTINATION, id=callInfoListener.id, ack="auto")
+        t1 = threading.Thread(target=callInfoListener.wait_on_receipt)
+        t1.daemon = True
+        t1.start()
+        get_log().warn('启动Listener:%s%s' % ('callInfoListener', i))
+        sleep(1)
 #     callInfoListener.wait_on_receipt()
     
     heartBeatInfoListener = StatInfoListener("DISCONNECT", 2, HeartBeatPgPersisted())
@@ -62,7 +66,8 @@ if __name__ == '__main__':
     conn2.subscribe(destination=STATUS_INFO_DESTINATION, id=heartBeatInfoListener.id, ack="auto")  
     t2 = threading.Thread(target=heartBeatInfoListener.wait_on_receipt)
     t2.daemon = True
-    t2.start() 
+    t2.start()
+    get_log().warn('启动Listener:%s%s' % ('heartBeatInfoListener'))
 #     heartBeatInfoListener.wait_on_receipt()
     
 #     conn.disconnect()
