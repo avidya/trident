@@ -67,7 +67,7 @@ if __name__ == '__main__':
     t2 = threading.Thread(target=heartBeatInfoListener.wait_on_receipt)
     t2.daemon = True
     t2.start()
-    get_log().warn('启动Listener:%s%s' % ('heartBeatInfoListener'))
+    get_log().warn('启动Listener:%s' % ('heartBeatInfoListener'))
 #     heartBeatInfoListener.wait_on_receipt()
     
 #     conn.disconnect()
