@@ -38,14 +38,15 @@ class HeartBeatPgPersisted:
     THREAD_HTTP = 7
 
     trivial_sub = lambda a : ''
+    trivial_sub2 = lambda c, l: l
     TYPE_NAME = {
-        YOUNG_GC: ('young gc', 'count', lambda m : m['remark']),
-        OLD_GC: ('old gc', 'count', lambda m : m['remark']),
-        HEAP: ('heap memory', 'MB', trivial_sub),
-        NON_HEAP: ('perm memory', 'MB', trivial_sub),
-        THREAD_ACTIVE: ('active thread', 'count', trivial_sub),
-        THREAD_DAEMON: ('daemon thread', 'count', trivial_sub),
-        THREAD_HTTP: ('http thread', 'count', trivial_sub)
+        YOUNG_GC: ('young gc', 'count', lambda m : m['remark'], lambda c, l: c(l)),
+        OLD_GC: ('old gc', 'count', lambda m : m['remark'], lambda c, l: c(l)),
+        HEAP: ('heap memory', 'MB', trivial_sub, trivial_sub2),
+        NON_HEAP: ('perm memory', 'MB', trivial_sub, trivial_sub2),
+        THREAD_ACTIVE: ('active thread', 'count', trivial_sub, trivial_sub2),
+        THREAD_DAEMON: ('daemon thread', 'count', trivial_sub, trivial_sub2),
+        THREAD_HTTP: ('http thread', 'count', trivial_sub, trivial_sub2)
     }
 
     # 获取 logger

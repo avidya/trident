@@ -334,16 +334,24 @@ def getVMStatus():
     dbPersisted = HeartBeatPgPersisted()
         
     query_operator = dbPersisted.query_operation(watch_time, ip, app, types[type][0])
-        
-    merger = lambda s, a: s + [a['info_value']]
-    stuffer=(lambda type:lambda l: l + [0] * (len(types[type][1]) - len(l)))(type)
     
-    # calculus. turn [(item1, item_list1), (item2, item_list2), ... (itemN, item_listN)] into JSON format
-    json_transformer = lambda (item_info, item_list): {'seriesData' : stuffer(reduce(merger, item_list, [])), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]) if item_list else '', 'seriesName': item_info[0], 'categories' : types[type][1]}
+    # extract only info_value, info_time fields from a target lst 
+    extractor = lambda lst: map(lambda a: {'info_value': a['info_value'], 'info_time': a['info_time']}, lst)
+    
+    # I don't know how to explain this... okay, the main purpose is to expand a lst2 to length(lst) 
+    # e.g. [{'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 7}, {'i_t':6, 'i_v': 12}] :=> [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 7}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v': 12}, ..., {'i_t':len(lst), 'i_v': 0}]
+    expander=(lambda lst: lambda lst2 : map(lambda x: filter(lambda z: z['info_time'] == x, lst2)[0]['info_value'] if x in map(lambda y: y['info_time'], lst2) else 0, lst))(range(0,24) if type == 0 else range(0, 60))
+    
+    # calculate diff between two nearby value
+    # e.g. [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 7}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v': 12}, ..., {'i_t':len(lst), 'i_v': 0}] 
+    #  :=> [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 2}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v': 5}, ..., {'i_t':len(lst), 'i_v': 0}]
+    compactor=lambda lst: reduce(lambda s,a: (s[0], s[1] + [a - reduce(lambda s2, a2: a2 + s2, s[1], s[0]) if a != 0 else 0]), lst[1:], (lst[0], [0]))[1]
+    
+    json_transformer = lambda lst: map(lambda (item_info, item_list): {'seriesData' : item_info[3](compactor, expander(extractor(item_list))), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]) if item_list else '', 'seriesName': item_info[0], 'categories' : types[type][1]}, lst)
 
     # ITEM:-> ITEM_LIST mapping
     status =  map(lambda item: (dbPersisted.TYPE_NAME[item], query_operator(item)), dbPersisted.TYPE_NAME.keys())
-    return template(json.dumps({'status':0, 'msg':'', 'data':map(json_transformer, status)}))
+    return template(json.dumps({'status':0, 'msg':'', 'data':json_transformer(status)}))
     
 
 if __name__ == '__main__':
