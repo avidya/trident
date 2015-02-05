@@ -64,4 +64,10 @@ public class ThreadInfo {
         this.http = http;
     }
     
+    @Override
+    public String toString() {
+    
+        return "ThreadInfo [active=" + active + ", daemon=" + daemon + ", peek=" + peek + ", http=" + http + "]";
+    }
+    
 }
