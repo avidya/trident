@@ -40,13 +40,13 @@ class HeartBeatPgPersisted:
     trivial_sub = lambda a : ''
     trivial_sub2 = lambda c, l: l
     TYPE_NAME = {
-        YOUNG_GC: ('young gc', 'count', lambda m : m['remark'], lambda c, l: c(l)),
-        OLD_GC: ('old gc', 'count', lambda m : m['remark'], lambda c, l: c(l)),
-        HEAP: ('heap memory', 'MB', trivial_sub, trivial_sub2),
-        NON_HEAP: ('perm memory', 'MB', trivial_sub, trivial_sub2),
-        THREAD_ACTIVE: ('active thread', 'count', trivial_sub, trivial_sub2),
-        THREAD_DAEMON: ('daemon thread', 'count', trivial_sub, trivial_sub2),
-        THREAD_HTTP: ('http thread', 'count', trivial_sub, trivial_sub2)
+        YOUNG_GC: ('young gc', 'count', lambda m : m['remark'], lambda c, l: c(l), lambda l: 5 if not l else reduce(lambda s, a: (a['info_value']-s[1] if (a['info_value']-s[1]) > s[0] else s[0], a['info_value']), l, (0, l[0]['info_value']))[0] * 2),
+        OLD_GC: ('old gc', 'count', lambda m : m['remark'], lambda c, l: c(l), lambda l: 5 if not l else reduce(lambda s, a: (a['info_value']-s[1] if (a['info_value']-s[1]) > s[0] else s[0], a['info_value']), l, (0, l[0]['info_value']))[0] * 2),
+        HEAP: ('heap memory', 'MB', trivial_sub, trivial_sub2, lambda l: 5 if not l else reduce(lambda s, a: s if s['info_second_value'] >= a['info_second_value'] else a, l)['info_second_value']),
+        NON_HEAP: ('perm memory', 'MB', trivial_sub, trivial_sub2, lambda l: 5 if not l else reduce(lambda s, a: s if s['info_second_value'] >= a['info_second_value'] else a, l)['info_second_value']),
+        THREAD_ACTIVE: ('active thread', 'count', trivial_sub, trivial_sub2, lambda l: 200),
+        THREAD_DAEMON: ('daemon thread', 'count', trivial_sub, trivial_sub2, lambda l: 200),
+        THREAD_HTTP: ('http thread', 'count', trivial_sub, trivial_sub2, lambda l: 200)
     }
 
     # 获取 logger
