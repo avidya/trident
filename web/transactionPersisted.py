@@ -23,6 +23,9 @@
 #
 # 指纹的计算方式为函数调用链上的各个函数依次处理，再加上对应的应用，以及该应用所在的app
 
+
+# 此版本有时会引起锁错误： 'ERROR:  current transaction is aborted, commands ignored until end of transaction block， 原因不明
+
 __author__ = 'yuyichuan'
 
 import pg
@@ -224,8 +227,9 @@ class DbPersisted:
         except Exception,e:
             print e.args[0]
             self.get_log().error("batch insert record into trident_audit failed, ret=%s" % e.args[0])
-            db.close()
-            return
+
+        db.close()
+        return
 
     # db 查询操作
     def query_operation(self, audit_ip=None, audit_app=None, low_times=0, op_mode='query_all_apps'):

@@ -150,6 +150,9 @@ class HeartBeatPgPersisted:
         save_heart_beat_info_item([data_json["timestamp"], self.THREAD_DAEMON, "daemon", data_json["thread"]["daemon"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], ''])
         save_heart_beat_info_item([data_json["timestamp"], self.THREAD_HTTP, "http", data_json["thread"]["http"], "peek", data_json["thread"]["peek"], data_json["ip"], data_json["app"], ''])
 
+        db.close()
+        return
+
     # db 查询操作
     def query_operation(self, watch_time, ip, app, op_mode="minute"):
 
