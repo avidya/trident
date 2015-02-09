@@ -111,8 +111,8 @@ define(function(require, exports, module) {
 							categories : item.categories,
 							yAxis_text : item.yAxis_text,
 							seriesName : item.seriesName,
-							seriesData : item.seriesData
-
+							seriesData : item.seriesData,
+							yMax: item.yMax_value
 						});
 					}
 				},

@@ -61,4 +61,10 @@ public class MemoryInfo {
         this.usedNonHeap = usedNonHeap;
     }
     
+    @Override
+    public String toString() {
+    
+        return "MemoryInfo [maxHeap=" + maxHeap + ", usedHeap=" + usedHeap + ", maxNonHeap=" + maxNonHeap + ", usedNonHeap=" + usedNonHeap + "]";
+    }
+    
 }

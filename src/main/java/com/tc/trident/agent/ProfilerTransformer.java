@@ -11,6 +11,8 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Modifier;
 import java.security.ProtectionDomain;
+import java.util.HashSet;
+import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -28,18 +30,19 @@ import javassist.NotFoundException;
  */
 public class ProfilerTransformer implements ClassFileTransformer {
     
-    public static final String[] MATCH_PACKAGE = {
-            "^com/tc/.*",
-            "^com/tcmc/.*",
-            "^info/kozz/.*"
-    };
+    public static final HashSet<String> MATCH_PACKAGE = new HashSet<String>();
     
-    public static final String[] UNMATCH_PACKAGE = {
-            "^com/tc/trident/.*",
-            "^com/tc/trinity/.*",
-            ".*BySpringCGLIB.*",
-            ".*ByCGLIB.*"
-    };
+    public static final HashSet<String> UNMATCH_PACKAGE = new HashSet<String>();
+    static {
+        MATCH_PACKAGE.add("^com/tc/.*");
+        MATCH_PACKAGE.add("^com/tcmc/.*");
+        MATCH_PACKAGE.add("^info/kozz/.*");
+        
+        UNMATCH_PACKAGE.add("^com/tc/trident/.*");
+        UNMATCH_PACKAGE.add("^com/tc/trinity/.*");
+        UNMATCH_PACKAGE.add(".*BySpringCGLIB.*");
+        UNMATCH_PACKAGE.add(".*ByCGLIB.*");
+    }
     
     private boolean match(String className) {
     
@@ -54,6 +57,17 @@ public class ProfilerTransformer implements ClassFileTransformer {
             }
         }
         return false;
+    }
+    
+    public ProfilerTransformer(Set<String> matchPackage, Set<String> unmatchPackage){
+        if(matchPackage != null && matchPackage.size() > 0){
+            MATCH_PACKAGE.clear();
+            MATCH_PACKAGE.addAll(matchPackage);
+        }
+        if(unmatchPackage != null && unmatchPackage.size() > 0){
+            UNMATCH_PACKAGE.clear();
+            UNMATCH_PACKAGE.addAll(unmatchPackage);
+        }
     }
     
     private String normalizeClassPath(String className) {

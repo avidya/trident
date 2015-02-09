@@ -314,11 +314,9 @@ def showVMStatus():
     return template("vm", viewmodel = result)
 
 
-day_list_series = map(lambda x:str(x), range(0, 24))
-hour_list_series = map(lambda x:str(x), range(0, 60))
-types=[('day', day_list_series), ('hour', hour_list_series)]
+query_types=[('day', map(lambda x:str(x), range(0, 24))), ('hour',  map(lambda x:str(x), range(0, 60)))]
 
-# 异步获取虚拟机状态
+# retrieving jvm status information in asynchronized way
 @route("/vm/status", method='POST')
 def getVMStatus():
     
@@ -333,7 +331,7 @@ def getVMStatus():
     watch_time = int(watch_time)
     dbPersisted = HeartBeatPgPersisted()
         
-    query_operator = dbPersisted.query_operation(watch_time, ip, app, types[type][0])
+    query_operator = dbPersisted.query_operation(watch_time, ip, app, query_types[type][0])
     
     # extract only info_value, info_time fields from a target lst 
     extractor = lambda lst: map(lambda a: {'info_value': a['info_value'], 'info_time': a['info_time']}, lst)
@@ -344,10 +342,10 @@ def getVMStatus():
     
     # calculate diff between two nearby value
     # e.g. [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 7}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v': 12}, ..., {'i_t':len(lst), 'i_v': 0}] 
-    #  :=> [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 2}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v': 5}, ..., {'i_t':len(lst), 'i_v': 0}]
+    #  :=> [{{'i_t':0, 'i_v': 0}}, ..., {'i_t':3, 'i_v': 5}, {'i_t':4, 'i_v': 2}, {'i_t':5, 'i_v': 0} {'i_t':6, 'i_v':  5}, ..., {'i_t':len(lst), 'i_v': 0}]
     compactor=lambda lst: reduce(lambda s,a: (s[0], s[1] + [a - reduce(lambda s2, a2: a2 + s2, s[1], s[0]) if a != 0 else 0]), lst[1:], (lst[0], [0]))[1]
     
-    json_transformer = lambda lst: map(lambda (item_info, item_list): {'seriesData' : item_info[3](compactor, expander(extractor(item_list))), 'title' : item_info[0], "yAxis_text" : item_info[1], "subtitle": item_info[2](item_list[0]) if item_list else '', 'seriesName': item_info[0], 'categories' : types[type][1]}, lst)
+    json_transformer = lambda lst: map(lambda (item_info, item_list): {'seriesData':item_info[3](compactor, expander(extractor(item_list))), 'yMax_value': item_info[4](item_list), 'title':item_info[0], "yAxis_text":item_info[1], "subtitle":item_info[2](item_list[0]) if item_list else '', 'seriesName': item_info[0], 'categories' : query_types[type][1]}, lst)
 
     # ITEM:-> ITEM_LIST mapping
     status =  map(lambda item: (dbPersisted.TYPE_NAME[item], query_operator(item)), dbPersisted.TYPE_NAME.keys())

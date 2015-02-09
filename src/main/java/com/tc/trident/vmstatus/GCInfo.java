@@ -44,4 +44,10 @@ public class GCInfo {
     
         this.time = time;
     }
+    
+    @Override
+    public String toString() {
+    
+        return "GCInfo [name=" + name + ", count=" + count + ", time=" + time + "]";
+    }
 }

@@ -68,5 +68,11 @@ public class HeartBeat implements StatInfo {
         heartBeat.put("timestamp", timestamp);
         return heartBeat;
     }
+
+    @Override
+    public String toString() {
+    
+        return "HeartBeat [hostname=" + hostname + ", ip=" + ip + ", timestamp=" + timestamp + ", memoryInfo=" + memoryInfo + ", threadInfo=" + threadInfo + ", gcInfoList=" + gcInfoList + "]";
+    }
     
 }
