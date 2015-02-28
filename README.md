@@ -17,3 +17,5 @@
 * 新、老代的GC回收情况
 * 虚拟机线程情况
 ![个人VPS宕机，请联系benimaur@gmail.com](http://199.68.197.202/images/tc/jvm_status.png)
+
+用户手册请参看[wiki页](https://github.com/avidya/trident/wiki)
